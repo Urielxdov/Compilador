@@ -4,9 +4,9 @@ import data_structures.Lista;
 import data_structures.Set;
 
 public class Context {
-    private Lista<> tokens; // Simbolos que encontremos
-    private  Lista<> errores; // Para la tabla de errores
-    private Set<> simbolos; // Simbolos encontrados
+    private Lista<String> tokens; // Simbolos que encontremos
+    private  Lista<String> errores; // Para la tabla de errores
+    private Set<String> simbolos; // Simbolos encontrados
     private Set<String> palabrasReservadas; // Palabras reservadas
     private Set<String> caracteresSimples; // Caracteres sumples
     private int numeroLinea;
