@@ -1,4 +1,49 @@
 package lexer.handlers;
 
-public class NumeroFloatHandler {
+import lexer.Context;
+import lexer.Token;
+
+public class NumeroFloatHandler implements TokenHandler {
+    private final int ATRIBUTO = 401;
+    @Override
+    public boolean accept(char c) {
+        return ((c >= 48) && (c <= 57)) || (c == 46);
+    }
+
+    @Override
+    public boolean proccessChar(Context ctx) {
+        /**
+         * Nota
+         * A este punto ya se debio pasar por numeros naturales
+         * por ende es imposible que si se detecta un primer numero
+         * el segundo caracter es imposible que sea un float
+         * No se dejara salir el lexema
+         */
+        String linea = ctx.getLineaActual();
+        int pos = ctx.getPunteroFinal();
+
+        if (ctx.getPunteroFinal() >= linea.length()) return false; // Ya vemos en ejecucion
+
+        char c = linea.charAt(pos);
+
+        if (!accept(c)) return false; // Posible error lexico esta vez
+
+        while (pos < linea.length() && accept(linea.charAt(pos))) pos++;
+
+        if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) {
+            // Eminente error, inicio con numero pero letra despues? eso no es
+            // siquiera intento de identificador
+            return false;
+        }
+
+        // Token valido
+        ctx.setPunteroFinal(pos);
+        if (ctx.limitador()) {
+            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal())));
+            return true;
+        }
+
+        ctx.consumirLexema();
+        return true;
+    }
 }
