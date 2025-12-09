@@ -15,40 +15,43 @@ public class CaracterSimpleHandler implements TokenHandler {
     @Override
     public boolean proccessChar(Context ctx) {
         String linea = ctx.getLineaActual();
-        int pos = ctx.getPunteroFinal();
+        int pos = ctx.getPunteroInicial();
 
-        if (pos >= linea.length()) return false; // Sepa que ha pasao
+        if (pos >= linea.length()) return false;
 
         char c = linea.charAt(pos);
 
         if (!accept(c)) return false;
 
-        while (pos < linea.length() && accept(linea.charAt(pos))) pos++;
+        int inicio = pos;
+        pos++;
 
-        if (pos - ctx.getPunteroInicial() > 2) {
-            ctx.setPunteroFinal(pos);
-            ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), "Caracter no perteneciente a los caracteres simples", LexicalError.ErrorType.TOKEN_DESCONOCIDO));
+        String lexema = "" + c;
+
+        if (pos < linea.length()) {
+            char next = linea.charAt(pos);
+
+            String sublexema = lexema + next;
+            if(sublexema.equals("==") || sublexema.equals("<>")) {
+                pos++;
+                lexema = sublexema;
+            }
+        }
+
+        ctx.setPunteroFinal(pos);
+
+        if (!ctx.isSimpleCharacter(lexema)) {
+            ctx.agregarError(new LexicalError(
+                    ctx.getNumeroLinea(),
+                    pos,
+                    lexema,
+                    "Caracter irreconocible",
+                    LexicalError.ErrorType.TOKEN_DESCONOCIDO
+            ));
             return false;
         }
 
-        if (pos - ctx.getPunteroInicial() == 2) {
-            String lexema = linea.substring(ctx.getPunteroInicial(), pos);
-            ctx.setPunteroFinal(pos);
-            if (lexema.equals("==") || lexema.equals("<>")) {
-                ctx.agregarToken(new Token(c, lexema));
-                return true;
-            } else {
-                ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, lexema, "Caracter no perteneciente a los caracteres simples", LexicalError.ErrorType.TOKEN_DESCONOCIDO));
-                return false;
-            }
-        }
-        if (pos > ctx.getPunteroInicial()) {
-            ctx.setPunteroFinal(pos);
-            ctx.agregarToken(new Token(c, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal())));
-            return true;
-        }
-
-
-        return false;
+        ctx.agregarToken(new Token(lexema.charAt(0), lexema));
+        return true;
     }
 }

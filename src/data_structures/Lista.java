@@ -80,7 +80,7 @@ public class Lista<T> {
             if(valor instanceof Character) cadena += (Character) valor;
             else if (valor instanceof Number) cadena += valor.toString();
             else cadena += valor.toString();
-            cadena += " ";
+            cadena += "\n";
             actual = actual.siguiente;
         }
 

@@ -16,4 +16,9 @@ public class Token {
     public int getAtributo() {
         return atributo;
     }
+
+    @Override
+    public String toString() {
+        return "Lexema: " + lexema + " - " + atributo;
+    }
 }

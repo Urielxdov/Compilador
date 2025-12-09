@@ -2,33 +2,66 @@ package lexer;
 
 import data_structures.Lista;
 import data_structures.Set;
+import io.FileReaderManager;
 import lexer.handlers.errors.LexicalError;
 import lexer.validators.boundaries.FinalLexema;
 import lexer.validators.boundaries.IdentificadorLimites;
 
 public class Context {
-    private final IdentificadorLimites limitador;
+    private IdentificadorLimites limitador;
     private Lista<Token> tokens; // Simbolos que encontremos
     private  Lista<LexicalError> errores; // Para la tabla de errores
     private Set<String> simbolos; // Simbolos encontrados
     private Set<String> palabrasReservadas; // Palabras reservadas
     private Set<String> caracteresSimples; // Caracteres sumples
+
+    private Lista<String> programa;
     private int numeroLinea;
     private String lineaActual;
     private int punteroInicial;
     private int punteroFinal;
 
     public Context() {
+        iniciarVariables();
+    }
+
+    private void iniciarVariables () {
         this.tokens = new Lista<>();
         this.errores = new Lista<>();
         this.simbolos = new Set<>();
         this.palabrasReservadas = new Set<>();
         this.caracteresSimples = new Set<>();
         this.numeroLinea = 0;
-        this.lineaActual = "<>";
         this.punteroFinal = 0;
         this.punteroInicial = 0;
         this.limitador = new FinalLexema();
+
+        this.caracteresSimples.add(";");
+        this.caracteresSimples.add("=");
+        this.caracteresSimples.add("+");
+        this.caracteresSimples.add("-");
+        this.caracteresSimples.add("*");
+        this.caracteresSimples.add("(");
+        this.caracteresSimples.add(")");
+        this.caracteresSimples.add(",");
+        this.caracteresSimples.add("<");
+        this.caracteresSimples.add(">");
+        this.caracteresSimples.add("==");
+        this.caracteresSimples.add("<>");
+
+        this.palabrasReservadas.add("Programa");
+        this.palabrasReservadas.add("Real");
+        this.palabrasReservadas.add("Entero");
+        this.palabrasReservadas.add("Leer");
+        this.palabrasReservadas.add("Escribir");
+        this.palabrasReservadas.add("Si");
+        this.palabrasReservadas.add("Entonces");
+        this.palabrasReservadas.add("Sino");
+        this.palabrasReservadas.add("Inicio");
+        this.palabrasReservadas.add("Fin");
+
+        this.programa = new FileReaderManager().leerArchivo();
+        lineaActual = programa.obtener(numeroLinea);
     }
 
     public boolean hasMoreChars() {
@@ -66,17 +99,28 @@ public class Context {
     }
 
     public boolean finArchivo() {
-        return punteroFinal == lineaActual.length();
+        if (punteroFinal >= lineaActual.length()) {
+            if (numeroLinea >= programa.nodosExistentes()) {
+                return true;
+            } else {
+                numeroLinea++;
+                if(numeroLinea >= programa.nodosExistentes()) return true;
+                lineaActual = programa.obtener(numeroLinea);
+                punteroFinal = 0;
+                punteroInicial = 0;
+                return false;
+            }
+        } else return false;
     }
 
     public boolean limitador() {
-        return punteroFinal >= lineaActual.length() || limitador.verificar(lineaActual.charAt(punteroFinal));
+        return punteroFinal >= lineaActual.length() || limitador.verificar(lineaActual.charAt(punteroFinal)) || caracteresSimples.contains(String.valueOf(lineaActual.charAt(punteroFinal)));
     }
 
     public String consumirLexema() {
         int inicio = punteroInicial;
 
-        while (punteroFinal < lineaActual.length() && !limitador.verificar(lineaActual.charAt(punteroFinal))) {
+        while (punteroFinal < lineaActual.length() && !limitador.verificar(lineaActual.charAt(punteroFinal)) && !caracteresSimples.contains(String.valueOf(lineaActual.charAt(punteroFinal)))) {
             punteroFinal++;
         }
 
@@ -106,5 +150,17 @@ public class Context {
 
     public int getNumeroLinea() {
         return numeroLinea;
+    }
+
+    public boolean isReservedWord (String lexema) {
+        return palabrasReservadas.contains(lexema);
+    }
+
+    public boolean isSimpleCharacter (String c) {
+        return caracteresSimples.contains(c);
+    }
+
+    public boolean isSimpleCharacter(char c) {
+        return caracteresSimples.contains(String.valueOf(c));
     }
 }

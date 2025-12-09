@@ -11,5 +11,6 @@ public class EliminarVacios implements AjustadorPuntero {
             puntero++;
         }
         ctx.setPunteroFinal(puntero);
+        ctx.setPunteroInicial(puntero);
     }
 }
