@@ -1,13 +1,13 @@
 Inicio
-Real multiple, cuenta;
-Entero numero, res;
-Leer (numero);
-multiple = 56 + (numero – 34.75);
-Si multiple > 10 Entonces
-Escribir(numero);
-Sino
-Escribir(multiple);
-numero = multiple * 123.99;
-res = numero + cuenta;
-Escribir(res);
+    Real multiple, cuenta;
+    Entero numero, res;
+    Leer (numero);
+    multiple = 56 + (numero – 34.75);
+    Si multiple > 10 Entonces
+    Escribir(numero);
+    Sino
+    Escribir(multiple);
+    numero = multiple * 123.99;
+    res = numero + cuenta;
+    Escribir(res);
 Fin
