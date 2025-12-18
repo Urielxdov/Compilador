@@ -11,8 +11,8 @@ public class Context {
     private IdentificadorLimites limitador;
     private Lista<Token> tokens; // Simbolos que encontremos
     private  Lista<LexicalError> errores; // Para la tabla de errores
-    private Set<String> simbolos; // Simbolos encontrados
-    private Set<String> palabrasReservadas; // Palabras reservadas
+    private Lista<Token> simbolos; // Simbolos encontrados
+    private Lista<String> palabrasReservadas; // Palabras reservadas
     private Set<String> caracteresSimples; // Caracteres sumples
 
     private Lista<String> programa;
@@ -28,8 +28,8 @@ public class Context {
     private void iniciarVariables () {
         this.tokens = new Lista<>();
         this.errores = new Lista<>();
-        this.simbolos = new Set<>();
-        this.palabrasReservadas = new Set<>();
+        this.simbolos = new Lista<>();
+        this.palabrasReservadas = new Lista<>();
         this.caracteresSimples = new Set<>();
         this.numeroLinea = 0;
         this.punteroFinal = 0;
@@ -49,23 +49,19 @@ public class Context {
         this.caracteresSimples.add("==");
         this.caracteresSimples.add("<>");
 
-        this.palabrasReservadas.add("Programa");
-        this.palabrasReservadas.add("Real");
-        this.palabrasReservadas.add("Entero");
-        this.palabrasReservadas.add("Leer");
-        this.palabrasReservadas.add("Escribir");
-        this.palabrasReservadas.add("Si");
-        this.palabrasReservadas.add("Entonces");
-        this.palabrasReservadas.add("Sino");
-        this.palabrasReservadas.add("Inicio");
-        this.palabrasReservadas.add("Fin");
+        this.palabrasReservadas.agregar("Programa");
+        this.palabrasReservadas.agregar("Real");
+        this.palabrasReservadas.agregar("Entero");
+        this.palabrasReservadas.agregar("Leer");
+        this.palabrasReservadas.agregar("Escribir");
+        this.palabrasReservadas.agregar("Si");
+        this.palabrasReservadas.agregar("Entonces");
+        this.palabrasReservadas.agregar("Sino");
+        this.palabrasReservadas.agregar("Inicio");
+        this.palabrasReservadas.agregar("Fin");
 
         this.programa = new FileReaderManager().leerArchivo();
         lineaActual = programa.obtener(numeroLinea);
-    }
-
-    public boolean hasMoreChars() {
-        return punteroFinal < lineaActual.length();
     }
 
     public String getLineaActual() {
@@ -78,14 +74,6 @@ public class Context {
 
     public int getPunteroFinal() {
         return this.punteroFinal;
-    }
-
-    public void incrementarPunteroFinal() {
-        this.punteroFinal++;
-    }
-
-    public void incrementarPunteroInicial() {
-        this.punteroInicial++;
     }
 
     public void setPunteroInicial(int nuevaPosicion) {
@@ -106,6 +94,10 @@ public class Context {
                 numeroLinea++;
                 if(numeroLinea >= programa.nodosExistentes()) return true;
                 lineaActual = programa.obtener(numeroLinea);
+                while ((lineaActual == null || lineaActual.isEmpty()) && numeroLinea <= programa.nodosExistentes()) {
+                    lineaActual = programa.obtener(numeroLinea);
+                    numeroLinea++;
+                }
                 punteroFinal = 0;
                 punteroInicial = 0;
                 return false;
@@ -114,8 +106,14 @@ public class Context {
     }
 
     public boolean limitador() {
-        return punteroFinal >= lineaActual.length() || limitador.verificar(lineaActual.charAt(punteroFinal)) || caracteresSimples.contains(String.valueOf(lineaActual.charAt(punteroFinal)));
+        if (punteroFinal >= lineaActual.length()) {
+            return true;
+        }
+
+        char c = lineaActual.charAt(punteroFinal);
+        return limitador.verificar(c) || caracteresSimples.contains(String.valueOf(c));
     }
+
 
     public String consumirLexema() {
         int inicio = punteroInicial;
@@ -153,14 +151,32 @@ public class Context {
     }
 
     public boolean isReservedWord (String lexema) {
-        return palabrasReservadas.contains(lexema);
+        return palabrasReservadas.existe(lexema);
     }
 
     public boolean isSimpleCharacter (String c) {
         return caracteresSimples.contains(c);
     }
 
-    public boolean isSimpleCharacter(char c) {
-        return caracteresSimples.contains(String.valueOf(c));
+    public void agregarSimbolo (Token simbolo) {
+        if (simbolos.nodosExistentes() == 0 || !simbolos.existe(simbolo)) simbolos.agregar(simbolo);
+    }
+
+    public Lista<Token> getSimbolos() {
+        return simbolos;
+    }
+
+    @Override
+    public String toString() {
+        String string = "";
+        string += "Palabras reservadas: \n";
+        string += palabrasReservadas.toString();
+        string += "\nSimbolos: \n";
+        string += simbolos.toString();
+        string += "\nTokens:\n";
+        string += tokens.toString();
+        string += "\nErrores:\n";
+        string += errores.toString();
+        return string;
     }
 }

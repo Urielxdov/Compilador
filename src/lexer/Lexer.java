@@ -27,10 +27,14 @@ public class Lexer {
             for (int i = 0; i < tokenHandlers.nodosExistentes(); i++) {
                 if(tokenHandlers.obtener(i).proccessChar(ctx)) break;
             }
-
-            ctx.consumirLexema();
+            ctx.setPunteroFinal(ctx.getPunteroFinal()-1);
+            if (ctx.limitador()) {
+                ctx.setPunteroFinal(ctx.getPunteroFinal()+1);
+            } else {
+                ctx.setPunteroFinal(ctx.getPunteroFinal()+1);
+                ctx.consumirLexema();
+            }
         }
-        System.out.println(ctx.getTokens().toString());
-        System.out.println(ctx.getErrores().toString());
+        System.out.println(ctx.toString());
     }
 }

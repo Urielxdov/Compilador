@@ -2,6 +2,7 @@ package lexer.handlers;
 
 import lexer.Context;
 import lexer.Token;
+import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
 public class NumeroNaturalesHandler implements  TokenHandler{
@@ -45,19 +46,33 @@ public class NumeroNaturalesHandler implements  TokenHandler{
             // error lexico dado que puede ser algo como
             // 0avs_12 -> los identificadores empiezan con letras
             String lexema = ctx.consumirLexema();
+            ctx.agregarError(new LexicalError(
+                    ctx.getNumeroLinea(),
+                    pos,
+                    lexema,
+                    "Los numeros naturales no pueden comenzar con 0",
+                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
+            ));
             return false;
         }
 
-        // Posible identificador o palabra reservada
+        // Error Lexico por que los identificadores no comienzan en numeros
         if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) {
-            ctx.setPunteroFinal(pos);
+            String lexema = ctx.consumirLexema();
+            ctx.agregarError(new LexicalError(
+                    ctx.getNumeroLinea(),
+                    pos,
+                    lexema,
+                    "Los numeros naturales no poseen letras",
+                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
+            ));
             return false;
         }
 
         // Token valido
         ctx.setPunteroFinal(pos);
         if (ctx.limitador()) {
-            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal())));
+            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_NATURAL));
             return true;
         }
 

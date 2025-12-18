@@ -2,9 +2,12 @@ package lexer.handlers;
 
 import lexer.Context;
 import lexer.Token;
+import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
 public class CaracterSimpleHandler implements TokenHandler {
+    private final int DOBLE_IGUAL = 600;
+    private final int DOBLE_FLECHA = 601;
     @Override
     public boolean accept(char c) {
         return (c == 59) || (c == 61) || (c == 43) || (c == 45)
@@ -51,7 +54,14 @@ public class CaracterSimpleHandler implements TokenHandler {
             return false;
         }
 
-        ctx.agregarToken(new Token(lexema.charAt(0), lexema));
+        if (lexema.length() == 1) {
+            ctx.agregarToken(new Token(lexema.charAt(0), lexema, TiposTokens.CARACTER_SIMPLE));
+        } else {
+            if (lexema.length() == 2) {
+                int atributo = lexema.equals("==") ? DOBLE_IGUAL : DOBLE_FLECHA;
+                ctx.agregarToken(new Token(atributo, lexema, TiposTokens.CARACTER_SIMPLE));
+            }
+        }
         return true;
     }
 }

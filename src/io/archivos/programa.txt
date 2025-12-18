@@ -1,13 +1,19 @@
 Inicio
-    Real multiple, cuenta;
-    Entero numero, res;
+    Real multiple, cuenta_;
+    Entero 2numero, res;
+
     Leer (numero);
-    multiple = 56 + (numero – 34.75);
-    Si multiple > 10 Entonces
-    Escribir(numero);
+
+    multiple = 056 + (numero - 34.75);
+    cuenta_ = 12_;
+    res = numero + cuenta_;
+
+    Si multiple >> 10 Entonces
+        Escribir(numero);
     Sino
-    Escribir(multiple);
-    numero = multiple * 123.99;
-    res = numero + cuenta;
+        Escribir(multiple);
+
+    numero = multiple * 123.;
+    res = numero + Cuenta;
     Escribir(res);
 Fin

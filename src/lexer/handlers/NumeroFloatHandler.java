@@ -2,6 +2,8 @@ package lexer.handlers;
 
 import lexer.Context;
 import lexer.Token;
+import lexer.constants.TiposTokens;
+import lexer.handlers.errors.LexicalError;
 
 public class NumeroFloatHandler implements TokenHandler {
     private final int ATRIBUTO = 401;
@@ -9,6 +11,7 @@ public class NumeroFloatHandler implements TokenHandler {
     public boolean accept(char c) {
         return ((c >= 48) && (c <= 57)) || (c == 46);
     }
+
 
     @Override
     public boolean proccessChar(Context ctx) {
@@ -19,6 +22,7 @@ public class NumeroFloatHandler implements TokenHandler {
          * el segundo caracter es imposible que sea un float
          * No se dejara salir el lexema
          */
+        int numeroPuntos = 0;
         String linea = ctx.getLineaActual();
         int pos = ctx.getPunteroFinal();
 
@@ -28,7 +32,22 @@ public class NumeroFloatHandler implements TokenHandler {
 
         if (!accept(c)) return false; // Posible error lexico esta vez
 
-        while (pos < linea.length() && accept(linea.charAt(pos))) pos++;
+        while (pos < linea.length() && accept(linea.charAt(pos))){
+            if(linea.charAt(pos) == '.') numeroPuntos++;
+            pos++;
+        }
+
+        if (numeroPuntos >= 2) {
+            ctx.agregarError(new LexicalError(
+                    ctx.getNumeroLinea(),
+                    pos,
+                    linea.substring(ctx.getPunteroInicial(), pos),
+                    "Los numeros naturales no pueden tener mas de un punto",
+                    LexicalError.ErrorType.NUMERO_FLOTANTE_INVALIDO
+            ));
+            ctx.setPunteroFinal(pos);
+            return false;
+        }
 
         if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) {
             // Eminente error, inicio con numero pero letra despues? eso no es
@@ -39,9 +58,10 @@ public class NumeroFloatHandler implements TokenHandler {
         // Token valido
         ctx.setPunteroFinal(pos);
         if (ctx.limitador()) {
-            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal())));
+            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_FLOTANTE));
             return true;
         }
+
 
         ctx.consumirLexema();
         return true;
