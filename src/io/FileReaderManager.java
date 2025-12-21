@@ -10,14 +10,13 @@ import java.io.IOException;
 public class FileReaderManager {
     private FileReader lector;
     private Lista<String> programa;
-    private final String RUTA_PROGRAMA = "src/io/archivos/programa.txt";
 
     public FileReaderManager(){
         this.programa = new Lista<>();
     }
 
-    public Lista<String> leerArchivo () {
-        try (BufferedReader br = new BufferedReader(new FileReader(RUTA_PROGRAMA))) {
+    public Lista<String> leerArchivo (RutaArchivos ruta) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ruta.ruta))) {
             String linea;
             while ((linea = br.readLine()) != null) {
                 programa.agregar(linea);

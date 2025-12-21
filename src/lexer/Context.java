@@ -3,6 +3,7 @@ package lexer;
 import data_structures.Lista;
 import data_structures.Set;
 import io.FileReaderManager;
+import io.RutaArchivos;
 import lexer.handlers.errors.LexicalError;
 import lexer.validators.boundaries.FinalLexema;
 import lexer.validators.boundaries.IdentificadorLimites;
@@ -60,7 +61,7 @@ public class Context {
         this.palabrasReservadas.agregar("Inicio");
         this.palabrasReservadas.agregar("Fin");
 
-        this.programa = new FileReaderManager().leerArchivo();
+        this.programa = new FileReaderManager().leerArchivo(RutaArchivos.PROGRAMA);
         lineaActual = programa.obtener(numeroLinea);
     }
 

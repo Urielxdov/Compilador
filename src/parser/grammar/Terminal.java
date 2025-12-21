@@ -1,4 +1,4 @@
-package parser.matrix;
+package parser.grammar;
 
 public class Terminal {
 }
