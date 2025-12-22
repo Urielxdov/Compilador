@@ -1,22 +1,22 @@
-<program>        → begin <statement_list> end
-<statement_list> → <statement> <statement_tail>
-<statement_tail> → <statement> <statement_tail>
-<statement_tail> → ε
-<statement>      → id := <expression> ;
-<statement>      → read ( <id_list> ) ;
-<statement>      → write ( <expr_list> ) ;
-<id_list>        → id <id_tail>
-<id_tail>        → , id <id_tail>
-<id_tail>       → ε
-<expr_list>     → <expr> <expr_tail>
-<expr_tail>     → , <expression> <expr_tail>
-<expr_tail>     → ε
-<expression>    → <primary> <primary_tail>
-<primary_tail>  → <addop> <primary> <primary_tail>
-<primary_tail>  → ε
-<primary>       → ( <expression> )
-<primary>       → id
-<primary>       → intLiteral
-<addop>         → +
-<addop>         → -
-<system_goal>   → <program> $
+<program>        -> begin <statement_list> end
+<statement_list> -> <statement> <statement_tail>
+<statement_tail> -> <statement> <statement_tail>
+<statement_tail> -> ε
+<statement>      -> id := <expression> ;
+<statement>      -> read ( <id_list> ) ;
+<statement>      -> write ( <expr_list> ) ;
+<id_list>        -> id <id_tail>
+<id_tail>        -> , id <id_tail>
+<id_tail>       -> ε
+<expr_list>     -> <expr> <expr_tail>
+<expr_tail>     -> , <expression> <expr_tail>
+<expr_tail>     -> ε
+<expression>    -> <primary> <primary_tail>
+<primary_tail>  -> <addop> <primary> <primary_tail>
+<primary_tail>  -> ε
+<primary>       -> ( <expression> )
+<primary>       -> id
+<primary>       -> intLiteral
+<addop>         -> +
+<addop>         -> -
+<system_goal>   -> <program> $

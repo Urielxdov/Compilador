@@ -1,9 +1,19 @@
 package parser.grammar;
 
-public class NoTerminal {
+public class NoTerminal implements Symbol {
+    private String nombre;
 
-    private String noTerminal;
-    public NoTerminal(String noTerminal) {
-        this.noTerminal = noTerminal;
+    public NoTerminal(String nombre) {
+        this.nombre = nombre;
+    }
+
+    @Override
+    public String getNombre() {
+        return nombre;
+    }
+
+    @Override
+    public String toString() {
+        return getNombre();
     }
 }
