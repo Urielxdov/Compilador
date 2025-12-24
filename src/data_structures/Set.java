@@ -1,6 +1,8 @@
 package data_structures;
 
-public class Set <T> {
+import java.util.Iterator;
+
+public class Set <T> implements Iterable<T>{
     private T[] valores;
     private int longitud;
     private int elementos;
@@ -41,8 +43,8 @@ public class Set <T> {
         }
     }
 
-    public T get(T valor){
-        if(valor == null) return null;
+    public int get(T valor){
+        if(valor == null) return -1;
 
         int indice = hash(valor);
         int i = 0;
@@ -50,14 +52,14 @@ public class Set <T> {
         while (i < longitud) {
             T elemento = valores[indice];
 
-            if(elemento == null) return  null;
-            else if (elemento.equals(valor)) return valor;
+            if(elemento == null) return  -1;
+            else if (elemento.equals(valor)) return indice;
 
             indice = (indice + 1) % longitud;
             i++;
         }
 
-        return null;
+        return -1;
     }
 
     public T get(int posicion) {
@@ -69,30 +71,13 @@ public class Set <T> {
         return elementos;
     }
 
-    public int obtenerPosicion(T valor) {
-        if(valor == null) return -1;
 
-        int indice = hash(valor);
-        int i = 0;
+    public void removerElemento(T valor) {
+        if (valor == null) return;
 
-        while (i < longitud) {
-            T elemento = valores[indice];
+        int posicion = get(valor);
+        if (posicion == -1) return;
 
-            if(elemento == null) return  -1;
-            else if (elemento.equals(valor)) return i;
-
-            indice = (indice + 1) % longitud;
-            i++;
-        }
-
-        return -1;
-    }
-
-    public void removerElemento(int posicion) {
-        if (posicion < 0 || posicion >= longitud) return;
-        if (valores[posicion] == null) return;
-
-        // Eliminar el elemento
         valores[posicion] = null;
         elementos--;
 
@@ -102,25 +87,25 @@ public class Set <T> {
         while (valores[siguiente] != null) {
             T valorRegistrar = valores[siguiente];
             valores[siguiente] = null;
-
+            elementos--;
             add(valorRegistrar);
 
             siguiente = (siguiente + 1) % longitud;
         }
     }
 
-    public void removerTodo(Set<T> valores) {
-        T[] eliminar = valores.obtenerArreglo();
 
-        for (T v : eliminar) {
-            int posicion = this.obtenerPosicion(v);
-            if (posicion != -1) {
-                this.removerElemento(posicion);
+
+    public void removerTodo(Set<T> valores) {
+        for (T v : valores) {
+            int posicion;
+            while ((posicion = get(v)) != -1) {
+                removerElemento(v);
             }
         }
     }
 
-    public boolean contains (T valor) { return get(valor) != null; }
+    public boolean contains (T valor) { return get(valor) != -1; }
 
     @SuppressWarnings("unchecked")
     private void redimensionar () {
@@ -183,15 +168,6 @@ public class Set <T> {
         this.elementos = reubicados; // Redundancia para asegurar consistencia
     }
 
-    @SuppressWarnings("unchecked")
-    public T[] obtenerArreglo () {
-        T[] arreglo = (T[]) new Object[elementos];
-        int lugar = 0;
-        for(T valor : valores) {
-            if(valor != null) arreglo[lugar++] = valor;
-        }
-        return arreglo;
-    }
 
     public int datosRegistrados(){
         return this.elementos;
@@ -221,4 +197,28 @@ public class Set <T> {
         return resultado;
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int indice = 0;
+            private int recorridos = 0;
+
+            @Override
+            public boolean hasNext() {
+                if (recorridos >= elementos) return false;
+
+                // Avanzamos hasta encontrar algo que no sea nulo
+                while (indice < longitud && valores[indice] == null) indice++;
+
+                return indice < longitud;
+            }
+
+            @Override
+            public T next() {
+                T valor = valores[indice++];
+                recorridos++;
+                return valor;
+            }
+        };
+    }
 }

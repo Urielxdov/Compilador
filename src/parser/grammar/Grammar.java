@@ -54,8 +54,6 @@ public class Grammar {
                 producciones.agregar(new Production(lhs, rhs));
             }
         }
-
-        System.out.println(producciones);
         definirPrincipal();
     }
 
@@ -122,9 +120,9 @@ public class Grammar {
 
         lhs.removerTodo(rhs);
 
-
+        System.out.println(lhs.size());
         if (lhs.size() == 1) {
-            System.out.println(lhs.obtenerArreglo()[0]);
+            System.out.println(lhs);
         } else {
             System.out.println("No la armas");
         }
