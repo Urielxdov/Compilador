@@ -1,6 +1,7 @@
 package data_structures;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Set <T> implements Iterable<T>{
     private T[] valores;
@@ -175,50 +176,37 @@ public class Set <T> implements Iterable<T>{
 
 
 
-    @SuppressWarnings("unchecked")
-    public T[] toArray(T[] plantilla) {
-        int n = elementos;
-        // Si la plantilla es lo bastante grande, la usamos; si no, creamos otra
-        T[] resultado = plantilla.length >= n
-                ? plantilla
-                : (T[]) java.lang.reflect.Array.newInstance(
-                plantilla.getClass().getComponentType(), n);
 
-        int idx = 0;
-        for (T v : valores) {
-            if (v != null) {
-                resultado[idx++] = v;
-            }
-        }
-        // Marcamos el fin si sobra espacio
-        if (resultado.length > n) {
-            resultado[n] = null;
-        }
-        return resultado;
-    }
 
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private int indice = 0;
-            private int recorridos = 0;
+            private int indice = 0; // posicion actual
+            private int restantes = elementos; // cuantos faltan por devolver?
 
             @Override
             public boolean hasNext() {
-                if (recorridos >= elementos) return false;
-
-                // Avanzamos hasta encontrar algo que no sea nulo
-                while (indice < longitud && valores[indice] == null) indice++;
-
-                return indice < longitud;
+                return restantes > 0;
             }
 
             @Override
             public T next() {
+                if (!hasNext()) throw new NoSuchElementException();
+
+                while (indice < longitud && valores[indice] == null) indice++;
+
+                if (indice >= longitud) throw new NoSuchElementException();
+
                 T valor = valores[indice++];
-                recorridos++;
+                restantes--;
                 return valor;
             }
         };
+    }
+
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
