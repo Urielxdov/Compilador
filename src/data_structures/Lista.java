@@ -1,6 +1,8 @@
 package data_structures;
 
-public class Lista<T> {
+import java.util.Iterator;
+
+public class Lista<T> implements Iterable<T> {
     private Nodo<T> inicio;
     private Nodo<T> fin;
     private int numeroNodos = 0;
@@ -24,14 +26,6 @@ public class Lista<T> {
         return this.fin;
     }
 
-    public void agregarInexistentes(T valor) {
-        agregarInexistentes(valor, true);
-    }
-
-    private Nodo<T> agregarInexistentes(T valor, boolean diferenciador) {
-        if(!this.existe(valor)) return this.agregar(valor, true);
-        return null;
-    }
 
     public int nodosExistentes(){
         return  this.numeroNodos;
@@ -45,12 +39,10 @@ public class Lista<T> {
         return eliminado.valor;
     }
 
-
-
     public boolean existe(T valor) {
         Nodo<T> nodoActual = this.inicio;
         for (int i = 0; i < this.numeroNodos; i++) {
-            if (nodoActual.valor.equals(valor)) return true;
+            if (valor.equals(nodoActual.valor)) return true;
             nodoActual = nodoActual.siguiente;
         }
         return false;
@@ -71,20 +63,31 @@ public class Lista<T> {
     @Override
     public String toString() {
         String cadena = "";
-        Nodo<T> actual = this.inicio;
-
-        while(actual != null) {
-            Object valor = actual.valor;
-            // Castea los 2 posibles valores, el tercero es mas general
-            // No supe meterle switch jaja
-            if(valor instanceof Character) cadena += (Character) valor;
-            else if (valor instanceof Number) cadena += valor.toString();
-            else cadena += valor.toString();
-            cadena += "\n";
-            actual = actual.siguiente;
+        for(T v : this) {
+            cadena += v.toString();
         }
-
         return cadena;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int restantes = numeroNodos;
+            private Nodo<T> nodoActual = inicio;
+            @Override
+            public boolean hasNext() {
+                return restantes > 0;
+            }
+
+            @Override
+            public T next() {
+                Nodo<T> valor = nodoActual;
+                nodoActual = nodoActual.siguiente;
+
+                restantes--;
+                return valor.valor;
+            }
+        };
     }
 
     private static class Nodo<E> {
@@ -93,6 +96,14 @@ public class Lista<T> {
 
         public Nodo(E valor) {
             this.valor = valor;
+        }
+
+        @Override
+        public String toString() {
+            return "Nodo{" +
+                    "valor=" + valor +
+                    ", siguiente=" + siguiente +
+                    '}';
         }
     }
 }

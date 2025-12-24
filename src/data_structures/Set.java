@@ -63,15 +63,9 @@ public class Set <T> implements Iterable<T>{
         return -1;
     }
 
-    public T get(int posicion) {
-        return this.valores[posicion];
-    }
-
-
     public int size () {
         return elementos;
     }
-
 
     public void removerElemento(T valor) {
         if (valor == null) return;
@@ -95,8 +89,6 @@ public class Set <T> implements Iterable<T>{
         }
     }
 
-
-
     public void removerTodo(Set<T> valores) {
         for (T v : valores) {
             int posicion;
@@ -114,20 +106,18 @@ public class Set <T> implements Iterable<T>{
         T[] nuevoSet = (T[]) new Object[nuevaLongitud];
         int elementosActuales = 0;
 
-        for(T valor : valores) {
-            if(valor != null) {
-                int nuevoIndice = Math.abs(valor.hashCode() % nuevaLongitud);
-                int i = 0;
+        for(T valor : this) {
+            int nuevoIndice = Math.abs(valor.hashCode() % nuevaLongitud);
+            int i = 0;
 
-                while(i < nuevaLongitud) {
-                    if(nuevoSet[nuevoIndice] == null) {
-                        nuevoSet[nuevoIndice] = valor;
-                        elementosActuales++;
-                        break;
-                    }
-                    nuevoIndice = (nuevoIndice + 1) % nuevaLongitud;
-                    i++;
+            while(i < nuevaLongitud) {
+                if(nuevoSet[nuevoIndice] == null) {
+                    nuevoSet[nuevoIndice] = valor;
+                    elementosActuales++;
+                    break;
                 }
+                nuevoIndice = (nuevoIndice + 1) % nuevaLongitud;
+                i++;
             }
         }
 
@@ -135,47 +125,6 @@ public class Set <T> implements Iterable<T>{
         longitud = nuevaLongitud;
         elementos = elementosActuales;
     }
-
-    /**
-     * Este metodo tiene como finalidad eliminar los espacios en blanco del arreglo
-     * Dado que quitara los espcios vacios, es importante usarlo unicamente cuando tu estructura
-     * dejara de modificarse. De hacerlo se perdera rendimiento dado que redimensionara nuevamente
-     * el arreglo y valores del objeto
-     */
-    @SuppressWarnings("unchecked")
-    public void limpiarArreglo() {
-        int nuevaLongitud = elementos;
-        T[]nuevoSet = (T[]) new Object[nuevaLongitud];
-        int reubicados= 0;
-
-        for(T valor : valores) {
-            if(valor != null) {
-                int nuevoIndice = Math.abs(valor.hashCode() % nuevaLongitud);
-                int i = 0;
-                while(i < nuevaLongitud) {
-                    if(nuevoSet[nuevoIndice] == null) {
-                        nuevoSet[nuevoIndice] = valor;
-                        reubicados++;
-                        break;
-                    }
-                    nuevoIndice = (nuevoIndice + 1) % nuevaLongitud;
-                    i++;
-                }
-            }
-        }
-
-        this.valores = nuevoSet;
-        this.longitud = nuevaLongitud;
-        this.elementos = reubicados; // Redundancia para asegurar consistencia
-    }
-
-
-    public int datosRegistrados(){
-        return this.elementos;
-    }
-
-
-
 
 
     @Override
@@ -207,6 +156,10 @@ public class Set <T> implements Iterable<T>{
 
     @Override
     public String toString() {
-        return super.toString();
+        String s = "";
+        for(T v : this) {
+           s += v.toString() + '\n';
+        };
+        return s;
     }
 }
