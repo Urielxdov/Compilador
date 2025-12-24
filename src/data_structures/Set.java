@@ -60,6 +60,15 @@ public class Set <T> {
         return null;
     }
 
+    public T get(int posicion) {
+        return this.valores[posicion];
+    }
+
+
+    public int size () {
+        return elementos;
+    }
+
     public int obtenerPosicion(T valor) {
         if(valor == null) return -1;
 
@@ -77,6 +86,38 @@ public class Set <T> {
         }
 
         return -1;
+    }
+
+    public void removerElemento(int posicion) {
+        if (posicion < 0 || posicion >= longitud) return;
+        if (valores[posicion] == null) return;
+
+        // Eliminar el elemento
+        valores[posicion] = null;
+        elementos--;
+
+        // Reinsertar la cadena
+        int siguiente = (posicion + 1) % longitud;
+
+        while (valores[siguiente] != null) {
+            T valorRegistrar = valores[siguiente];
+            valores[siguiente] = null;
+
+            add(valorRegistrar);
+
+            siguiente = (siguiente + 1) % longitud;
+        }
+    }
+
+    public void removerTodo(Set<T> valores) {
+        T[] eliminar = valores.obtenerArreglo();
+
+        for (T v : eliminar) {
+            int posicion = this.obtenerPosicion(v);
+            if (posicion != -1) {
+                this.removerElemento(posicion);
+            }
+        }
     }
 
     public boolean contains (T valor) { return get(valor) != null; }

@@ -2,6 +2,7 @@ package parser.grammar;
 
 import data_structures.Lista;
 import data_structures.Map;
+import data_structures.Set;
 import io.FileReaderManager;
 import io.RutaArchivos;
 
@@ -55,6 +56,7 @@ public class Grammar {
         }
 
         System.out.println(producciones);
+        definirPrincipal();
     }
 
     private Lista<Symbol> obtenerRHS (String linea, int inicio) {
@@ -102,6 +104,30 @@ public class Grammar {
             }
         }
         return -1;
+    }
+
+    private void definirPrincipal() {
+        Set<NoTerminal> lhs = new Set<>();
+        Set<NoTerminal> rhs = new Set<>();
+
+        for (int i = 0; i < producciones.nodosExistentes(); i++) {
+            lhs.add(producciones.obtener(i).getIzquierda());
+            for (int j = 0; j < producciones.obtener(i).getDerecha().nodosExistentes(); j++) {
+                Symbol symbol = producciones.obtener(i).getDerecha().obtener(j);
+                if (symbol instanceof NoTerminal) {
+                    rhs.add((NoTerminal) symbol);
+                }
+            }
+        }
+
+        lhs.removerTodo(rhs);
+
+
+        if (lhs.size() == 1) {
+            System.out.println(lhs.obtenerArreglo()[0]);
+        } else {
+            System.out.println("No la armas");
+        }
     }
 
     private NoTerminal obtenerLHS (String linea) {
