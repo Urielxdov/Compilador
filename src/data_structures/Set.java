@@ -91,10 +91,7 @@ public class Set <T> implements Iterable<T>{
 
     public void removerTodo(Set<T> valores) {
         for (T v : valores) {
-            int posicion;
-            while ((posicion = get(v)) != -1) {
-                removerElemento(v);
-            }
+            removerElemento(v);
         }
     }
 

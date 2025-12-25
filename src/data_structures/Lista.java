@@ -64,7 +64,7 @@ public class Lista<T> implements Iterable<T> {
     public String toString() {
         String cadena = "";
         for(T v : this) {
-            cadena += v.toString();
+            cadena += v.toString() + '\n';
         }
         return cadena;
     }

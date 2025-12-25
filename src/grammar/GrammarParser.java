@@ -1,32 +1,20 @@
-package parser.grammar;
+package grammar;
 
 import data_structures.Lista;
-import data_structures.Map;
 import data_structures.Set;
-import io.FileReaderManager;
-import io.RutaArchivos;
+import grammar.utils.NoTerminal;
+import grammar.utils.Production;
+import grammar.utils.Symbol;
+import grammar.utils.Terminal;
 
-public class Grammar {
-    // Gramatica completa
-    private Lista<Terminal> terminales;
-    private Lista<NoTerminal> noTerminales;
-    private Lista<Production> producciones;
+public class GrammarParser {
+    private Grammar grammar;
+    private GrammarReader grammarReader;
 
-    private NoTerminal simboloInicial;
-
-    // Gramatica separada por conjuntos
-    private Map<NoTerminal, Terminal> conjuntoFirst;
-    private Map<NoTerminal, Lista<Terminal>> conjuntoFollow;
-
-    public Grammar() {
-        terminales = new Lista<>();
-        noTerminales = new Lista<>();
-        producciones = new Lista<>();
-
-        conjuntoFirst = new Map<>();
-        conjuntoFollow = new Map<>();
+    public GrammarParser(Grammar grammar, GrammarReader grammarReader) {
+        this.grammar = grammar;
+        this.grammarReader = grammarReader;
     }
-
 
     private boolean isSimpleCharacter(char c) {
         return (c == 59) || (c == 61) || (c == 43) || (c == 45)
@@ -35,14 +23,8 @@ public class Grammar {
     }
 
 
-
-    private void inicializar() {
-
-    }
-
-    public void obtenerTodo () {
-        FileReaderManager lector = new FileReaderManager();
-        Lista<String> gramatica = lector.leerArchivo(RutaArchivos.GRAMATICA);
+    public void ejecutar() {
+        Lista<String> gramatica = grammarReader.leerGramatica();
 
         for (int i = 0; i < gramatica.nodosExistentes(); i++) {
             String linea = gramatica.obtener(i);
@@ -51,11 +33,19 @@ public class Grammar {
 
             if (lhs != null && inicioRHS != -1) {
                 Lista<Symbol> rhs = obtenerRHS(linea, inicioRHS);
-                producciones.agregar(new Production(lhs, rhs));
+                grammar.agregarProduccion(new Production(lhs, rhs));
+                for (Symbol s : rhs) {
+                    if (s instanceof Terminal && !grammar.terminalExiste((Terminal) s)) {
+                        grammar.agregarTerminal((Terminal) s);
+                    }
+                }
             }
         }
         definirPrincipal();
+
+        System.out.println(grammar.getProducciones());
     }
+
 
     private Lista<Symbol> obtenerRHS (String linea, int inicio) {
         Lista<Symbol> rhs = new Lista<>();
@@ -108,10 +98,10 @@ public class Grammar {
         Set<NoTerminal> lhs = new Set<>();
         Set<NoTerminal> rhs = new Set<>();
 
-        for (int i = 0; i < producciones.nodosExistentes(); i++) {
-            lhs.add(producciones.obtener(i).getIzquierda());
-            for (int j = 0; j < producciones.obtener(i).getDerecha().nodosExistentes(); j++) {
-                Symbol symbol = producciones.obtener(i).getDerecha().obtener(j);
+        for (int i = 0; i < grammar.getProducciones().nodosExistentes(); i++) {
+            lhs.add(grammar.getProducciones().obtener(i).getIzquierda());
+            for (int j = 0; j < grammar.getProducciones().obtener(i).getDerecha().nodosExistentes(); j++) {
+                Symbol symbol = grammar.getProducciones().obtener(i).getDerecha().obtener(j);
                 if (symbol instanceof NoTerminal) {
                     rhs.add((NoTerminal) symbol);
                 }
@@ -122,9 +112,9 @@ public class Grammar {
 
         System.out.println(lhs.size());
         if (lhs.size() == 1) {
-            System.out.println(lhs);
+            grammar.setSimboloInicial(lhs.iterator().next());
         } else {
-            System.out.println("No la armas");
+            System.out.println("No hay simbolo inicial");
         }
     }
 
@@ -142,10 +132,7 @@ public class Grammar {
 
         if (inicio != -1 && fin != -1) {
             NoTerminal noTerminal = new NoTerminal(linea.substring(inicio, fin + 1));
-
-            if (!noTerminales.existe(noTerminal)) {
-                noTerminales.agregar(noTerminal);
-            }
+            grammar.agregarNoTerminal(noTerminal);
             return noTerminal;
         }
         return null;

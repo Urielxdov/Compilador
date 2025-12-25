@@ -4,9 +4,9 @@ import data_structures.Map;
 import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
-import parser.grammar.NoTerminal;
-import parser.grammar.Production;
-import parser.grammar.Terminal;
+import grammar.utils.NoTerminal;
+import grammar.utils.Production;
+import grammar.utils.Terminal;
 
 public class Parser {
     private Lexer lexer;

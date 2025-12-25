@@ -1,6 +1,6 @@
-package parser.grammar;
+package grammar.utils;
 
-public class Terminal implements Symbol{
+public class Terminal implements Symbol {
     private final String nombre;
 
     public Terminal (String nombre) {
