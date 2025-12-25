@@ -1,4 +1,4 @@
-package grammar;
+package parser.reader;
 
 import data_structures.Lista;
 import io.FileReaderManager;

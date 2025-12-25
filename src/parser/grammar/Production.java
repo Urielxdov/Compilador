@@ -1,4 +1,4 @@
-package grammar.utils;
+package parser.grammar;
 
 import data_structures.Lista;
 

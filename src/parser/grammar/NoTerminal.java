@@ -1,4 +1,4 @@
-package grammar.utils;
+package parser.grammar;
 
 public class NoTerminal implements Symbol {
     private String nombre;

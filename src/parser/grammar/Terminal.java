@@ -1,4 +1,4 @@
-package grammar.utils;
+package parser.grammar;
 
 public class Terminal implements Symbol {
     private final String nombre;

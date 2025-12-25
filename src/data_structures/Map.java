@@ -33,6 +33,11 @@ public class Map <K, V>{
     }
 
 
+    public boolean existKey (K clave) {
+
+    }
+
+
     private class Nodo <T> {
         T dato;
         Nodo<T> siguiente;

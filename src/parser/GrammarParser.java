@@ -1,11 +1,9 @@
-package grammar;
+package parser;
 
 import data_structures.Lista;
 import data_structures.Set;
-import grammar.utils.NoTerminal;
-import grammar.utils.Production;
-import grammar.utils.Symbol;
-import grammar.utils.Terminal;
+import parser.grammar.*;
+import parser.reader.GrammarReader;
 
 public class GrammarParser {
     private Grammar grammar;

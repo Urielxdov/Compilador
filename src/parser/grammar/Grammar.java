@@ -1,10 +1,7 @@
-package grammar;
+package parser.grammar;
 
 import data_structures.Lista;
 import data_structures.Map;
-import grammar.utils.NoTerminal;
-import grammar.utils.Production;
-import grammar.utils.Terminal;
 
 public class Grammar {
     // Gramatica completa

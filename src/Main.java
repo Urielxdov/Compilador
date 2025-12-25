@@ -1,6 +1,6 @@
-import grammar.Grammar;
-import grammar.GrammarParser;
-import grammar.GrammarReader;
+import parser.grammar.Grammar;
+import parser.GrammarParser;
+import parser.reader.GrammarReader;
 public class Main {
     public static void main(String[] args) {
 //        Lexer lexer = new Lexer();
