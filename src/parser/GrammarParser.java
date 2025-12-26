@@ -20,6 +20,10 @@ public class GrammarParser {
                 || (c == 60) || (c == 62);
     }
 
+    private boolean isEpsilon (char c) {
+        return c == 'ε';
+    }
+
 
     public void ejecutar() {
         Lista<String> gramatica = grammarReader.leerGramatica();
@@ -65,6 +69,10 @@ public class GrammarParser {
                     fin++;
                 }
                 rhs.agregar(new NoTerminal(linea.substring(inicio, fin + 1)));
+                fin++;
+                inicio = fin;
+            } else if (isEpsilon(linea.charAt(fin))) {
+                rhs.agregar(new Epsilon(String.valueOf(linea.charAt(fin))));
                 fin++;
                 inicio = fin;
             } else if (isSimpleCharacter(linea.charAt(fin))) {

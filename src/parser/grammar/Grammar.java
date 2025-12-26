@@ -58,6 +58,10 @@ public class Grammar {
         return producciones;
     }
 
+    public NoTerminal getSimboloInicial() {
+        return simboloInicial;
+    }
+
 
 
 }

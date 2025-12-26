@@ -9,8 +9,9 @@ public class Lista<T> implements Iterable<T> {
 
     public Lista() {}
 
-    public void agregar(T valor) {
+    public boolean agregar(T valor) {
         agregar(valor, true);
+        return true;
     }
 
     private Nodo<T> agregar(T valor, boolean diferenciador) {
