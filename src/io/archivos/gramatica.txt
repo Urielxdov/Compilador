@@ -8,7 +8,7 @@
 <id_list>        -> id <id_tail>
 <id_tail>        -> , id <id_tail>
 <id_tail>       -> ε
-<expr_list>     -> <expr> <expr_tail>
+<expr_list>     -> <expression> <expr_tail>
 <expr_tail>     -> , <expression> <expr_tail>
 <expr_tail>     -> ε
 <expression>    -> <primary> <primary_tail>

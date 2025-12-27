@@ -63,5 +63,6 @@ public class Grammar {
     }
 
 
+    public Lista<NoTerminal> getNoTerminales () { return noTerminales; }
 
 }

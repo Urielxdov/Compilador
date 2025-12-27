@@ -1,10 +1,12 @@
 package data_structures;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
-public class Conjunto<T> implements Iterable{
+public class Conjunto<T> implements Iterable<T>{
     private T[] datos;
     private int size;
+    private final String VACIO = "ε";
 
     public Conjunto() {
         datos = (T[]) new Object[8];
@@ -12,6 +14,10 @@ public class Conjunto<T> implements Iterable{
     }
 
     public boolean contiene (T elemento) {
+        if (elemento == null || size == 0) return false;
+//        for (T d : datos) {
+//            if (d.equals(elemento)) return true;
+//        }
         for (int i = 0; i < size; i++) {
             if (datos[i].equals(elemento)) return true;
         }
@@ -20,6 +26,7 @@ public class Conjunto<T> implements Iterable{
 
     public boolean agregar(T elemento) {
         if (contiene(elemento)) return false;
+        if (elemento == null) return false;
 
         if (size == datos.length) redimensionar();
 
@@ -41,6 +48,7 @@ public class Conjunto<T> implements Iterable{
     }
 
     public boolean agregar(Conjunto<T> otro) {
+        if (otro == null) return false;
         boolean cambio = false;
         for (T elemento : otro.getDatos()) {
             cambio |= agregar(elemento);
@@ -49,9 +57,19 @@ public class Conjunto<T> implements Iterable{
     }
 
 
+    public Conjunto<T> obtenerSinVacio() {
+        if (size == 0) return null;
+        Conjunto<T> aux = new Conjunto<>();
+        for (T s : this) {
+            if (!s.equals(VACIO)) aux.agregar(s);
+        }
+        return aux;
+    }
+
+
     @Override
-    public Iterator iterator() {
-        return new Iterator() {
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
             private int i = 0;
             @Override
             public boolean hasNext() {
@@ -59,9 +77,19 @@ public class Conjunto<T> implements Iterable{
             }
 
             @Override
-            public Object next() {
+            public T next() {
                 return datos[i++];
             }
         };
+    }
+
+
+    @Override
+    public String toString() {
+        String sb = "";
+        for (T v : this) {
+            sb += " " + v.toString() + " ";
+        }
+        return sb;
     }
 }

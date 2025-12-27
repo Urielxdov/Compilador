@@ -72,7 +72,7 @@ public class GrammarParser {
                 fin++;
                 inicio = fin;
             } else if (isEpsilon(linea.charAt(fin))) {
-                rhs.agregar(new Epsilon(String.valueOf(linea.charAt(fin))));
+                rhs.agregar(new Epsilon());
                 fin++;
                 inicio = fin;
             } else if (isSimpleCharacter(linea.charAt(fin))) {
