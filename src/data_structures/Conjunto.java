@@ -1,5 +1,7 @@
 package data_structures;
 
+import parser.grammar.Epsilon;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -61,7 +63,7 @@ public class Conjunto<T> implements Iterable<T>{
         if (size == 0) return null;
         Conjunto<T> aux = new Conjunto<>();
         for (T s : this) {
-            if (!s.equals(VACIO)) aux.agregar(s);
+            if (!(s instanceof Epsilon)) aux.contiene(s);
         }
         return aux;
     }

@@ -11,5 +11,6 @@ public class Main {
         gp.ejecutar();
         GrammarAnalysis ga = new GrammarAnalysis(grammar);
         ga.calcularFirst();
+        ga.calcularFollow();
     }
 }
