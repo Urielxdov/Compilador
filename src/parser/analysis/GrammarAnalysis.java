@@ -107,6 +107,8 @@ public class GrammarAnalysis {
                         cambio |= grammar.getFollow().get(ntActual).agregar(grammar.getFollow().get(lhs));
                     }
                 }
+            } else {
+                cambio |= grammar.getFollow().get(ntActual).agregar(grammar.getFollow().get(lhs));
             }
         }
         return cambio;
