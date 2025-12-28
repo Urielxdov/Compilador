@@ -3,6 +3,7 @@ package parser.ll1;
 import data_structures.Conjunto;
 import data_structures.Lista;
 import data_structures.Map;
+import lexer.Token;
 import parser.grammar.*;
 
 public class LL1ParsingTable {
@@ -13,6 +14,9 @@ public class LL1ParsingTable {
     private Map<Terminal, Integer> ubicacionesTerminales = new Map<>();
 
     private Grammar grammar;
+
+
+    private final int ID = 295;
 
     public LL1ParsingTable(Grammar grammar) {
         this.grammar = grammar;
@@ -66,6 +70,14 @@ public class LL1ParsingTable {
         int columna = ubicacionesTerminales.get(t);
 
         matriz[fila][columna] = valor;
+    }
+
+    public int getNumeroProduccion (NoTerminal nt, Token t) {
+        if (nt == null) return 0;
+        Terminal terminal = null;
+        if (t.getAtributo() == ID) terminal = new Terminal("id");
+        else terminal = Epsilon.getInstance();
+        return matriz[ubicacionesTerminales.get(terminal)][ubicacionesNoTerminales.get(nt)];
     }
 
     // No pregunten, este metodo si se lo hecho chatgpt

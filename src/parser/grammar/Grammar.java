@@ -59,6 +59,13 @@ public class Grammar {
         return producciones;
     }
 
+    public Production getProduccion(int numeroProduccion) {
+        for (Production p : producciones) {
+            if (p.getId() == numeroProduccion) return p;
+        }
+        return null;
+    }
+
     public NoTerminal getSimboloInicial() {
         return simboloInicial;
     }
