@@ -14,8 +14,6 @@ public class Main {
         ga.calcularFirst();
         ga.calcularFollow();
         LL1ParsingTable l = new LL1ParsingTable(grammar);
-        System.out.println(grammar.getFirst());
-        System.out.println(grammar.getFollow());
-//        System.out.println(l);
+        System.out.println(l);
     }
 }

@@ -88,9 +88,22 @@ public class Grammar {
     public Conjunto<Terminal> firstDeSecuencia (Lista<Symbol> alfa) {
         Conjunto<Terminal> conjunto = new Conjunto<>();
         for (Symbol s : alfa) {
-            if (s instanceof Terminal) conjunto.agregar((Terminal) s);
-            else if (s instanceof NoTerminal) conjunto.agregar(first.get((NoTerminal) s));
+            if (s instanceof Terminal) {
+                conjunto.agregar((Terminal) s);
+                return conjunto;
+            }
+
+            NoTerminal nt = (NoTerminal) s;
+            Conjunto<Terminal> firstNt = first.get(nt);
+
+            conjunto.agregar(firstNt.obtenerSinVacio());
+
+            if (!firstNt.contiene(Epsilon.getInstance())) {
+                return conjunto;
+            }
         }
+
+        conjunto.agregar(Epsilon.getInstance());
         return conjunto;
     }
 }

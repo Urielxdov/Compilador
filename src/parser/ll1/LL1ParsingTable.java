@@ -22,18 +22,15 @@ public class LL1ParsingTable {
 
     private void crearTabla() {
         int altura = grammar.getNoTerminales().nodosExistentes();
-        int anchura = grammar.getTerminales().nodosExistentes();
+        int anchura = grammar.getTerminales().nodosExistentes() - 1;
 
         for (int i = 0; i < altura; i++) {
-            ubicacionesNoTerminales.put(
-                    grammar.getNoTerminales().obtener(i), i
-            );
+            ubicacionesNoTerminales.put( grammar.getNoTerminales().obtener(i), i);
         }
 
         for (int i = 0; i < anchura; i++) {
-            ubicacionesTerminales.put(
-                    grammar.getTerminales().obtener(i), i
-            );
+            if (grammar.getTerminales().obtener(i) instanceof Epsilon) continue;
+            ubicacionesTerminales.put(grammar.getTerminales().obtener(i), i);
         }
 
         this.matriz = new int[altura][anchura];
@@ -74,34 +71,34 @@ public class LL1ParsingTable {
     // No pregunten, este metodo si se lo hecho chatgpt
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        String salida = "";
 
         // Encabezado
-        sb.append(String.format("%-20s", ""));
-        for (int j = 0; j < grammar.getTerminales().nodosExistentes(); j++) {
-            sb.append(String.format(
-                    "%-15s",
-                    grammar.getTerminales().obtener(j)
-            ));
+        salida += String.format("%-20s", "");
+        for (Terminal t : ubicacionesTerminales) {
+            salida += String.format("%-15s", t);
         }
-        sb.append("\n");
+        salida += "\n";
 
         // Filas
-        for (int i = 0; i < grammar.getNoTerminales().nodosExistentes(); i++) {
-            NoTerminal nt = grammar.getNoTerminales().obtener(i);
-            sb.append(String.format("%-20s", nt));
+        for (NoTerminal nt : ubicacionesNoTerminales) {
+            int fila = ubicacionesNoTerminales.get(nt);
+            salida += String.format("%-20s", nt);
 
-            for (int j = 0; j < grammar.getTerminales().nodosExistentes(); j++) {
-                int valor = matriz[i][j];
+            for (Terminal t : ubicacionesTerminales) {
+                int columna = ubicacionesTerminales.get(t);
+                int valor = matriz[fila][columna];
+
                 if (valor == 0) {
-                    sb.append(String.format("%-15s", "—"));
+                    salida += String.format("%-15s", "—");
                 } else {
-                    sb.append(String.format("%-15d", valor));
+                    salida += String.format("%-15d", valor);
                 }
             }
-            sb.append("\n");
+            salida += "\n";
         }
 
-        return sb.toString();
+        return salida;
     }
+
 }
