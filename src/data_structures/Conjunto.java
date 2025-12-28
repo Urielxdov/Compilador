@@ -8,7 +8,6 @@ import java.util.Iterator;
 public class Conjunto<T> implements Iterable<T>{
     private T[] datos;
     private int size;
-    private final String VACIO = "ε";
 
     public Conjunto() {
         datos = (T[]) new Object[8];
@@ -17,9 +16,6 @@ public class Conjunto<T> implements Iterable<T>{
 
     public boolean contiene (T elemento) {
         if (elemento == null || size == 0) return false;
-//        for (T d : datos) {
-//            if (d.equals(elemento)) return true;
-//        }
         for (int i = 0; i < size; i++) {
             if (datos[i].equals(elemento)) return true;
         }
@@ -63,7 +59,7 @@ public class Conjunto<T> implements Iterable<T>{
         if (size == 0) return null;
         Conjunto<T> aux = new Conjunto<>();
         for (T s : this) {
-            if (!(s instanceof Epsilon)) aux.contiene(s);
+            if (!(s instanceof Epsilon)) aux.agregar(s);
         }
         return aux;
     }

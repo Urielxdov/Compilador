@@ -3,12 +3,14 @@ package parser.grammar;
 import data_structures.Lista;
 
 public class Production {
+    private final int id;
     private final NoTerminal izquierda;
     private final Lista<Symbol> derecha;
 
-    public Production(NoTerminal izquierda, Lista<Symbol> derecha) {
+    public Production(NoTerminal izquierda, Lista<Symbol> derecha, int id) {
         this.izquierda = izquierda;
         this.derecha = derecha;
+        this.id = id;
     }
 
     public NoTerminal getIzquierda() {
@@ -19,9 +21,13 @@ public class Production {
         return derecha;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
-        return izquierda.getNombre() + ' ' + derecha.toString();
+        return String.valueOf(id) + izquierda.getNombre() + ' ' + derecha.toString();
     }
 
     @Override

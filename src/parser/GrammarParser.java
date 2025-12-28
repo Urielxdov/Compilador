@@ -1,13 +1,17 @@
 package parser;
 
+import data_structures.Conjunto;
 import data_structures.Lista;
+import data_structures.Map;
 import data_structures.Set;
+import parser.analysis.GrammarAnalysis;
 import parser.grammar.*;
 import parser.reader.GrammarReader;
 
 public class GrammarParser {
     private Grammar grammar;
     private GrammarReader grammarReader;
+
 
     public GrammarParser(Grammar grammar, GrammarReader grammarReader) {
         this.grammar = grammar;
@@ -35,7 +39,7 @@ public class GrammarParser {
 
             if (lhs != null && inicioRHS != -1) {
                 Lista<Symbol> rhs = obtenerRHS(linea, inicioRHS);
-                grammar.agregarProduccion(new Production(lhs, rhs));
+                grammar.agregarProduccion(new Production(lhs, rhs, i+1));
                 for (Symbol s : rhs) {
                     if (s instanceof Terminal && !grammar.terminalExiste((Terminal) s)) {
                         grammar.agregarTerminal((Terminal) s);
@@ -45,7 +49,6 @@ public class GrammarParser {
         }
         definirPrincipal();
 
-        System.out.println(grammar.getProducciones());
     }
 
 
@@ -116,7 +119,6 @@ public class GrammarParser {
 
         lhs.removerTodo(rhs);
 
-        System.out.println(lhs.size());
         if (lhs.size() == 1) {
             grammar.setSimboloInicial(lhs.iterator().next());
         } else {
@@ -143,4 +145,5 @@ public class GrammarParser {
         }
         return null;
     }
+
 }

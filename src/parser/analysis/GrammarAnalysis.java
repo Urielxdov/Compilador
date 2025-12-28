@@ -9,15 +9,12 @@ import parser.grammar.*;
 public class GrammarAnalysis {
     private Grammar grammar;
 
-    private Map<NoTerminal, Conjunto<Terminal>> first;
-    private Map<NoTerminal, Conjunto<Terminal>> follow;
+
 
     private final String VACIO = "ε";
 
     public GrammarAnalysis(Grammar grammar) {
         this.grammar = grammar;
-        this.first = new Map<>();
-        this.follow = new Map<>();
     }
 
 
@@ -26,7 +23,7 @@ public class GrammarAnalysis {
         boolean cambios;
         // Inicializamos los campos vacios
         for(NoTerminal nt : grammar.getNoTerminales()) {
-            first.put(nt, new Conjunto<>());
+            grammar.getFirst().put(nt, new Conjunto<>());
         }
 
         do {
@@ -38,7 +35,6 @@ public class GrammarAnalysis {
                 cambios |= cambio;
             }
         } while (cambios);
-        System.out.println(first);
     }
 
     private boolean procesarProduccionFirst (Production p) {
@@ -48,11 +44,12 @@ public class GrammarAnalysis {
 
         for (Symbol s : rhs) {
             if (s instanceof Terminal) {
-                cambio |= first.get(p.getIzquierda()).agregar((Terminal) s);
+                cambio |= grammar.getFirst().get(p.getIzquierda()).agregar(s.equals(Epsilon.getInstance()) ? Epsilon.getInstance() : (Terminal) s);
                 break;
             } else {
-                Conjunto<Terminal> fistS = first.get((NoTerminal) s);
-                cambio |= first.get(noTerminal).agregar(fistS.obtenerSinVacio());
+                Conjunto<Terminal> fistS = grammar.getFirst().get((NoTerminal) s);
+
+                cambio |= grammar.getFirst().get(noTerminal).agregar(fistS.obtenerSinVacio());
 
                 if (!fistS.contiene(new Epsilon())) break;
             }
@@ -64,10 +61,10 @@ public class GrammarAnalysis {
         Lista<Production> productions = grammar.getProducciones();
 
         for (Production p : productions) {
-            follow.put(p.getIzquierda(), new Conjunto<>());
+            grammar.getFollow().put(p.getIzquierda(), new Conjunto<>());
         }
 
-        follow.get(grammar.getSimboloInicial()).agregar(new Terminal("$"));
+        grammar.getFollow().get(grammar.getSimboloInicial()).agregar(new Terminal("$"));
         boolean cambios;
 
         do {
@@ -79,7 +76,6 @@ public class GrammarAnalysis {
             }
         }while (cambios);
 
-        System.out.println(follow);
     }
 
 
@@ -100,15 +96,15 @@ public class GrammarAnalysis {
 
                 if (siguiente instanceof Terminal) {
                     // caso 1 A -> aB
-                    cambio |= follow.get(ntActual).agregar((Terminal) siguiente);
+                    cambio |= grammar.getFollow().get(ntActual).agregar((Terminal) siguiente);
                 } else {
                     NoTerminal ntSiguiente = (NoTerminal) siguiente;
 
-                    cambio |= follow.get(ntActual).agregar(first.get(ntSiguiente).obtenerSinVacio());
+                    cambio |= grammar.getFollow().get(ntActual).agregar(grammar.getFirst().get(ntSiguiente).obtenerSinVacio());
 
                     // Si First(b) contiene vacio, agregamos Follow(A)
-                    if (first.get(ntSiguiente).contiene(new Epsilon())) {
-                        cambio |= follow.get(ntSiguiente).agregar(follow.get(lhs));
+                    if (grammar.getFirst().get(ntSiguiente).contiene(Epsilon.getInstance())) {
+                        cambio |= grammar.getFollow().get(ntActual).agregar(grammar.getFollow().get(lhs));
                     }
                 }
             }

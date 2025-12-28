@@ -1,5 +1,6 @@
 package parser.grammar;
 
+import data_structures.Conjunto;
 import data_structures.Lista;
 import data_structures.Map;
 
@@ -12,16 +13,16 @@ public class Grammar {
     private NoTerminal simboloInicial;
 
     // Gramatica separada por conjuntos
-    private Map<NoTerminal, Terminal> conjuntoFirst;
-    private Map<NoTerminal, Lista<Terminal>> conjuntoFollow;
+    private Map<NoTerminal, Conjunto<Terminal>> first;
+    private Map<NoTerminal, Conjunto<Terminal>> follow;
 
     public Grammar() {
         terminales = new Lista<>();
         noTerminales = new Lista<>();
         producciones = new Lista<>();
 
-        conjuntoFirst = new Map<>();
-        conjuntoFollow = new Map<>();
+        first = new Map<>();
+        follow = new Map<>();
     }
 
 
@@ -65,4 +66,31 @@ public class Grammar {
 
     public Lista<NoTerminal> getNoTerminales () { return noTerminales; }
 
+
+    public void agregarFirst(NoTerminal nt, Conjunto<Terminal> conjunto) {
+        first.put(nt, conjunto);
+    }
+
+
+    public void agregarFollow(NoTerminal nt, Conjunto<Terminal> conjunto) {
+        follow.put(nt, conjunto);
+    }
+
+    public Map<NoTerminal, Conjunto<Terminal>> getFirst () {
+        return first;
+    }
+
+    public Map<NoTerminal, Conjunto<Terminal>> getFollow() {
+        return follow;
+    }
+    
+    
+    public Conjunto<Terminal> firstDeSecuencia (Lista<Symbol> alfa) {
+        Conjunto<Terminal> conjunto = new Conjunto<>();
+        for (Symbol s : alfa) {
+            if (s instanceof Terminal) conjunto.agregar((Terminal) s);
+            else if (s instanceof NoTerminal) conjunto.agregar(first.get((NoTerminal) s));
+        }
+        return conjunto;
+    }
 }
