@@ -11,7 +11,7 @@ import lexer.validators.boundaries.IdentificadorLimites;
 public class Context {
     private IdentificadorLimites limitador;
     private Lista<Token> tokens; // Simbolos que encontremos
-    private  Lista<LexicalError> errores; // Para la tabla de errores
+    private Lista<LexicalError> errores; // Para la tabla de errores
     private Lista<Token> simbolos; // Simbolos encontrados
     private Lista<String> palabrasReservadas; // Palabras reservadas
     private Set<String> caracteresSimples; // Caracteres sumples
@@ -21,6 +21,8 @@ public class Context {
     private String lineaActual;
     private int punteroInicial;
     private int punteroFinal;
+
+    private Token tokenActual;
 
     public Context() {
         iniciarVariables();
@@ -165,6 +167,15 @@ public class Context {
 
     public Lista<Token> getSimbolos() {
         return simbolos;
+    }
+
+    public void setTokenActual(Token t) {
+        this.tokenActual = t;
+    }
+
+
+    public Token getTokenActual() {
+        return tokenActual;
     }
 
     @Override

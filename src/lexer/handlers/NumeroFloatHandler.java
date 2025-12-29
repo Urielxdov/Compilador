@@ -38,13 +38,14 @@ public class NumeroFloatHandler implements TokenHandler {
         }
 
         if (numeroPuntos >= 2) {
-            ctx.agregarError(new LexicalError(
-                    ctx.getNumeroLinea(),
-                    pos,
-                    linea.substring(ctx.getPunteroInicial(), pos),
-                    "Los numeros naturales no pueden tener mas de un punto",
-                    LexicalError.ErrorType.NUMERO_FLOTANTE_INVALIDO
-            ));
+//            ctx.agregarError(new LexicalError(
+//                    ctx.getNumeroLinea(),
+//                    pos,
+//                    linea.substring(ctx.getPunteroInicial(), pos),
+//                    "Los numeros naturales no pueden tener mas de un punto",
+//                    LexicalError.ErrorType.NUMERO_FLOTANTE_INVALIDO
+//            ));
+            ctx.setTokenActual(new Token(404, linea.substring(ctx.getPunteroInicial(), pos), TiposTokens.INVALIDO));
             ctx.setPunteroFinal(pos);
             return false;
         }
@@ -58,7 +59,8 @@ public class NumeroFloatHandler implements TokenHandler {
         // Token valido
         ctx.setPunteroFinal(pos);
         if (ctx.limitador()) {
-            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_FLOTANTE));
+            // ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_FLOTANTE));
+            ctx.setTokenActual(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_FLOTANTE));
             return true;
         }
 

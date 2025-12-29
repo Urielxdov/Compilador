@@ -44,22 +44,25 @@ public class CaracterSimpleHandler implements TokenHandler {
         ctx.setPunteroFinal(pos);
 
         if (!ctx.isSimpleCharacter(lexema)) {
-            ctx.agregarError(new LexicalError(
-                    ctx.getNumeroLinea(),
-                    pos,
-                    lexema,
-                    "Caracter irreconocible",
-                    LexicalError.ErrorType.TOKEN_DESCONOCIDO
-            ));
+//            ctx.agregarError(new LexicalError(
+//                    ctx.getNumeroLinea(),
+//                    pos,
+//                    lexema,
+//                    "Caracter irreconocible",
+//                    LexicalError.ErrorType.TOKEN_DESCONOCIDO
+//            ));
+            ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
             return false;
         }
 
         if (lexema.length() == 1) {
-            ctx.agregarToken(new Token(lexema.charAt(0), lexema, TiposTokens.CARACTER_SIMPLE));
+            // ctx.agregarToken();
+            ctx.setTokenActual(new Token(lexema.charAt(0), lexema, TiposTokens.CARACTER_SIMPLE));
         } else {
             if (lexema.length() == 2) {
                 int atributo = lexema.equals("==") ? DOBLE_IGUAL : DOBLE_FLECHA;
-                ctx.agregarToken(new Token(atributo, lexema, TiposTokens.CARACTER_SIMPLE));
+                //ctx.agregarToken();
+                ctx.setTokenActual(new Token(atributo, lexema, TiposTokens.CARACTER_SIMPLE));
             }
         }
         return true;

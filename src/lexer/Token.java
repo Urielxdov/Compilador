@@ -21,6 +21,10 @@ public class Token {
         return atributo;
     }
 
+    public TiposTokens getTipo () {
+        return tipo;
+    }
+
     @Override
     public String toString() {
         return "Lexema: " + lexema + " - " + atributo + " tipo: " + tipo;

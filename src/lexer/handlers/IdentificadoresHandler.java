@@ -34,27 +34,30 @@ public class IdentificadoresHandler implements TokenHandler {
         if(ctx.limitador()) {
             String lexema = linea.substring(ctx.getPunteroInicial(), pos);
             if (lexema.charAt(lexema.length()-1) == '_') {
-                ctx.agregarError(new LexicalError(
-                        ctx.getNumeroLinea(),
-                        pos,
-                        lexema,
-                        "Los identificadores no pueden terminar con guion bajo",
-                        LexicalError.ErrorType.IDENTIFICADOR_INVALIDO
-                ));
+//                ctx.agregarError(new LexicalError(
+//                        ctx.getNumeroLinea(),
+//                        pos,
+//                        lexema,
+//                        "Los identificadores no pueden terminar con guion bajo",
+//                        LexicalError.ErrorType.IDENTIFICADOR_INVALIDO
+//                ));
+                ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
                 return false;
             } else {
                 ctx.agregarSimbolo(new Token(ATRIBUTO , lexema, TiposTokens.IDENTIFICADOR));
+                ctx.agregarToken(new Token(ATRIBUTO, lexema, TiposTokens.IDENTIFICADOR));
                 return true;
             }
         } else {
             String lexema = ctx.consumirLexema();
-            ctx.agregarError(new LexicalError(
-                    ctx.getNumeroLinea(),
-                    pos,
-                    lexema,
-                    "Se introdujo un caracteres desconocido en medio de un identificador",
-                    LexicalError.ErrorType.IDENTIFICADOR_INVALIDO
-            ));
+//            ctx.agregarError(new LexicalError(
+//                    ctx.getNumeroLinea(),
+//                    pos,
+//                    lexema,
+//                    "Se introdujo un caracteres desconocido en medio de un identificador",
+//                    LexicalError.ErrorType.IDENTIFICADOR_INVALIDO
+//            ));
+            ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
             return false;
         }
 
@@ -76,14 +79,17 @@ public class IdentificadoresHandler implements TokenHandler {
         String lexema = linea.substring(ctx.getPunteroInicial(), pos);
         if (ctx.limitador()) {
             if (ctx.isReservedWord(lexema)) {
-                ctx.agregarToken(new Token(800, lexema, TiposTokens.PALABRA_RESERVADA));
+                //ctx.agregarToken(new Token(800, lexema, TiposTokens.PALABRA_RESERVADA));
+                ctx.setTokenActual(new Token(800, lexema, TiposTokens.PALABRA_RESERVADA));
                 return true;
             } else {
-                ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, lexema,"No cumple con las condiciones de palabra reservada ni identificador", LexicalError.ErrorType.IDENTIFICADOR_INVALIDO));
+                // ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, lexema,"No cumple con las condiciones de palabra reservada ni identificador", LexicalError.ErrorType.IDENTIFICADOR_INVALIDO));
+                ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
                 return false;
             }
         } else {
-            ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, lexema,"No cumple con las condiciones de palabra reservada ni identificador", LexicalError.ErrorType.IDENTIFICADOR_INVALIDO));
+            //ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, lexema,"No cumple con las condiciones de palabra reservada ni identificador", LexicalError.ErrorType.IDENTIFICADOR_INVALIDO));
+            ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
             return false;
         }
     }

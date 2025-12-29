@@ -35,14 +35,14 @@ public class LL1Parser {
                         pila.push(s);
                     }
                 } else {
-                    // Error sintactico
+                    System.out.println("Error sintactico");
                 }
             } else {
                 if (x.equals(a)) {
                     pila.pop();
-                    a = lexer.ejecutar();
+                    a = lexer.getNextToken();
                 } else {
-                    // error sintactico
+                    System.out.println("Error sintactico");
                 }
             }
         }

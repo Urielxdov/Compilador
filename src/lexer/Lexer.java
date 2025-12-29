@@ -20,7 +20,7 @@ public class Lexer {
         tokenHandlers.agregar(new IdentificadoresHandler());
         tokenHandlers.agregar(new CaracterSimpleHandler());
     }
-    public void ejecutar() {
+    public Token getNextToken() {
         while (!ctx.finArchivo()) {
             limpiador.aplicar(ctx);
 
@@ -34,7 +34,8 @@ public class Lexer {
                 ctx.setPunteroFinal(ctx.getPunteroFinal()+1);
                 ctx.consumirLexema();
             }
+            return ctx.getTokenActual();
         }
-        System.out.println(ctx.toString());
+        return null;
     }
 }

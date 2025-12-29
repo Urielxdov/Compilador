@@ -33,7 +33,8 @@ public class NumeroNaturalesHandler implements  TokenHandler{
         if (empiezaCero && (pos >= linea.length() || linea.charAt(pos) != '.')) {
             // Empezo con 0 pero no es un flotante
             // 0123 -> error
-            ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, linea.substring(ctx.getPunteroInicial(), pos), "Los numeros naturales no pueden comenzar por 0", LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO));
+            // ctx.agregarError(new LexicalError(ctx.getNumeroLinea(), pos, linea.substring(ctx.getPunteroInicial(), pos), "Los numeros naturales no pueden comenzar por 0", LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO));
+            ctx.setTokenActual(new Token(404, linea.substring(ctx.getPunteroInicial(), pos), TiposTokens.INVALIDO));
             ctx.setPunteroFinal(pos);
             return false;
         }
@@ -46,33 +47,37 @@ public class NumeroNaturalesHandler implements  TokenHandler{
             // error lexico dado que puede ser algo como
             // 0avs_12 -> los identificadores empiezan con letras
             String lexema = ctx.consumirLexema();
-            ctx.agregarError(new LexicalError(
-                    ctx.getNumeroLinea(),
-                    pos,
-                    lexema,
-                    "Los numeros naturales no pueden comenzar con 0",
-                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
-            ));
+//            ctx.agregarError(new LexicalError(
+//                    ctx.getNumeroLinea(),
+//                    pos,
+//                    lexema,
+//                    "Los numeros naturales no pueden comenzar con 0",
+//                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
+//            ));
+            ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
             return false;
         }
 
         // Error Lexico por que los identificadores no comienzan en numeros
         if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) {
             String lexema = ctx.consumirLexema();
-            ctx.agregarError(new LexicalError(
-                    ctx.getNumeroLinea(),
-                    pos,
-                    lexema,
-                    "Los numeros naturales no poseen letras",
-                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
-            ));
+//            ctx.agregarError(new LexicalError(
+//                    ctx.getNumeroLinea(),
+//                    pos,
+//                    lexema,
+//                    "Los numeros naturales no poseen letras",
+//                    LexicalError.ErrorType.NUMERO_NATURAL_INVALIDO
+//            ));
+            ctx.setTokenActual(new Token(404, lexema, TiposTokens.INVALIDO));
             return false;
         }
 
         // Token valido
         ctx.setPunteroFinal(pos);
         if (ctx.limitador()) {
-            ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_NATURAL));
+            // ctx.agregarToken(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_NATURAL));
+            ctx.setTokenActual(new Token(ATRIBUTO, linea.substring(ctx.getPunteroInicial(), ctx.getPunteroFinal()), TiposTokens.NUMERO_NATURAL));
+
             return true;
         }
 
