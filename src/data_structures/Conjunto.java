@@ -2,9 +2,12 @@ package data_structures;
 
 import parser.grammar.Epsilon;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
+/**
+ * Se realiza una implementacion propia de conjunto por fines academicos
+ * @param <T> - Tipo de dato
+ */
 public class Conjunto<T> implements Iterable<T>{
     private T[] datos;
     private int size;
