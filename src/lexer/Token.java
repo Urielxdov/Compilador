@@ -29,4 +29,11 @@ public class Token {
     public String toString() {
         return "Lexema: " + lexema + " - " + atributo + " tipo: " + tipo;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Token)) return false;
+        if (((Token) o).lexema.equals(this.lexema)) return true;
+        return false;
+    }
 }

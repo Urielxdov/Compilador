@@ -64,11 +64,15 @@ public class GrammarParser {
 
 
             if (linea.charAt(fin) == '<') {
-                inicio = fin;
-                while (fin < linea.length() && linea.charAt(fin) != '>') {
-                    fin++;
+                if (fin+1 < linea.length() && linea.charAt(fin + 1) != ' ' && linea.charAt(fin + 1) != '>') {
+                    inicio = fin;
+                    while (fin < linea.length() && linea.charAt(fin) != '>') {
+                        fin++;
+                    }
+                    rhs.agregar(new NoTerminal(linea.substring(inicio, fin + 1)));
+                } else {
+                    rhs.agregar(new Terminal(linea.substring(inicio, fin + 1)));
                 }
-                rhs.agregar(new NoTerminal(linea.substring(inicio, fin + 1)));
                 fin++;
                 inicio = fin;
             } else if (isEpsilon(linea.charAt(fin))) {

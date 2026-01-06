@@ -1,19 +1,4 @@
-Inicio
-    Real multiple, cuenta_;
-    Entero 2numero, res;
-
-    Leer (numero);
-
-    multiple = 056 + (numero - 34.75);
-    cuenta_ = 12_;
-    res = numero + cuenta_;
-
-    Si multiple >> 10 Entonces
-        Escribir(numero);
-    Sino
-        Escribir(multiple);
-
-    numero = multiple * 123.;
-    res = numero + Cuenta;
-    Escribir(res);
+Programa p Inicio
+Entero x;
+x = 5 + ;
 Fin

@@ -1,7 +1,6 @@
 package parser.ll1;
 
 import data_structures.Lista;
-import data_structures.Map;
 import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
@@ -21,27 +20,33 @@ public class LL1Parser {
     }
 
 
-    public void parse(Lista<Terminal> input) {
+    public void execute() {
         pila.push(grammar.getSimboloInicial());
         Symbol x = pila.peek();
-        Token a = null; // inicializa pa
+        Token a = lexer.next(); // inicializa pa
         while (!pila.esVacia()) {
             if (x instanceof NoTerminal) {
                 int posicion = tabla.getNumeroProduccion((NoTerminal) x, a);
-                if (posicion != 0) {
+                if (posicion != -1) {
                     Production p = grammar.getProduccion(posicion);
                     pila.pop();
-                    for (Symbol s : p.getDerecha()) {
-                        pila.push(s);
+                    for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
+                        pila.push(p.getDerecha().obtener(i));
                     }
+                    x = pila.peek();
                 } else {
                     System.out.println("Error sintactico");
                 }
             } else {
-                if (x.equals(a)) {
+                if (Comparator.comapare(a, x)) {
                     pila.pop();
-                    a = lexer.getNextToken();
-                } else {
+                    x = pila.peek();
+                    a = lexer.next();
+                } else if (x instanceof Epsilon) {
+                    pila.pop();
+                    x = pila.peek();
+                }
+                else {
                     System.out.println("Error sintactico");
                 }
             }

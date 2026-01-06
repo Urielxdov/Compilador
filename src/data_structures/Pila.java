@@ -18,6 +18,7 @@ public class Pila <T> implements Iterable<T>{
     public void push(T valor) {
         Nodo<T> nuevo = new Nodo<>(valor);
         nuevo.siguiente = tope;
+        size++;
         tope = nuevo;
     }
 
@@ -25,6 +26,7 @@ public class Pila <T> implements Iterable<T>{
         if (esVacia()) throw new RuntimeException("La pila se encuentra vacia");
         T valor = tope.valor;
         tope = tope.siguiente;
+        size--;
         return valor;
     }
 

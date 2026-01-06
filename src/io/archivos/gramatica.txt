@@ -1,22 +1,39 @@
-<program>        -> begin <statement_list> end
+<system_goal>   -> <program> $
+<program>        -> Programa id Inicio <statement_list> Fin
 <statement_list> -> <statement> <statement_tail>
 <statement_tail> -> <statement> <statement_tail>
 <statement_tail> -> ε
-<statement>      -> id := <expression> ;
-<statement>      -> read ( <id_list> ) ;
-<statement>      -> write ( <expr_list> ) ;
+<statement>      -> <declaration> ;
+<statement>      -> <assignment> ;
+<statement>      -> Leer ( <id_list> ) ;
+<statement>      -> Escribir ( <expr_list> ) ;
+<statement>      -> <if_stmt>
+<declaration>    -> Entero <id_list>
+<declaration>    -> Real <id_list>
+<assignment>     -> id = <expression>
+<if_stmt>        -> Si <condition> Entonces Inicio <statement_list> Fin <else_tail>
+<else_tail>      -> Sino Inicio <statement_list> Fin
+<else_tail>      -> ε
+<condition>      -> <expression> <relop> <expression>
+<relop>          -> <
+<relop>          -> >
+<relop>          -> ==
+<relop>          -> <>
 <id_list>        -> id <id_tail>
 <id_tail>        -> , id <id_tail>
-<id_tail>       -> ε
-<expr_list>     -> <expression> <expr_tail>
-<expr_tail>     -> , <expression> <expr_tail>
-<expr_tail>     -> ε
-<expression>    -> <primary> <primary_tail>
-<primary_tail>  -> <addop> <primary> <primary_tail>
-<primary_tail>  -> ε
-<primary>       -> ( <expression> )
-<primary>       -> id
-<primary>       -> intLiteral
-<addop>         -> +
-<addop>         -> -
-<system_goal>   -> <program> $
+<id_tail>        -> ε
+<expr_list>      -> <expression> <expr_tail>
+<expr_tail>      -> , <expression> <expr_tail>
+<expr_tail>      -> ε
+<expression>     -> <term> <expression_tail>
+<expression_tail> -> <addop> <term> <expression_tail>
+<expression_tail> -> ε
+<term>           -> <factor> <term_tail>
+<term_tail>      -> * <factor> <term_tail>
+<term_tail>      -> ε
+<factor>         -> ( <expression> )
+<factor>         -> id
+<factor>         -> intLiteral
+<factor>         -> realLiteral
+<addop>          -> +
+<addop>          -> -

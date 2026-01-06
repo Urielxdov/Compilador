@@ -2,10 +2,10 @@ package lexer.constants;
 
 import data_structures.Set;
 
-public class TablaCaracteresSimples {
+public class TablaCaracteresSimples{
     final static Set<Elemento> CARACTERES_SIMPLES = new Set<>();
 
-    public TablaCaracteresSimples () {
+    static {
         CARACTERES_SIMPLES.add(new Elemento(";", ';'));
         CARACTERES_SIMPLES.add(new Elemento("=", '='));
         CARACTERES_SIMPLES.add(new Elemento("+", '+'));
@@ -18,6 +18,12 @@ public class TablaCaracteresSimples {
         CARACTERES_SIMPLES.add(new Elemento(">", '>'));
         CARACTERES_SIMPLES.add(new Elemento("==", '='));
         CARACTERES_SIMPLES.add(new Elemento("<>", '<'));
+    }
+    private TablaCaracteresSimples() {}
+    public static boolean existe(String s) {
+        for (Elemento elemento : CARACTERES_SIMPLES)
+            if (elemento.clave.equals(s)) return true;
+        return false;
     }
 
     static class Elemento {

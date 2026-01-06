@@ -4,6 +4,8 @@ import data_structures.Conjunto;
 import data_structures.Lista;
 import data_structures.Map;
 import lexer.Token;
+import lexer.constants.TablaCaracteresSimples;
+import lexer.constants.TablaPalabrasReservadas;
 import parser.grammar.*;
 
 public class LL1ParsingTable {
@@ -26,7 +28,7 @@ public class LL1ParsingTable {
 
     private void crearTabla() {
         int altura = grammar.getNoTerminales().nodosExistentes();
-        int anchura = grammar.getTerminales().nodosExistentes() - 1;
+        int anchura = grammar.getTerminales().nodosExistentes();
 
         for (int i = 0; i < altura; i++) {
             ubicacionesNoTerminales.put( grammar.getNoTerminales().obtener(i), i);
@@ -69,15 +71,32 @@ public class LL1ParsingTable {
         int fila = ubicacionesNoTerminales.get(nt);
         int columna = ubicacionesTerminales.get(t);
 
+
+
         matriz[fila][columna] = valor;
     }
 
     public int getNumeroProduccion (NoTerminal nt, Token t) {
         if (nt == null) return 0;
-        Terminal terminal = null;
+        Terminal terminal = new Terminal(t.getLexema());
         if (t.getAtributo() == ID) terminal = new Terminal("id");
-        else terminal = Epsilon.getInstance();
-        return matriz[ubicacionesTerminales.get(terminal)][ubicacionesNoTerminales.get(nt)];
+        else if (
+                TablaPalabrasReservadas.existe(t.getLexema())
+                        || TablaCaracteresSimples.existe(t.getLexema())
+            )
+            terminal = new Terminal(t.getLexema());
+
+        int posicion;
+        try {
+            posicion = matriz[
+                    ubicacionesNoTerminales.get(nt)
+                    ][
+                    ubicacionesTerminales.get(terminal)
+                    ];
+        } catch (NullPointerException e) {
+            posicion = -1;
+        }
+        return posicion;
     }
 
     // No pregunten, este metodo si se lo hecho chatgpt

@@ -2,10 +2,8 @@ package parser.grammar;
 
 public class Terminal implements Symbol {
     private final String nombre;
-    private final TerminalMatcher matcher;
 
-    public Terminal (String nombre, TerminalMatcher matcher) {
-        this.matcher = matcher;
+    public Terminal (String nombre) {
         this.nombre = nombre;
     }
 

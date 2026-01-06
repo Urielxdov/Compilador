@@ -7,7 +7,7 @@ import java.util.Objects;
 public class TablaPalabrasReservadas {
     static final Set<Elemento> PALABRAS_RESERVADAS = new Set<>();
 
-    public TablaPalabrasReservadas () {
+    static {
         PALABRAS_RESERVADAS.add(new Elemento("Programa", 400));
         PALABRAS_RESERVADAS.add(new Elemento("Real", 401));
         PALABRAS_RESERVADAS.add(new Elemento("Entero", 402));
@@ -18,6 +18,14 @@ public class TablaPalabrasReservadas {
         PALABRAS_RESERVADAS.add(new Elemento("Sino", 407));
         PALABRAS_RESERVADAS.add(new Elemento("Inicio", 408));
         PALABRAS_RESERVADAS.add(new Elemento("Fin", 409));
+    }
+
+    private TablaPalabrasReservadas() {}
+
+    public static boolean existe (String value) {
+        for (Elemento elemento : PALABRAS_RESERVADAS)
+            if (elemento.clave.equals(value)) return true;
+        return false;
     }
 
     static class Elemento {

@@ -46,6 +46,7 @@ public class IdentificadoresHandler implements TokenHandler {
             } else {
                 ctx.agregarSimbolo(new Token(ATRIBUTO , lexema, TiposTokens.IDENTIFICADOR));
                 ctx.agregarToken(new Token(ATRIBUTO, lexema, TiposTokens.IDENTIFICADOR));
+                ctx.setTokenActual(new Token(ATRIBUTO, lexema, TiposTokens.IDENTIFICADOR));
                 return true;
             }
         } else {
