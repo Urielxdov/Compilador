@@ -5,27 +5,59 @@ import data_structures.Set;
 import parser.grammar.*;
 import parser.reader.GrammarReader;
 
+/**
+ * Analizador de gramaticas
+ *
+ * Esta clase se encarga de:
+ *  - Leer una gramatica desde un archvio de texto
+ *  - Parsear producciones en formato BNF simplificado
+ *  - Construir la estructura {@link Grammar}
+ *  - Detectar automaticamente el simbolo inicial
+ *
+ *
+ * No valia propiedades LL(1); unicamente contruye la gramatica
+ */
 public class GrammarParser {
-    private Grammar grammar;
-    private GrammarReader grammarReader;
+    private Grammar grammar; // Gramatica que se contruye
+    private GrammarReader grammarReader; // Lector de la gramatica desde archivo
 
 
+    /**
+     * Crea un parser de gramática.
+     *
+     * @param grammar estructura de gramática a construir
+     * @param grammarReader lector del archivo de gramática
+     */
     public GrammarParser(Grammar grammar, GrammarReader grammarReader) {
         this.grammar = grammar;
         this.grammarReader = grammarReader;
     }
 
+    /**
+     * Determina si un carácter corresponde a un terminal simple
+     * definido por el lenguaje.
+     */
     private boolean isSimpleCharacter(char c) {
         return (c == 59) || (c == 61) || (c == 43) || (c == 45)
                 || (c == 42) || (c == 40) || (c == 41) || (c == 44)
                 || (c == 60) || (c == 62);
     }
 
+    /**
+     * Verifica si el carácter representa la producción vacía (ε).
+     */
     private boolean isEpsilon (char c) {
         return c == 'ε';
     }
 
 
+    /**
+     * Ejecuta el análisis de la gramática.
+     *
+     * Lee cada línea del archivo de gramática, extrae producciones,
+     * registra terminales y no terminales, y finalmente determina
+     * el símbolo inicial.
+     */
     public void ejecutar() {
         Lista<String> gramatica = grammarReader.leerGramatica();
 
@@ -49,6 +81,13 @@ public class GrammarParser {
     }
 
 
+    /**
+     * Extrae la parte derecha de una producción gramatical.
+     *
+     * @param linea línea completa de la gramática
+     * @param inicio índice donde inicia el RHS
+     * @return lista de símbolos que conforman la producción
+     */
     private Lista<Symbol> obtenerRHS (String linea, int inicio) {
         Lista<Symbol> rhs = new Lista<>();
 
@@ -95,6 +134,11 @@ public class GrammarParser {
         return rhs;
     }
 
+    /**
+     * Localiza el inicio del lado derecho de una producción.
+     *
+     * @return índice posterior a '->' o -1 si no existe
+     */
     private int inicioProduccion(String linea) {
         for (int i = 0; i < linea.length() - 1; i++) {
             if (linea.charAt(i) == '-' && linea.charAt(i + 1) == '>') {
@@ -104,6 +148,13 @@ public class GrammarParser {
         return -1;
     }
 
+
+    /**
+     * Determina el símbolo inicial de la gramática.
+     *
+     * El símbolo inicial es aquel no terminal que aparece en el LHS
+     * pero nunca en ningún RHS.
+     */
     private void definirPrincipal() {
         Set<NoTerminal> lhs = new Set<>();
         Set<NoTerminal> rhs = new Set<>();
@@ -127,6 +178,12 @@ public class GrammarParser {
         }
     }
 
+    /**
+     * Obtiene el no terminal del lado izquierdo de una producción.
+     *
+     * @param linea línea de la gramática
+     * @return no terminal encontrado o null si no existe
+     */
     private NoTerminal obtenerLHS (String linea) {
         int inicio = -1;
         int fin = -1;

@@ -5,6 +5,13 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
+/**
+ * Manejador lexico para identificadores y palabras reservadas
+ *
+ * Nota: Por restricciones de tiempo, este handler combina
+ * la logica de identificacion de palabras reservadas e identificadores,
+ * lo cual podria separse en implementaciones futuras
+ */
 public class IdentificadoresHandler implements TokenHandler {
     private final int ATRIBUTO = 295;
     @Override

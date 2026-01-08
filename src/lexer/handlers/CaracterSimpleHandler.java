@@ -5,8 +5,17 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
+/**
+ * Manejador lexico envargado de reconocer caracteres simples
+ * y operadores compuestos de uno o dos simbolos (por ejemplo
+ * '=', '==', '<>')
+ *
+ * Forma parte de la cadena de manejadores del analizador lexico
+ */
 public class CaracterSimpleHandler implements TokenHandler {
+    /**Atributo lexico para el operador '=='*/
     private final int DOBLE_IGUAL = 600;
+    /**Atributo lexico para el operador '<>'*/
     private final int DOBLE_FLECHA = 601;
     @Override
     public boolean accept(char c) {
