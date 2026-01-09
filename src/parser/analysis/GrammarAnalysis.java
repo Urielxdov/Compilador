@@ -6,6 +6,16 @@ import data_structures.Map;
 import data_structures.Set;
 import parser.grammar.*;
 
+/**
+ * Implementa el calculo de los conjuntos FIRT y FOLLOW
+ * para una gramatica libre de contexto
+ *
+ * Utiliza algoritmos iterativos hasta alcanzar punto fijo,
+ * siguiendo las reglas formales para el analisis LL(1)
+ *
+ * Esta clase no valida si la gramatica es LL(1)
+ * unicamente calcula los conjuntos necesarios
+ */
 public class GrammarAnalysis {
     private Grammar grammar;
 
@@ -18,6 +28,11 @@ public class GrammarAnalysis {
     }
 
 
+    /**
+     * Calcula el conjunto FIRST para todos los no terminales
+     * de la gramatica mediante iteraciones sucesivas hasta
+     * que no existan cambios
+     */
     public void calcularFirst() {
         Lista<Production> producciones = grammar.getProducciones();
         boolean cambios;
@@ -37,6 +52,17 @@ public class GrammarAnalysis {
         } while (cambios);
     }
 
+    /**
+     * Procesa una produccion para actualizar el conjunto FIRST
+     * del no terminal izquierdo
+     *
+     * Aplica las reglas:
+     * - Si el simbolo es terminal se agrega directamente
+     * - Si es no terminal, se propaha FIRST sin epsilon
+     * - Si FIRST conteiene epsilon, continua evaluando
+     *
+     * @return true si hubo cambios en FIRST, flase en caso contrario
+     */
     private boolean procesarProduccionFirst (Production p) {
         boolean cambio = false;
         Lista<Symbol> rhs = p.getDerecha();
@@ -57,6 +83,13 @@ public class GrammarAnalysis {
         return cambio;
     }
 
+    /**
+     * Calcula el conjunto FOLLOW para todos los no terminales
+     * de la gramatica
+     *
+     * El simbolo inicial recibe el terminal '$'
+     * El calculo se realiza de forma iterativa hasta punto fijo
+     */
     public void calcularFollow() {
         Lista<Production> productions = grammar.getProducciones();
 
@@ -78,7 +111,17 @@ public class GrammarAnalysis {
 
     }
 
-
+    /**
+     * Procesa una producción para actualizar los conjuntos FOLLOW
+     * según las reglas formales:
+     *
+     * 1) A → α B a     → a ∈ FOLLOW(B)
+     * 2) A → α B C     → FIRST(C) - ε ⊆ FOLLOW(B)
+     * 3) Si FIRST(C) contiene ε o B es el último símbolo,
+     *    FOLLOW(A) ⊆ FOLLOW(B)
+     *
+     * @return true si hubo cambios en FOLLOW, false en caso contrario
+     */
     public boolean procesarProduccionFollow (Production p) {
         boolean cambio = false;
         Lista<Symbol> rhs = p.getDerecha();
@@ -95,6 +138,7 @@ public class GrammarAnalysis {
                 Symbol siguiente = rhs.obtener(i + 1);
 
                 if (siguiente instanceof Terminal) {
+                    //Posibles cambios
                     // caso 1 A -> aB
                     cambio |= grammar.getFollow().get(ntActual).agregar((Terminal) siguiente);
                 } else {

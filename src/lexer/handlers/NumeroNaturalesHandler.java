@@ -5,6 +5,24 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
+/**
+ * Handler lexico encargado de reconocer numeros naturales
+ *
+ * Reglas:
+ * - Un numero natural esta compuesto unicamente por digitos
+ * - No puede comenzar con el digito '0', salvo que forme parte de un numero flotante
+ * - No puede contener letras
+ *
+ * Importante:
+ * - Si despues de la secuencia de digitos aparece un '.'.
+ * este handler delega el reconocimiento al handler de numeros flotantes.
+ * - El orden de evaluacion de los handlers es critico para el correcto
+ * funcionamiento del analisis lexico
+ *
+ * Nota tecnica:
+ * - el manejo de errores lexicos se limita a la generacion de tokens invalidos
+ * debido a restricciones de tiempo
+ */
 public class NumeroNaturalesHandler implements  TokenHandler{
     private final int ATRIBUTO = 400;
     
@@ -13,6 +31,13 @@ public class NumeroNaturalesHandler implements  TokenHandler{
         return (c >= 48) && (c <= 57);
     }
 
+    /**
+     * Intenta reconocer un numero natural a partir de la posicion actual del contexto
+     *
+     * @param ctx contexto lexico compartido
+     * @return true si el hanfler consume caracteres (validos o invalidos)
+     *          false si el handler no aplica en la posicion actual
+     */
     @Override
     public boolean proccessChar(Context ctx) {
 

@@ -4,7 +4,21 @@ import data_structures.Set;
 
 import java.util.Objects;
 
+/**
+ * TablaPalabras reservadas
+ *
+ * Tabla lexica que define las palabras reservadas
+ * reconocidas por el lenguaje
+ *
+ * Una palabra reservada es un identificador con
+ * significado semantico especial, que no puede
+ * ser utilizado como nombre definido por el usuario.
+ *
+ * Esta tabla es utilizada por el analizador lexico
+ * para diferenciar entre identificadores y palabras reservadas
+ */
 public class TablaPalabrasReservadas {
+    /**Conjunto de palabras reservadas dentro del ellenguaje*/
     static final Set<Elemento> PALABRAS_RESERVADAS = new Set<>();
 
     static {
@@ -22,12 +36,21 @@ public class TablaPalabrasReservadas {
 
     private TablaPalabrasReservadas() {}
 
+    /**
+     * Verifica si un lexema corresponde a una palabra reservada
+     *
+     * @param value lexema a evaluar
+     * @return true si el lexema es una palara reservada
+     */
     public static boolean existe (String value) {
         for (Elemento elemento : PALABRAS_RESERVADAS)
             if (elemento.clave.equals(value)) return true;
         return false;
     }
 
+    /**
+     * Representa una palabra reservada y su codigo lexico asociado
+     */
     static class Elemento {
         private String clave;
         private int valor;

@@ -1,5 +1,15 @@
 package parser.grammar;
 
+/**
+ * Representa un simbolo no terminal dentro de una gramatica
+ * libre de contexto
+ *
+ * Un no terminal puede ser remplazado por una o mas
+ * producciones y se utiliza para definir la estructura
+ * del lenguaje
+ *
+ * La igualdad entre no terminales se define por su nombre
+ */
 public class NoTerminal implements Symbol {
     private String nombre;
 

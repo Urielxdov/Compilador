@@ -2,19 +2,29 @@ package data_structures;
 
 import java.util.Iterator;
 
+/**
+ * Implementacion simple de una lista simple enlazada
+ *
+ * - Insersiciones que se realizan de manera consecutiva
+ * - Busqueda lineal
+ *
+ * Diseñada con fines academicos para evitar el uso de java.util.List
+ */
 public class Lista<T> implements Iterable<T> {
+    // Inicio de la lista
     private Nodo<T> inicio;
+    // Final de la lista
     private Nodo<T> fin;
+    // Cantidad de elementos registrados
     private int numeroNodos = 0;
 
     public Lista() {}
 
-    public boolean agregar(T valor) {
-        agregar(valor, true);
-        return true;
-    }
-
-    private Nodo<T> agregar(T valor, boolean diferenciador) {
+    /**
+     * Inserta un nuevo elemento en la lista
+     * Si la lista esta vacia se asigna al inicio y fin el nuevo elemento
+     */
+    public Nodo<T> agregar(T valor) {
         this.numeroNodos++;
         if (this.inicio == null) {
             this.inicio = new Nodo<>(valor);
@@ -27,19 +37,18 @@ public class Lista<T> implements Iterable<T> {
         return this.fin;
     }
 
-
+    /**
+     * @return - Numero de elementos registrados
+     */
     public int nodosExistentes(){
         return  this.numeroNodos;
     }
 
-    public T eliminar() {
-        Nodo<T> eliminado = inicio;
-        inicio = inicio.siguiente;
-        eliminado.siguiente = null;
-        this.numeroNodos--;
-        return eliminado.valor;
-    }
-
+    /**
+     * Itera sobre la lista para encontrar un elemento que concida con el parametro
+     * Busqueda lineal
+     * @return - (boolean) Indica la presencia o ausencia del elemento buscado
+     */
     public boolean existe(T valor) {
         Nodo<T> nodoActual = this.inicio;
         for (int i = 0; i < this.numeroNodos; i++) {
@@ -49,6 +58,10 @@ public class Lista<T> implements Iterable<T> {
         return false;
     }
 
+    /**
+     * Busqueda lineal por indice de elemento
+     * @return - Elemento de la posicion 'i'
+     */
     public T obtener(int i) {
         if (i < 0 || i >= nodosExistentes()) return null; // Validación de índice
 
@@ -70,6 +83,9 @@ public class Lista<T> implements Iterable<T> {
         return cadena;
     }
 
+    /**
+     * Permite iterarr sobre los elementos de la lista
+     */
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -91,6 +107,9 @@ public class Lista<T> implements Iterable<T> {
         };
     }
 
+    /**
+     * Nodo de la lista simplemente enlazada
+     */
     private static class Nodo<E> {
         E valor;
         Nodo<E> siguiente;

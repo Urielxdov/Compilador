@@ -1,5 +1,15 @@
 package parser.grammar;
 
+/**
+ * Representa un simbolo terminal dentro de una gramatica
+ * libre de conteto
+ *
+ * Un terminal es un simbolo que no puede ser remplazado
+ * por ninguna produccion y aparece directamente
+ * en la cadena de entrada
+ *
+ * La igualdad entre terminales se define por su nombre
+ */
 public class Terminal implements Symbol {
     private final String nombre;
 

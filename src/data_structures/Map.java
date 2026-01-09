@@ -2,26 +2,45 @@ package data_structures;
 
 import java.util.Iterator;
 
+/**
+ * Implementacion simple de un mapo clave-valor basada en lista enlazada
+ *
+ * - No utiliza Hashing
+ * - Inserciones se realizan al inicio de la lista
+ * - La busqueda es lineal
+ *
+ * Diseñada con fines academicos para evitarrr el uso de java.util.Map
+ */
+
 public class Map <K, V> implements Iterable<K>{
+    // Cabeza de la lista enlazada
     private Nodo<Par<K, V>> cabeza;
 
+    /**
+     * Inserta un par clave-valor en el mapa.
+     * Si la clave existe, se actualiza el valor
+     */
     public void put (K clave, V valor) {
         Nodo<Par<K, V>> actual = cabeza;
 
         while (actual != null) {
             if (actual.dato.clave.equals(clave)) {
-                actual.dato.valor = valor; // se actualiza el valor
+                actual.dato.valor = valor; // actualiza el valor
                 return;
             }
             actual = actual.siguiente;
         }
-        // Insertamos nuevo
+        // Insertamos al inicio de la lista
         Nodo<Par<K, V>> nodo = new Nodo<>(new Par<>(clave, valor));
         nodo.siguiente = cabeza;
         cabeza = nodo;
     }
 
 
+    /**
+     * Obtiene el valor asociado a una clave
+     * RRetorna null si la clave no existe
+     */
     public V get (K clave) {
         Nodo <Par<K, V>> actual = cabeza;
 
@@ -34,7 +53,9 @@ public class Map <K, V> implements Iterable<K>{
         return null;
     }
 
-
+    /**
+     * Verifica si una clave existe dentro del mapa
+     */
     public boolean existKey (K clave) {
         Nodo <Par<K, V>> actual = cabeza;
 
@@ -46,6 +67,9 @@ public class Map <K, V> implements Iterable<K>{
         return false;
     }
 
+    /**
+     * Permite iterar sobrer las claves almacenadas en el mapa
+     */
     @Override
     public Iterator<K> iterator() {
         return new Iterator<K>() {
@@ -65,7 +89,9 @@ public class Map <K, V> implements Iterable<K>{
         };
     }
 
-
+    /**
+     * Nodo de la lista enlazada
+     */
     private class Nodo <T> {
         T dato;
         Nodo<T> siguiente;
@@ -81,6 +107,9 @@ public class Map <K, V> implements Iterable<K>{
         }
     }
 
+    /**
+     * Estructura para clave-valor
+     */
     private class Par <K, V> {
         K clave;
         V valor;

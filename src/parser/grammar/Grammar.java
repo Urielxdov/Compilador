@@ -90,8 +90,24 @@ public class Grammar {
     public Map<NoTerminal, Conjunto<Terminal>> getFollow() {
         return follow;
     }
-    
-    
+
+
+    /**
+     * Calcula FIRST(α) para una secuencia de simbolos α = X1, X2 ... Xn.
+     *
+     * Reglas:
+     * - Si X1 es terminal de ε → FIRST(α) = {X1}
+     * - Si X1 es no terminal:
+     *  - Se agrega FIRST(X1) \ {ε}
+     *  - Si ε pertenece a FIRST(X1), se continua con X2
+     *  - Si todos los Xi pueden producir ε -> ε  perteneciente a FIRST(α)
+     *
+     * Precondicion:
+     * - FIRST(nt) debe estar previamente calculado para todo no terminal
+     *
+     * @param alfa
+     * @return
+     */
     public Conjunto<Terminal> firstDeSecuencia (Lista<Symbol> alfa) {
         Conjunto<Terminal> conjunto = new Conjunto<>();
         for (Symbol s : alfa) {

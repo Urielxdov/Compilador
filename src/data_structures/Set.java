@@ -3,10 +3,45 @@ package data_structures;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Set
+ *
+ * Implementacion propia de un conjunto basado en una tabla hash
+ * con direccionamiento abierto y resolucion de coalisiones mediante
+ * probing lineal
+ *
+ * Caracteristicas:
+ * - No permite valores duplicados
+ * - No permite valores null
+ * - Redimensiona automaticamente segun el factor de carga
+ * - Iteracion eficiente sin exponer posiciones vacias
+ *
+ * Diseño:
+ * - Open Addressing
+ * - Linear Probing
+ * - Reashing al superar el factor de carga
+ *
+ * Complejidad esperada:
+ * - Insersion O(1) promedio
+ * - Busqueda O(1) promedio
+ * - Eliminacion O(1) promedio (con reinsercion de cluster)
+ *
+ * Nota:
+ * Esta implementacion prioriza calidad y control de algoritmos
+ * sobre optimizaciones extremas
+ * @param <T>
+ */
 public class Set <T> implements Iterable<T>{
+    /**
+     * Arreglo interno que almacena los valores del conjunto
+     * Las posiciones null representan espacios vacios
+     */
     private T[] valores;
+    /**Capacidad actual de la tabla hash*/
     private int longitud;
+    /**Numero de elementos almacenados*/
     private int elementos;
+    /**Factor de carga maximo antes de redimensionar*/
     private final float CARGA_MAXIMA = 0.75F;
 
     @SuppressWarnings("unchecked")
@@ -21,6 +56,11 @@ public class Set <T> implements Iterable<T>{
         return Math.abs(valor.hashCode() % longitud);
     }
 
+    /**
+     * Agrega un valor al conjunto si no existe previamente
+     *
+     * @param valor elemnto a insertar
+     */
     public void add(T valor) {
         if(valor == null) return;
 
@@ -44,6 +84,12 @@ public class Set <T> implements Iterable<T>{
         }
     }
 
+    /**
+     * Obtiene la posicion interna del valor dentro de la tabla hash
+     *
+     * @param valor elemnto a buscar
+     * @return indice interno o -1 si no existe
+     */
     public int get(T valor){
         if(valor == null) return -1;
 
@@ -67,6 +113,13 @@ public class Set <T> implements Iterable<T>{
         return elementos;
     }
 
+
+    /**
+     * Eliminar un elemnto del conjunto y restructura
+     * el cluster generado por probing lineal
+     *
+     * @param valor elemento a eliminar
+     */
     public void removerElemento(T valor) {
         if (valor == null) return;
 
@@ -97,6 +150,10 @@ public class Set <T> implements Iterable<T>{
 
     public boolean contains (T valor) { return get(valor) != -1; }
 
+    /**
+     * Duplica la capacidad del conjunto y reubica todos
+     * los elemntos usando la nueva funcion hash
+     */
     @SuppressWarnings("unchecked")
     private void redimensionar () {
         int nuevaLongitud = longitud * 2;

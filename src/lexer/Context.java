@@ -8,6 +8,19 @@ import lexer.handlers.errors.LexicalError;
 import lexer.validators.boundaries.FinalLexema;
 import lexer.validators.boundaries.IdentificadorLimites;
 
+/**
+ * Contexto central del analisis lexico
+ *
+ * Mantiene el estado actual del proceso de tokenizacion
+ * - Linea actual
+ * - Punteros de inicio y fin de lexema
+ * - Tokens reconocidos
+ * - Errores lexicos
+ * - Tabla de simbolos
+ *
+ * Es compartido por los distintos TokenHandler y validadores
+ * durante el analisis del programa fuente
+ */
 public class Context {
     private IdentificadorLimites limitador;
     private Lista<Token> tokens; // Simbolos que encontremos
@@ -79,6 +92,11 @@ public class Context {
         return this.punteroFinal;
     }
 
+    /**
+     * Establece el puntero inicial del lexema
+     *
+     * @throws IllegalArgumentException si supera al puntero final
+     */
     public void setPunteroInicial(int nuevaPosicion) {
         if (nuevaPosicion > punteroFinal) throw new IllegalArgumentException("El puntero inicial no puede ser mayor que el puntero final");
         this.punteroInicial = nuevaPosicion;
@@ -89,6 +107,12 @@ public class Context {
         this.punteroFinal = nuevaPosicion;
     }
 
+    /**
+     * Avanza a la siguiente linea del programa si el puntero
+     * alcanzo el final de la linea actual
+     *
+     * @return true si se alcanzo el final del archivo, false en caso contrario
+     */
     public boolean finArchivo() {
         if (punteroFinal >= lineaActual.length()) {
             if (numeroLinea >= programa.nodosExistentes()) {
@@ -108,6 +132,11 @@ public class Context {
         } else return false;
     }
 
+    /**
+     * Verificar si el caracter actual marca el fin valido de un lexema
+     *
+     * @return true si el puntero esta en un limite valido, false en caso contrario
+     */
     public boolean limitador() {
         if (punteroFinal >= lineaActual.length()) {
             return true;
@@ -118,6 +147,12 @@ public class Context {
     }
 
 
+    /**
+     * Consume caracteres desde el puntero inicial hasta encontrar
+     * un delimitador valido y devuelve el lexema resultante
+     *
+     * @return lexema consumido
+     */
     public String consumirLexema() {
         int inicio = punteroInicial;
 
@@ -163,10 +198,6 @@ public class Context {
 
     public void agregarSimbolo (Token simbolo) {
         if (simbolos.nodosExistentes() == 0 || !simbolos.existe(simbolo)) simbolos.agregar(simbolo);
-    }
-
-    public Lista<Token> getSimbolos() {
-        return simbolos;
     }
 
     public void setTokenActual(Token t) {

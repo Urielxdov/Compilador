@@ -5,14 +5,38 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 import lexer.handlers.errors.LexicalError;
 
+/**
+ * Handler lexico encargado de reconocer numeros flotantes
+ *
+ * Reglas:
+ * -Acepta secuencias de digitos con unsolo punto decimal
+ * -Rechaza numeros con mas de un punto
+ * - Rechaza letras inmediatamente despues del primer numero
+ *
+ * Importante:
+ * - Este hanlder asume que el reconocimiento de numeros naturales
+ * ya fue evaluado previamente en la cadena de handlers.
+ * - El orden de evaluacion de los handlers es critico para su correcto funcionamiento
+ *
+ * Nota tecnica:
+ * -Debido a restricciones de tiempo, el manejo de errores lexicos se limita
+ * a la generacion de tokens invalidos
+ */
 public class NumeroFloatHandler implements TokenHandler {
     private final int ATRIBUTO = 401;
+
     @Override
     public boolean accept(char c) {
         return ((c >= 48) && (c <= 57)) || (c == 46);
     }
 
-
+    /**
+     * Intenta reconocer un numero flotante a partir de la posicion actual del contexto
+     *
+     * @param ctx contexto lexico compartido
+     * @return true si el handler consumio caracteres (validos o invalidos),
+     *              false si el handler no aplica en la posicion actual
+     */
     @Override
     public boolean proccessChar(Context ctx) {
         /**
