@@ -1,8 +1,6 @@
 package parser.grammar;
 
-import data_structures.Conjunto;
 import data_structures.Lista;
-import data_structures.Map;
 
 public class Grammar {
     // Gramatica completa

@@ -136,8 +136,8 @@ public class LL1ParsingTable {
         agregarUbicacion("lista_expr", "literalentera", 13);
         agregarUbicacion("lista_expr", "literalreal", 13);
 
-        // lista_exprfinal
-        agregarUbicacion("lista_exprfinal", "=", 14);
+        // lista_exprfinal - CORREGIDO
+        agregarUbicacion("lista_exprfinal", ",", 14);  // CAMBIO: era "=" ahora ","
         agregarUbicacion("lista_exprfinal", ")", 15);
 
         // expr_bool
@@ -152,15 +152,19 @@ public class LL1ParsingTable {
         agregarUbicacion("expresion", "literalreal", 17);
         agregarUbicacion("expresion", "(", 17);
 
-        // expr_final
+        // expr_final - CORREGIDO
         agregarUbicacion("expr_final", ";", 19);
+        agregarUbicacion("expr_final", ")", 19);      // AGREGADO
+        agregarUbicacion("expr_final", ",", 19);      // AGREGADO
+        agregarUbicacion("expr_final", "Entonces", 19); // AGREGADO
+        agregarUbicacion("expr_final", "Sino", 19);   // AGREGADO
         agregarUbicacion("expr_final", "+", 18);
         agregarUbicacion("expr_final", "-", 18);
         agregarUbicacion("expr_final", "*", 18);
-        agregarUbicacion("expr_final", ">", 18);
-        agregarUbicacion("expr_final", "<", 18);
-        agregarUbicacion("expr_final", "<>", 18);
-        agregarUbicacion("expr_final", "==", 18);
+        agregarUbicacion("expr_final", ">", 19);      // CAMBIO: era 18 ahora 19
+        agregarUbicacion("expr_final", "<", 19);      // CAMBIO: era 18 ahora 19
+        agregarUbicacion("expr_final", "<>", 19);     // CAMBIO: era 18 ahora 19
+        agregarUbicacion("expr_final", "==", 19);     // CAMBIO: era 18 ahora 19
 
         // expr_arit
         agregarUbicacion("expr_arit", "id", 21);
@@ -186,6 +190,7 @@ public class LL1ParsingTable {
         // inicio
         agregarUbicacion("inicio", "Programa", 33);
     }
+
 
     /**
      * Asigna una produccion a una celda especifica de la tabla
