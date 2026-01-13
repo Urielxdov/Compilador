@@ -119,4 +119,8 @@ public class Lexer {
         }
         return  ctx.getTokenActual();
     }
+
+    public Lista<Token> obtenerSimbolos() {
+        return ctx.getSimbolos();
+    }
 }

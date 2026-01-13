@@ -70,32 +70,47 @@ public class LL1Parser {
         pila.push(grammar.getSimboloInicial());
         Symbol x = pila.peek();
         Token a = lexer.next(); // inicializa pa
+        int paso = 1;
         while (!pila.esVacia()) {
+            System.out.println(String.valueOf(paso)+ ".- Token actual: " + a.getLexema() + "\nContenido de la pila:"+ pila.toString());
             if (x instanceof NoTerminal) {
                 int posicion = tabla.getNumeroProduccion((NoTerminal) x, a);
-                if (posicion != -1) {
+
+                if (posicion != 0) {
                     Production p = grammar.getProduccion(posicion);
                     pila.pop();
+                    System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
+                    if (p == null) {
+                        System.out.println("dime");
+                    }
                     for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
                         pila.push(p.getDerecha().obtener(i));
                     }
                     x = pila.peek();
                 } else {
-                    System.out.println("Error sintactico");
+                    System.out.println("Se produjo un error sintacto, se esperaba un '" + x.getNombre() + "' y se obtuvo un '" + a.getLexema() + "'");
+                    return;
                 }
             } else {
                 if (Comparator.comapare(a, x)) {
-                    pila.pop();
-                    x = pila.peek();
+                    Symbol t = pila.pop();
+                    try {
+                        x = pila.peek();
+                        System.out.println("Simbolos en paso '" + String.valueOf(paso) + "':\n" + lexer.obtenerSimbolos());
+                    } catch (Exception e) {
+                        System.out.println("aca");
+                        System.out.println(t);
+                    }
                     a = lexer.next();
                 } else if (x instanceof Epsilon) {
                     pila.pop();
                     x = pila.peek();
                 }
                 else {
-                    System.out.println("Error sintactico");
+                    System.out.println("Error sintactico 2");
                 }
             }
+            paso++;
         }
     }
 

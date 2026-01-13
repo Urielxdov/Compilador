@@ -1,4 +1,4 @@
-Programa p Inicio
-Entero x;
-x = 5 + ;
+Programa test Inicio
+    Entero x;
+    x = 5;
 Fin

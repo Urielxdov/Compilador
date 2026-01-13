@@ -209,6 +209,10 @@ public class Context {
         return tokenActual;
     }
 
+    public Lista<Token> getSimbolos() {
+        return simbolos;
+    }
+
     @Override
     public String toString() {
         String string = "";
