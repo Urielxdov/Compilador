@@ -154,17 +154,12 @@ public class LL1ParsingTable {
 
         // expr_final - CORREGIDO
         agregarUbicacion("expr_final", ";", 19);
-        agregarUbicacion("expr_final", ")", 19);      // AGREGADO
-        agregarUbicacion("expr_final", ",", 19);      // AGREGADO
-        agregarUbicacion("expr_final", "Entonces", 19); // AGREGADO
-        agregarUbicacion("expr_final", "Sino", 19);   // AGREGADO
+        agregarUbicacion("expr_final", ",", 19);
+        agregarUbicacion("expr_final", ")", 19); // AGREGADOmq
         agregarUbicacion("expr_final", "+", 18);
         agregarUbicacion("expr_final", "-", 18);
         agregarUbicacion("expr_final", "*", 18);
-        agregarUbicacion("expr_final", ">", 19);      // CAMBIO: era 18 ahora 19
-        agregarUbicacion("expr_final", "<", 19);      // CAMBIO: era 18 ahora 19
-        agregarUbicacion("expr_final", "<>", 19);     // CAMBIO: era 18 ahora 19
-        agregarUbicacion("expr_final", "==", 19);     // CAMBIO: era 18 ahora 19
+
 
         // expr_arit
         agregarUbicacion("expr_arit", "id", 21);
