@@ -4,6 +4,7 @@ import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
 import parser.grammar.*;
+import semantic.ast.ASTNode;
 
 /**
  * Implementacion de un LL(1)
@@ -32,6 +33,7 @@ public class LL1Parser {
     private Grammar grammar; // Gramatica LL(1)
     private LL1ParsingTable tabla; // Tabla de analisis predictivo LL(1)
     private Pila<Symbol> pila; // Pila de simbolos del parser
+    private Pila<ASTNode> pilaAST;
     private Lexer lexer; // Fuente de tokens
 
     /**
@@ -45,6 +47,7 @@ public class LL1Parser {
         this.grammar = grammar;
         this.tabla = tabla;
         this.pila = new Pila<>();
+        this.pilaAST = new Pila<>();
         this.lexer = lexer;
     }
 
@@ -94,6 +97,9 @@ public class LL1Parser {
             } else {
                 if (Comparator.comapare(a, x)) {
                     Symbol t = pila.pop();
+                    // Aqui debemos implementar un FActory para la creacion del nodo
+                    // se compara lo que se espera para el sintactico, con lo que hay en el programa
+                    // esto lo logramos mediante token que posee un atributo TipoToken
                     try {
                         x = pila.peek();
                         System.out.println("Simbolos en paso '" + String.valueOf(paso) + "':\n" + lexer.obtenerSimbolos());
