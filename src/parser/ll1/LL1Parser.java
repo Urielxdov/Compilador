@@ -4,6 +4,7 @@ import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
 import parser.grammar.*;
+import semantic.ast.ASTNode;
 
 /**
  * Implementacion de un LL(1)
@@ -32,6 +33,7 @@ public class LL1Parser {
     private Grammar grammar; // Gramatica LL(1)
     private LL1ParsingTable tabla; // Tabla de analisis predictivo LL(1)
     private Pila<Symbol> pila; // Pila de simbolos del parser
+    private Pila<ASTNode> pilaAST;
     private Lexer lexer; // Fuente de tokens
 
     /**
@@ -45,6 +47,7 @@ public class LL1Parser {
         this.grammar = grammar;
         this.tabla = tabla;
         this.pila = new Pila<>();
+        this.pilaAST = new Pila<>();
         this.lexer = lexer;
     }
 
@@ -70,32 +73,50 @@ public class LL1Parser {
         pila.push(grammar.getSimboloInicial());
         Symbol x = pila.peek();
         Token a = lexer.next(); // inicializa pa
+        int paso = 1;
         while (!pila.esVacia()) {
+            System.out.println(String.valueOf(paso)+ ".- Token actual: " + a.getLexema() + "\nContenido de la pila:"+ pila.toString());
             if (x instanceof NoTerminal) {
                 int posicion = tabla.getNumeroProduccion((NoTerminal) x, a);
-                if (posicion != -1) {
+
+                if (posicion != 0) {
                     Production p = grammar.getProduccion(posicion);
                     pila.pop();
+                    System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
+                    if (p == null) {
+                        System.out.println("dime");
+                    }
                     for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
                         pila.push(p.getDerecha().obtener(i));
                     }
                     x = pila.peek();
                 } else {
-                    System.out.println("Error sintactico");
+                    System.out.println("Se produjo un error sintacto, se esperaba un '" + x.getNombre() + "' y se obtuvo un '" + a.getLexema() + "'");
+                    return;
                 }
             } else {
                 if (Comparator.comapare(a, x)) {
-                    pila.pop();
-                    x = pila.peek();
+                    Symbol t = pila.pop();
+                    // Aqui debemos implementar un FActory para la creacion del nodo
+                    // se compara lo que se espera para el sintactico, con lo que hay en el programa
+                    // esto lo logramos mediante token que posee un atributo TipoToken
+                    try {
+                        x = pila.peek();
+                        System.out.println("Simbolos en paso '" + String.valueOf(paso) + "':\n" + lexer.obtenerSimbolos());
+                    } catch (Exception e) {
+                        System.out.println("aca");
+                        System.out.println(t);
+                    }
                     a = lexer.next();
                 } else if (x instanceof Epsilon) {
                     pila.pop();
                     x = pila.peek();
                 }
                 else {
-                    System.out.println("Error sintactico");
+                    System.out.println("Error sintactico 2");
                 }
             }
+            paso++;
         }
     }
 

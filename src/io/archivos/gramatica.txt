@@ -1,39 +1,33 @@
-<system_goal>   -> <program> $
-<program>        -> Programa id Inicio <statement_list> Fin
-<statement_list> -> <statement> <statement_tail>
-<statement_tail> -> <statement> <statement_tail>
-<statement_tail> -> ε
-<statement>      -> <declaration> ;
-<statement>      -> <assignment> ;
-<statement>      -> Leer ( <id_list> ) ;
-<statement>      -> Escribir ( <expr_list> ) ;
-<statement>      -> <if_stmt>
-<declaration>    -> Entero <id_list>
-<declaration>    -> Real <id_list>
-<assignment>     -> id = <expression>
-<if_stmt>        -> Si <condition> Entonces Inicio <statement_list> Fin <else_tail>
-<else_tail>      -> Sino Inicio <statement_list> Fin
-<else_tail>      -> ε
-<condition>      -> <expression> <relop> <expression>
-<relop>          -> <
-<relop>          -> >
-<relop>          -> ==
-<relop>          -> <>
-<id_list>        -> id <id_tail>
-<id_tail>        -> , id <id_tail>
-<id_tail>        -> ε
-<expr_list>      -> <expression> <expr_tail>
-<expr_tail>      -> , <expression> <expr_tail>
-<expr_tail>      -> ε
-<expression>     -> <term> <expression_tail>
-<expression_tail> -> <addop> <term> <expression_tail>
-<expression_tail> -> ε
-<term>           -> <factor> <term_tail>
-<term_tail>      -> * <factor> <term_tail>
-<term_tail>      -> ε
-<factor>         -> ( <expression> )
-<factor>         -> id
-<factor>         -> intLiteral
-<factor>         -> realLiteral
-<addop>          -> +
-<addop>          -> -
+programa         -> Programa id Inicio lista_sent Fin
+lista_sent       -> sentencia sent_final
+sent_final       -> sentencia sent_final
+sent_final       -> ε
+sentencia        -> tipo lista_id;
+sentencia        -> id = expresion ;
+sentencia        -> Leer ( lista_id );
+sentencia        -> Escribir ( lista_expr );
+sentencia        -> Si expr_bool Entonces sentencia Sino sentencia
+lista_id        -> id id_final
+id_final        -> , id id_final
+id_final        -> ε
+lista_expr      -> expresion lista_exprfinal
+lista_exprfinal -> , expresion lista_exprfinal
+lista_exprfinal -> ε
+expr_bool       -> expr_arit operel expr_arit
+expresion       -> expr_arit expr_final
+expr_final      -> operador expr_arit expr_final
+expr_final      -> ε
+expr_arit       -> ( expresion )
+expr_arit       -> id
+expr_arit       -> literalentera
+expr_arit       -> literalreal
+tipo            -> Entero
+tipo            -> Real
+operador        -> +
+operador        -> -
+operador        -> *
+operel          -> >
+operel          -> <
+operel          -> <>
+operel          -> ==
+inicio          -> programa
