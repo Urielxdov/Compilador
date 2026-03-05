@@ -6,31 +6,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostfixConverter {
+    public static void main(String[] args) {
+        List<OperationToken> tokens = List.of(
+                new NumberToken("3"),
+                new OperatorToken("+"),
+                new NumberToken("5"),
+                new OperatorToken("*"),
+                new OperatorToken("("),
+                new NumberToken("2"),
+                new OperatorToken("-"),
+                new NumberToken("8"),
+                new OperatorToken(")")
+        );
+        List p = convert(tokens);
+        System.out.println(p.toString());
+    }
 
-    public List<OperationToken> convert(List<OperationToken> tokens) {
+    public static List<OperationToken> convert(List<OperationToken> tokens) {
         List<OperationToken> output = new ArrayList<>();
-        Pila<OperationToken> operators = new Pila<>();
+        Pila<OperatorToken> operators = new Pila<>();
 
         for (OperationToken token : tokens) {
-            if (token instanceof NumberToken) {
+
+            if (token.isNumber()) {
                 output.add(token);
-            } else if (token instanceof OperationToken op) {
-                if (isLeftParenthesis((OperatorToken) op)) {
-                    while (!isLeftParenthesis((OperatorToken) operators.peek())) {
+            }
+
+            else if (token.isOperator()) {
+
+                OperatorToken op = (OperatorToken) token;
+
+                if (op.isLeftParenthesis()) {
+                    operators.push(op);
+                }
+
+                else if (op.isRightParenthesis()) {
+                    while (!operators.peek().isLeftParenthesis()) {
                         output.add(operators.pop());
                     }
-                    operators.pop(); // Quitamos el (
-                }
-            } else {
-
-                while (!operators.esVacia() &&
-                        op.getPrecedence() <= operators.peek().getPrecedence()) {
-                    output.add(operators.pop());
+                    operators.pop();
                 }
 
-                operators.push(op);
+                else {
+                    while (!operators.esVacia() &&
+                            op.getPrecedence() <=  operators.peek().getPrecedence()) {
+                        output.add(operators.pop());
+                    }
+                    operators.push(op);
+                }
             }
         }
+
 
         while (!operators.esVacia()) {
             output.add(operators.pop());
@@ -39,7 +65,4 @@ public class PostfixConverter {
         return output;
     }
 
-    private boolean isLeftParenthesis(OperatorToken op) {
-        return
-    }
 }
