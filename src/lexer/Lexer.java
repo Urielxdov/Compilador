@@ -100,10 +100,18 @@ public class Lexer {
         if (ctx.finArchivo()) {
             return new Token(-1, "$", TiposTokens.IDENTIFICADOR);
         }
+        Token token = null;
         limpiador.aplicar(ctx);
 
         for (TokenHandler handler : tokenHandlers) {
-            if(handler.proccessChar(ctx)) break;
+            token = handler.extractLexeme(ctx);
+            if (token != null) break;
+        }
+
+        if (token != null) {
+            // Tenemos que administrar el puntero del token
+        } else {
+            // El lexema salio en null entonces tenemos administrar el error lexico
         }
 
         // Retrocede el puntero final por que el handler avanza una posicion extra
@@ -122,5 +130,10 @@ public class Lexer {
 
     public Lista<Token> obtenerSimbolos() {
         return ctx.getSimbolos();
+    }
+
+    @Override
+    public String toString() {
+        return ctx.getTokensLinea().toString();
     }
 }

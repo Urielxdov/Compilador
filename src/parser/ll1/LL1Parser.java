@@ -92,7 +92,7 @@ public class LL1Parser {
                     x = pila.peek();
                 } else {
                     System.out.println("Se produjo un error sintacto, se esperaba un '" + x.getNombre() + "' y se obtuvo un '" + a.getLexema() + "'");
-                    return;
+                    break;
                 }
             } else {
                 if (Comparator.comapare(a, x)) {
@@ -114,10 +114,13 @@ public class LL1Parser {
                 }
                 else {
                     System.out.println("Error sintactico 2");
+                    break;
                 }
             }
             paso++;
         }
+        System.out.println("Vamos a imprir");
+        System.out.println(lexer.toString());
     }
 
 

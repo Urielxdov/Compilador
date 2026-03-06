@@ -1,6 +1,7 @@
 package lexer.handlers;
 
 import lexer.Context;
+import lexer.Token;
 
 /**
  * Interfaz base para los manejadores lexicos del analizador
@@ -36,5 +37,5 @@ public interface TokenHandler {
      * @param ctx contexto lexico compartido
      * @return true si el hanlder aplico, false si no aplica
      */
-    boolean proccessChar(Context ctx);
+    Token extractLexeme(Context ctx);
 }

@@ -5,6 +5,7 @@ import data_structures.Set;
 import io.FileReaderManager;
 import io.RutaArchivos;
 import lexer.handlers.errors.LexicalError;
+import lexer.tokens.NodoLineaToken;
 import lexer.validators.boundaries.FinalLexema;
 import lexer.validators.boundaries.IdentificadorLimites;
 
@@ -23,7 +24,7 @@ import lexer.validators.boundaries.IdentificadorLimites;
  */
 public class Context {
     private IdentificadorLimites limitador;
-    private Lista<Token> tokens; // Simbolos que encontremos
+    private Lista<NodoLineaToken> tokens; // Simbolos que encontremos
     private Lista<LexicalError> errores; // Para la tabla de errores
     private Lista<Token> simbolos; // Simbolos encontrados
     private Lista<String> palabrasReservadas; // Palabras reservadas
@@ -169,10 +170,18 @@ public class Context {
 
 
     public void agregarToken(Token token) {
-        this.tokens.agregar(token);
+        this.tokens.agregar(new NodoLineaToken(numeroLinea, token));
     }
 
     public Lista<Token> getTokens() {
+        Lista<Token> lista = new Lista<>();
+        for (NodoLineaToken nlt : tokens) {
+            lista.agregar(nlt.getToken());
+        }
+        return lista;
+    }
+
+    public Lista<NodoLineaToken> getTokensLinea() {
         return tokens;
     }
 

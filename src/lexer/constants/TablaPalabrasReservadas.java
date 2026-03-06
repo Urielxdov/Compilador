@@ -48,6 +48,15 @@ public class TablaPalabrasReservadas {
         return false;
     }
 
+
+    public static int getValor(String lexema) {
+        for (Elemento elemento : PALABRAS_RESERVADAS)
+            if (elemento.clave.equals(lexema)) return elemento.valor;
+        return -1;
+    }
+
+
+
     /**
      * Representa una palabra reservada y su codigo lexico asociado
      */
