@@ -62,6 +62,7 @@ public class Lexer {
         tokenHandlers.agregar(new NumeroNaturalesHandler());
         tokenHandlers.agregar(new NumeroFloatHandler());
         tokenHandlers.agregar(new IdentificadoresHandler());
+        tokenHandlers.agregar(new PalabrasReservadasHandler());
         tokenHandlers.agregar(new CaracterSimpleHandler());
     }
 //    public Token getNextToken() {
@@ -110,21 +111,24 @@ public class Lexer {
 
         if (token != null) {
             // Tenemos que administrar el puntero del token
+            ctx.consumirLexema();
+            ctx.setTokenActual(token);
         } else {
             // El lexema salio en null entonces tenemos administrar el error lexico
+            System.out.println("Error lexico, validar");
         }
 
         // Retrocede el puntero final por que el handler avanza una posicion extra
         // y causaba errores dado que si se encontraban lexemas validos juntos, estos se perdian
-        ctx.setPunteroFinal(ctx.getPunteroFinal() - 1);
-        // Si el token es delimitador, no se consume el lexema (ej. Caracter simple)
-        if (ctx.limitador()) {
-            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
-        } else {
-            // Tokens normales consumen lexema
-            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
-            ctx.consumirLexema();
-        }
+//        ctx.setPunteroFinal(ctx.getPunteroFinal() - 1);
+//        // Si el token es delimitador, no se consume el lexema (ej. Caracter simple)
+//        if (ctx.limitador()) {
+//            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
+//        } else {
+//            // Tokens normales consumen lexema
+//            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
+//            ctx.consumirLexema();
+//        }
         return  ctx.getTokenActual();
     }
 

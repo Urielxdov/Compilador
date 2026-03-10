@@ -30,7 +30,7 @@ public class IdentificadoresHandler implements TokenHandler {
         int inicio = ctx.getPunteroInicial();
         int pos = inicio;
 
-        if (pos >= linea.length() || !Character.isLetter(linea.charAt(pos))) {
+        if (pos >= linea.length() || !Character.isLetter(linea.charAt(pos)) || !accept(linea.charAt(pos))) {
             return null; // No puede empezar con dígito o _
         }
 
