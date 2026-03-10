@@ -132,6 +132,31 @@ public class Lexer {
         return  ctx.getTokenActual();
     }
 
+
+    public void all() {
+        while (!ctx.finArchivo()) {
+            Token token = null;
+            limpiador.aplicar(ctx);
+
+            for (TokenHandler handler : tokenHandlers) {
+                token = handler.extractLexeme(ctx);
+                if (token != null) break;
+            }
+
+            if (token != null) {
+                // Tenemos que administrar el puntero del token
+                ctx.consumirLexema();
+                ctx.setTokenActual(token);
+            } else {
+                // El lexema salio en null entonces tenemos administrar el error lexico
+                System.out.println("Error lexico, validar");
+            }
+        }
+
+        System.out.println(ctx.getTokens());
+  
+    }
+
     public Lista<Token> obtenerSimbolos() {
         return ctx.getSimbolos();
     }

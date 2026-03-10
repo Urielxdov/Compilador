@@ -32,6 +32,9 @@ public class TablaPalabrasReservadas {
         PALABRAS_RESERVADAS.add(new Elemento("Sino", 407));
         PALABRAS_RESERVADAS.add(new Elemento("Inicio", 408));
         PALABRAS_RESERVADAS.add(new Elemento("Fin", 409));
+        PALABRAS_RESERVADAS.add(new Elemento("Iniciar", 410));
+        PALABRAS_RESERVADAS.add(new Elemento("Int", 411));
+        PALABRAS_RESERVADAS.add(new Elemento("Mostrar", 412));
     }
 
     private TablaPalabrasReservadas() {}

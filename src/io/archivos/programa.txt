@@ -1,13 +1,10 @@
-Programa MiPrograma Inicio
-    Entero x, y;
-    Real z;
-    x = 5;
-    y = 10;
-    z = (x + y) * 2;
-    Leer(x, y);
-    Escribir(z, x + y);
-    Si x > y Entonces
-        z = x - y;
-    Sino
-        z = y - x;
-Fin
+Iniciar 
+    Int a, b, c; 
+    a = 0; 
+    b = 0; 
+    c = 0; 
+    Leer a; 
+    Leer b; 
+    c = a * b - 3 * 2.5; 
+    Mostrar c; 
+Finalizar

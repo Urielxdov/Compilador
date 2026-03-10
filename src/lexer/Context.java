@@ -48,7 +48,7 @@ public class Context {
         this.simbolos = new Lista<>();
         this.palabrasReservadas = new Lista<>();
         this.caracteresSimples = new Set<>();
-        this.numeroLinea = 0;
+        this.numeroLinea = 1; // Cuidado, tiene un error logico por alguna razon
         this.punteroFinal = 0;
         this.punteroInicial = 0;
         this.limitador = new FinalLexema();
@@ -131,6 +131,24 @@ public class Context {
                 return false;
             }
         } else return false;
+    }
+
+    public void validarPosicionPunteros() {
+        if (lineaActual != null && punteroInicial >= lineaActual.length()) {
+            lineaActual = null;
+
+            while (numeroLinea <= programa.nodosExistentes()) {
+                lineaActual = programa.obtener(numeroLinea);
+                numeroLinea++;
+
+                if (lineaActual != null && !lineaActual.trim().isEmpty()) {
+                    break;
+                }
+            }
+
+            punteroInicial = 0;
+            punteroFinal = 0;
+        }
     }
 
     /**
