@@ -48,7 +48,7 @@ public class Context {
         this.simbolos = new Lista<>();
         this.palabrasReservadas = new Lista<>();
         this.caracteresSimples = new Set<>();
-        this.numeroLinea = 1; // Cuidado, tiene un error logico por alguna razon
+        this.numeroLinea = 0; // Cuidado, tiene un error logico por alguna razon
         this.punteroFinal = 0;
         this.punteroInicial = 0;
         this.limitador = new FinalLexema();
@@ -173,18 +173,31 @@ public class Context {
      * @return lexema consumido
      */
     public String consumirLexema() {
-        int inicio = punteroInicial;
+        if (punteroFinal >= lineaActual.length()) return null; // fin de línea
 
-        while (punteroFinal < lineaActual.length() && !limitador.verificar(lineaActual.charAt(punteroFinal)) && !caracteresSimples.contains(String.valueOf(lineaActual.charAt(punteroFinal)))) {
+        char actual = lineaActual.charAt(punteroFinal);
+
+        // Si es un carácter simple, consumelo solo
+        if (caracteresSimples.contains(String.valueOf(actual))) {
+            punteroInicial = punteroFinal;
+            punteroFinal++;
+            return String.valueOf(actual);
+        }
+
+        // Si no, consume hasta encontrar un limitador o carácter simple
+        int inicio = punteroFinal;
+        while (punteroFinal < lineaActual.length() &&
+                !limitador.verificar(lineaActual.charAt(punteroFinal)) &&
+                !caracteresSimples.contains(String.valueOf(lineaActual.charAt(punteroFinal)))) {
             punteroFinal++;
         }
 
         String lexema = lineaActual.substring(inicio, punteroFinal);
-
         punteroInicial = punteroFinal;
-
         return lexema;
     }
+
+
 
 
     public void agregarToken(Token token) {

@@ -147,6 +147,7 @@ public class Lexer {
                 // Tenemos que administrar el puntero del token
                 ctx.consumirLexema();
                 ctx.setTokenActual(token);
+                ctx.agregarToken(token);
             } else {
                 // El lexema salio en null entonces tenemos administrar el error lexico
                 System.out.println("Error lexico, validar");
