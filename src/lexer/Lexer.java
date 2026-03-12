@@ -3,6 +3,7 @@ package lexer;
 import data_structures.Lista;
 import lexer.constants.TiposTokens;
 import lexer.handlers.*;
+import lexer.tokens.NodoLineaToken;
 import lexer.validators.pointer.AjustadorPuntero;
 import lexer.validators.pointer.EliminarVacios;
 
@@ -154,13 +155,17 @@ public class Lexer {
             }
         }
 
-        System.out.println(ctx.getTokens());
+        //System.out.println(ctx.getTokens());
   
     }
 
     public Lista<Token> obtenerSimbolos() {
         return ctx.getSimbolos();
     }
+
+    public Lista<Token> obtenerTokens() { return ctx.getTokens(); }
+
+    public Lista<NodoLineaToken> obtenerTokensLinea() { return ctx.getTokensLinea(); }
 
     @Override
     public String toString() {

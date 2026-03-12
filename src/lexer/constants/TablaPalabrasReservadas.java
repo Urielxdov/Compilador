@@ -35,6 +35,7 @@ public class TablaPalabrasReservadas {
         PALABRAS_RESERVADAS.add(new Elemento("Iniciar", 410));
         PALABRAS_RESERVADAS.add(new Elemento("Int", 411));
         PALABRAS_RESERVADAS.add(new Elemento("Mostrar", 412));
+        PALABRAS_RESERVADAS.add(new Elemento("Finalizar", 413));
     }
 
     private TablaPalabrasReservadas() {}

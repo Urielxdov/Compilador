@@ -11,10 +11,12 @@ package lexer.constants;
  */
 public enum TiposTokens {
     NUMERO_NATURAL,
-    NUMERO_FLOTANTE,
+    NUMERO_REAL,
     IDENTIFICADOR,
     PALABRA_RESERVADA,
     CARACTER_SIMPLE,
     /**Secuencia de caracteres que no pertenece al lenguaje*/
-    INVALIDO
+    INVALIDO,
+    OPERADOR_ARITMETICO,
+    ASIGNACION
 }

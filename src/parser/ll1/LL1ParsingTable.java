@@ -222,7 +222,7 @@ public class LL1ParsingTable {
             terminal = new Terminal(t.getLexema());
         else if (t.getTipo() == TiposTokens.NUMERO_NATURAL) {
             terminal = new Terminal("literalentera");
-        } else if (t.getTipo() == TiposTokens.NUMERO_FLOTANTE) {
+        } else if (t.getTipo() == TiposTokens.NUMERO_REAL) {
             terminal = new Terminal("literalreal");
         }
 

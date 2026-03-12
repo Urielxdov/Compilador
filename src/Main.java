@@ -1,4 +1,8 @@
+import data_structures.Lista;
 import lexer.Lexer;
+import lexer.Token;
+import lexer.constants.TiposTokens;
+import lexer.tokens.NodoLineaToken;
 import parser.grammar.Grammar;
 import parser.GrammarParser;
 import parser.grammar.Production;
@@ -30,5 +34,58 @@ public class Main {
 //         lp.execute();
         Lexer lex = new Lexer();
         lex.all();
+
+        Lista<NodoLineaToken> tokens = lex.obtenerTokensLinea();
+
+        System.out.printf("%-10s %-10s %-25s%n", "NUMERO LINEA", "LEXEMA", "TIPO");
+        System.out.println("----------------------------------------------------");
+
+        for(NodoLineaToken token : tokens) {
+
+            String tipoFinal;
+
+            if (token.getToken().getTipo() == TiposTokens.CARACTER_SIMPLE) {
+
+                switch (token.getToken().getLexema()) {
+
+                    case "+":
+                        tipoFinal = "OPERADOR_SUMA";
+                        break;
+
+                    case "-":
+                        tipoFinal = "OPERADOR_RESTA";
+                        break;
+
+                    case "*":
+                        tipoFinal = "OPERADOR_MULTIPLICACION";
+                        break;
+
+                    case "=":
+                        tipoFinal = "ASIGNACION";
+                        break;
+
+                    case ";":
+                    case ",":
+                    case "(":
+                    case ")":
+                        tipoFinal = "SIMBOLO_ESPECIAL";
+                        break;
+
+                    default:
+                        tipoFinal = "DESCONOCIDO";
+                }
+
+            } else {
+
+                tipoFinal = token.getToken().getTipo().toString();
+            }
+
+            System.out.printf(
+                    "%-10s %-10s %-25s%n",
+                    token.getLinea(),
+                    token.getToken().getLexema(),
+                    tipoFinal
+            );
+        }
     }
 }

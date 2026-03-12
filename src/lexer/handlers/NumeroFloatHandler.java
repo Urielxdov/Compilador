@@ -44,6 +44,6 @@ public class NumeroFloatHandler implements TokenHandler {
         // No permitir números que terminan con punto
         if (lexema.endsWith(".")) return null;
 
-        return new Token(ATRIBUTO, lexema, TiposTokens.NUMERO_FLOTANTE);
+        return new Token(ATRIBUTO, lexema, TiposTokens.NUMERO_REAL);
     }
 }
