@@ -85,8 +85,8 @@ public class LL1Parser {
                     if (p == null) {
                         System.out.println("dime");
                     }
-                    for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
-                        pila.push(p.getDerecha().obtener(i));
+                    for (int i = p.getDerecha().size() - 1; i >= 0; i--) {
+                        pila.push(p.getDerecha().get(i));
                     }
                     x = pila.peek();
                 } else {

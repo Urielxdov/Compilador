@@ -1,5 +1,8 @@
 package lexer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import data_structures.Lista;
 import lexer.constants.TiposTokens;
 import lexer.handlers.*;
@@ -35,7 +38,7 @@ public class Lexer {
      * El orden es importante: el primer handler que reconoce el token
      * detiene la cadea
      */
-    private final Lista<TokenHandler> tokenHandlers;
+    private final List<TokenHandler> tokenHandlers;
     /**
      * Contexto com´partido del analisis lexico.
      * Mantiene punteros, lexema actual y token reconocido.
@@ -58,13 +61,13 @@ public class Lexer {
     public Lexer() {
         ctx = new Context();
         limpiador = new EliminarVacios();
-        tokenHandlers = new Lista<>();
+        tokenHandlers = new ArrayList<>();
         // Primero se validan posibilidades de numeros
-        tokenHandlers.agregar(new NumeroNaturalesHandler());
-        tokenHandlers.agregar(new NumeroFloatHandler());
-        tokenHandlers.agregar(new IdentificadoresHandler());
-        tokenHandlers.agregar(new PalabrasReservadasHandler());
-        tokenHandlers.agregar(new CaracterSimpleHandler());
+        tokenHandlers.add(new NumeroNaturalesHandler());
+        tokenHandlers.add(new NumeroFloatHandler());
+        tokenHandlers.add(new IdentificadoresHandler());
+        tokenHandlers.add(new PalabrasReservadasHandler());
+        tokenHandlers.add(new CaracterSimpleHandler());
     }
 //    public Token getNextToken() {
 //        while (!ctx.finArchivo()) {
@@ -159,13 +162,13 @@ public class Lexer {
   
     }
 
-    public Lista<Token> obtenerSimbolos() {
+    public List<Token> obtenerSimbolos() {
         return ctx.getSimbolos();
     }
 
     public Lista<Token> obtenerTokens() { return ctx.getTokens(); }
 
-    public Lista<NodoLineaToken> obtenerTokensLinea() { return ctx.getTokensLinea(); }
+    public List<NodoLineaToken> obtenerTokensLinea() { return ctx.getTokensLinea(); }
 
     @Override
     public String toString() {

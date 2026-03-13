@@ -1,8 +1,8 @@
 package lexer.constants;
 
-import data_structures.Set;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TablaPalabras reservadas
@@ -19,23 +19,24 @@ import java.util.Objects;
  */
 public class TablaPalabrasReservadas {
     /**Conjunto de palabras reservadas dentro del ellenguaje*/
-    static final Set<Elemento> PALABRAS_RESERVADAS = new Set<>();
+    //static final Set<Elemento> PALABRAS_RESERVADAS = new Set<>();
+    static final Map<String, Integer> PALABRAS_RESERVADAS = new HashMap<>();
 
     static {
-        PALABRAS_RESERVADAS.add(new Elemento("Programa", 400));
-        PALABRAS_RESERVADAS.add(new Elemento("Real", 401));
-        PALABRAS_RESERVADAS.add(new Elemento("Entero", 402));
-        PALABRAS_RESERVADAS.add(new Elemento("Leer", 403));
-        PALABRAS_RESERVADAS.add(new Elemento("Escribir", 404));
-        PALABRAS_RESERVADAS.add(new Elemento("Si", 405));
-        PALABRAS_RESERVADAS.add(new Elemento("Entonces", 406));
-        PALABRAS_RESERVADAS.add(new Elemento("Sino", 407));
-        PALABRAS_RESERVADAS.add(new Elemento("Inicio", 408));
-        PALABRAS_RESERVADAS.add(new Elemento("Fin", 409));
-        PALABRAS_RESERVADAS.add(new Elemento("Iniciar", 410));
-        PALABRAS_RESERVADAS.add(new Elemento("Int", 411));
-        PALABRAS_RESERVADAS.add(new Elemento("Mostrar", 412));
-        PALABRAS_RESERVADAS.add(new Elemento("Finalizar", 413));
+        PALABRAS_RESERVADAS.put("Programa", 400);
+        PALABRAS_RESERVADAS.put("Real", 401);
+        PALABRAS_RESERVADAS.put("Entero", 402);
+        PALABRAS_RESERVADAS.put("Leer", 403);
+        PALABRAS_RESERVADAS.put("Escribir", 404);
+        PALABRAS_RESERVADAS.put("Si", 405);
+        PALABRAS_RESERVADAS.put("Entonces", 406);
+        PALABRAS_RESERVADAS.put("Sino", 407);
+        PALABRAS_RESERVADAS.put("Inicio", 408);
+        PALABRAS_RESERVADAS.put("Fin", 409);
+        PALABRAS_RESERVADAS.put("Iniciar", 410);
+        PALABRAS_RESERVADAS.put("Int", 411);
+        PALABRAS_RESERVADAS.put("Mostrar", 412);
+        PALABRAS_RESERVADAS.put("Finalizar", 413);
     }
 
     private TablaPalabrasReservadas() {}
@@ -47,39 +48,12 @@ public class TablaPalabrasReservadas {
      * @return true si el lexema es una palara reservada
      */
     public static boolean existe (String value) {
-        for (Elemento elemento : PALABRAS_RESERVADAS)
-            if (elemento.clave.equals(value)) return true;
-        return false;
+        return PALABRAS_RESERVADAS.containsKey(value);
     }
 
 
     public static int getValor(String lexema) {
-        for (Elemento elemento : PALABRAS_RESERVADAS)
-            if (elemento.clave.equals(lexema)) return elemento.valor;
-        return -1;
+        return PALABRAS_RESERVADAS.getOrDefault(lexema, -1);
     }
 
-
-
-    /**
-     * Representa una palabra reservada y su codigo lexico asociado
-     */
-    static class Elemento {
-        private String clave;
-        private int valor;
-
-        public Elemento (String clave, int valor) {
-            this.clave = clave;
-            this.valor = valor;
-        }
-
-        public String getClave() {
-            return clave;
-        }
-
-
-        public int getValor () {
-            return valor;
-        }
-    }
 }

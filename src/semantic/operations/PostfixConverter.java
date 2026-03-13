@@ -7,19 +7,19 @@ import java.util.List;
 
 public class PostfixConverter {
     public static void main(String[] args) {
-        List<OperationToken> tokens = List.of(
-                new NumberToken("3"),
-                new OperatorToken("+"),
-                new NumberToken("5"),
-                new OperatorToken("*"),
-                new OperatorToken("("),
-                new NumberToken("2"),
-                new OperatorToken("-"),
-                new NumberToken("8"),
-                new OperatorToken(")")
-        );
-        List p = convert(tokens);
-        System.out.println(p.toString());
+        // List<OperationToken> tokens = List.of(
+        //         new NumberToken("3"),
+        //         new OperatorToken("+"),
+        //         new NumberToken("5"),
+        //         new OperatorToken("*"),
+        //         new OperatorToken("("),
+        //         new NumberToken("2"),
+        //         new OperatorToken("-"),
+        //         new NumberToken("8"),
+        //         new OperatorToken(")")
+        // );
+        // List p = convert(tokens);
+        // System.out.println(p.toString());
     }
 
     public static List<OperationToken> convert(List<OperationToken> tokens) {

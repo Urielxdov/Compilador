@@ -7,12 +7,26 @@ public class OperatorToken implements OperationToken {
 
     public OperatorToken(String symbol) {
         this.symbol = symbol;
-        this.precedence = switch (symbol) {
-            case "+", "-" -> 1;
-            case "*", "/" -> 2;
-            case "(", ")" -> 0;
-            default -> throw new IllegalArgumentException();
-        };
+
+        switch (symbol) {
+            case "+":
+            case "-":
+                this.precedence = 1;
+                break;
+
+            case "*":
+            case "/":
+                this.precedence = 2;
+                break;
+
+            case "(":
+            case ")":
+                this.precedence = 0;
+                break;
+
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public int getPrecedence() {

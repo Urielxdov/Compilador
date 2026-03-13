@@ -1,6 +1,6 @@
 package parser.grammar;
 
-import data_structures.Lista;
+import java.util.List;
 
 /**
  * Representa una produccion de una gramatica libre de contexto
@@ -18,9 +18,9 @@ import data_structures.Lista;
 public class Production {
     private final int id;                   // Identificiador unico de la produccion
     private final NoTerminal izquierda;     // Lado izquierdo (no terminal)
-    private final Lista<Symbol> derecha;    // Lado derecho (secuencia de simbolos)
+    private final List<Symbol> derecha;    // Lado derecho (secuencia de simbolos)
 
-    public Production(NoTerminal izquierda, Lista<Symbol> derecha, int id) {
+    public Production(NoTerminal izquierda, List<Symbol> derecha, int id) {
         this.izquierda = izquierda;
         this.derecha = derecha;
         this.id = id;
@@ -30,7 +30,7 @@ public class Production {
         return izquierda;
     }
 
-    public Lista<Symbol> getDerecha() {
+    public List<Symbol> getDerecha() {
         return derecha;
     }
 

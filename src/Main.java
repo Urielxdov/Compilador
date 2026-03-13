@@ -1,14 +1,8 @@
-import data_structures.Lista;
+import java.util.List;
+
 import lexer.Lexer;
-import lexer.Token;
 import lexer.constants.TiposTokens;
 import lexer.tokens.NodoLineaToken;
-import parser.grammar.Grammar;
-import parser.GrammarParser;
-import parser.grammar.Production;
-import parser.ll1.LL1Parser;
-import parser.ll1.LL1ParsingTable;
-import parser.reader.GrammarReader;
 public class Main {
     public static void main(String[] args) {
 //         Grammar grammar = new Grammar();
@@ -35,7 +29,7 @@ public class Main {
         Lexer lex = new Lexer();
         lex.all();
 
-        Lista<NodoLineaToken> tokens = lex.obtenerTokensLinea();
+        List<NodoLineaToken> tokens = lex.obtenerTokensLinea();
 
         System.out.printf("%-10s %-10s %-25s%n", "NUMERO LINEA", "LEXEMA", "TIPO");
         System.out.println("----------------------------------------------------");
