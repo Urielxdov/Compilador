@@ -1,15 +1,33 @@
 package semantic.ast;
 
-import data_structures.Lista;
+import lexer.Token;
 
-public abstract class ASTNode {
-    protected Lista<ASTNode> children = new Lista<>();
+public class ASTNode {
+    private Token token;
+    private ASTNode izquierdo;
+    private ASTNode derecho;
 
-    public Lista<ASTNode> getChildren() {
-        return children;
+    public ASTNode(Token token) {
+        this.token = token;
     }
 
-    public void addChild(ASTNode node) {
-        children.agregar(node);
+    public Token getToken() {
+        return token;
+    }
+
+    public ASTNode getIzquierdo() {
+        return izquierdo;
+    }
+
+    public void setIzquierdo(ASTNode izquierdo) {
+        this.izquierdo = izquierdo;
+    }
+
+    public ASTNode getDerecho() {
+        return derecho;
+    }
+
+    public void setDerecho(ASTNode derecho) {
+        this.derecho = derecho;
     }
 }

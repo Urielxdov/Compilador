@@ -1,28 +1,27 @@
 package semantic.ast;
 
-import data_structures.Pila;
+import data_structures.Lista;
 import lexer.Token;
-import parser.grammar.Production;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ASTBuilder {
-    private Pila<ASTNode> pilaNodos = new Pila<>();
 
-    public void onMatchTerminal(Token token) {
-
-    }
-
-    public void onReduce(Production p) {
-        ASTNode nodo; // crea el nodo
-
-        int hijos = p.getDerecha().nodosExistentes();
-
-        List<ASTNode> temp = new ArrayList<>();
-
-        for (int i = 0; i < hijos; i++) {
-            temp.add(0, pilaNodos.pop());
+    public AST construirAST(Lista<Token> tokens) {
+        if (tokens.nodosExistentes() != 3){
+            throw new RuntimeException("Expresion no soportada todavia");
         }
+
+        Token izquierdo = tokens.obtener(0);
+        Token operador = tokens.obtener(1);
+        Token derecho = tokens.obtener(2);
+
+        ASTNode nodoIzq = new ASTNode(izquierdo);
+        ASTNode nodoDer = new ASTNode(derecho);
+        ASTNode raiz = new ASTNode(operador);
+
+        raiz.setIzquierdo(nodoIzq);
+        raiz.setDerecho(nodoDer);
+
+        return new AST(raiz);
+
     }
 }

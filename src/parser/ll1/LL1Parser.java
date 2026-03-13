@@ -4,7 +4,6 @@ import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
 import parser.grammar.*;
-import semantic.ast.ASTNode;
 
 /**
  * Implementacion de un LL(1)
@@ -33,7 +32,7 @@ public class LL1Parser {
     private Grammar grammar; // Gramatica LL(1)
     private LL1ParsingTable tabla; // Tabla de analisis predictivo LL(1)
     private Pila<Symbol> pila; // Pila de simbolos del parser
-    private Pila<ASTNode> pilaAST;
+    //private Pila<ASTNode> pilaAST;
     private Lexer lexer; // Fuente de tokens
 
     /**
@@ -47,7 +46,7 @@ public class LL1Parser {
         this.grammar = grammar;
         this.tabla = tabla;
         this.pila = new Pila<>();
-        this.pilaAST = new Pila<>();
+        //this.pilaAST = new Pila<>();
         this.lexer = lexer;
     }
 
