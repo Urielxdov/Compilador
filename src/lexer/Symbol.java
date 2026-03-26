@@ -31,6 +31,7 @@ public class Symbol {
         return scopeLevel;
     }
 
+
     public Object getValor() {
         return valor;
     }
