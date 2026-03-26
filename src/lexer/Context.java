@@ -256,6 +256,8 @@ public class Context {
         return simbolos;
     }
 
+    public void addSimbolos(Token t) { this.simbolos.add(t); }
+
     @Override
     public String toString() {
         String string = "";

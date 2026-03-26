@@ -80,6 +80,9 @@ public class Main {
                     token.getToken().getLexema(),
                     tipoFinal
             );
+
+
         }
+        System.out.println(lex.obtenerSimbolos());
     }
 }

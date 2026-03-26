@@ -152,6 +152,9 @@ public class Lexer {
                 ctx.consumirLexema();
                 ctx.setTokenActual(token);
                 ctx.agregarToken(token);
+                if (token.getTipo().equals(TiposTokens.IDENTIFICADOR)) {
+                    ctx.addSimbolos(token);
+                }
             } else {
                 // El lexema salio en null entonces tenemos administrar el error lexico
                 System.out.println("Error lexico, validar");
