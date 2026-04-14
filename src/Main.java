@@ -2,6 +2,7 @@ import java.util.List;
 
 import lexer.Lexer;
 import lexer.constants.TiposTokens;
+import lexer.table.SymbolTable;
 import lexer.tokens.NodoLineaToken;
 import semantic.operadores.MapeadorCaracteresSimples;
 
@@ -56,5 +57,8 @@ public class Main {
 
         }
         System.out.println(lex.obtenerSimbolos());
+
+        SymbolTable tabla = SymbolTable.construir(lex.getCtx());
+        System.out.println(tabla);
     }
 }

@@ -33,7 +33,7 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Lexema: " + lexema + " - " + atributo + " tipo: " + tipo;
+        return "Lexema: " + lexema + " - " + atributo + " tipo: " + tipo + "\n";
     }
 
     /**

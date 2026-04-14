@@ -173,6 +173,10 @@ public class Lexer {
 
     public List<NodoLineaToken> obtenerTokensLinea() { return ctx.getTokensLinea(); }
 
+    public Context getCtx() {
+        return ctx;
+    }
+
     @Override
     public String toString() {
         return ctx.getTokensLinea().toString();
