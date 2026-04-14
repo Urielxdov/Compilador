@@ -3,6 +3,8 @@ import java.util.List;
 import lexer.Lexer;
 import lexer.constants.TiposTokens;
 import lexer.tokens.NodoLineaToken;
+import semantic.operadores.MapeadorCaracteresSimples;
+
 public class Main {
     public static void main(String[] args) {
 //         Grammar grammar = new Grammar();
@@ -39,38 +41,8 @@ public class Main {
             String tipoFinal;
 
             if (token.getToken().getTipo() == TiposTokens.CARACTER_SIMPLE) {
-
-                switch (token.getToken().getLexema()) {
-
-                    case "+":
-                        tipoFinal = "OPERADOR_SUMA";
-                        break;
-
-                    case "-":
-                        tipoFinal = "OPERADOR_RESTA";
-                        break;
-
-                    case "*":
-                        tipoFinal = "OPERADOR_MULTIPLICACION";
-                        break;
-
-                    case "=":
-                        tipoFinal = "ASIGNACION";
-                        break;
-
-                    case ";":
-                    case ",":
-                    case "(":
-                    case ")":
-                        tipoFinal = "SIMBOLO_ESPECIAL";
-                        break;
-
-                    default:
-                        tipoFinal = "DESCONOCIDO";
-                }
-
+                tipoFinal = MapeadorCaracteresSimples.obtenerTipoOperador(token.getToken().getLexema());
             } else {
-
                 tipoFinal = token.getToken().getTipo().toString();
             }
 
