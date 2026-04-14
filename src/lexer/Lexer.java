@@ -1,8 +1,12 @@
 package lexer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import data_structures.Lista;
 import lexer.constants.TiposTokens;
 import lexer.handlers.*;
+import lexer.tokens.NodoLineaToken;
 import lexer.validators.pointer.AjustadorPuntero;
 import lexer.validators.pointer.EliminarVacios;
 
@@ -34,7 +38,7 @@ public class Lexer {
      * El orden es importante: el primer handler que reconoce el token
      * detiene la cadea
      */
-    private final Lista<TokenHandler> tokenHandlers;
+    private final List<TokenHandler> tokenHandlers;
     /**
      * Contexto com´partido del analisis lexico.
      * Mantiene punteros, lexema actual y token reconocido.
@@ -57,12 +61,13 @@ public class Lexer {
     public Lexer() {
         ctx = new Context();
         limpiador = new EliminarVacios();
-        tokenHandlers = new Lista<>();
+        tokenHandlers = new ArrayList<>();
         // Primero se validan posibilidades de numeros
-        tokenHandlers.agregar(new NumeroNaturalesHandler());
-        tokenHandlers.agregar(new NumeroFloatHandler());
-        tokenHandlers.agregar(new IdentificadoresHandler());
-        tokenHandlers.agregar(new CaracterSimpleHandler());
+        tokenHandlers.add(new NumeroNaturalesHandler());
+        tokenHandlers.add(new NumeroFloatHandler());
+        tokenHandlers.add(new IdentificadoresHandler());
+        tokenHandlers.add(new PalabrasReservadasHandler());
+        tokenHandlers.add(new CaracterSimpleHandler());
     }
 //    public Token getNextToken() {
 //        while (!ctx.finArchivo()) {
@@ -100,23 +105,76 @@ public class Lexer {
         if (ctx.finArchivo()) {
             return new Token(-1, "$", TiposTokens.IDENTIFICADOR);
         }
+        Token token = null;
         limpiador.aplicar(ctx);
 
         for (TokenHandler handler : tokenHandlers) {
-            if(handler.proccessChar(ctx)) break;
+            token = handler.extractLexeme(ctx);
+            if (token != null) break;
+        }
+
+        if (token != null) {
+            // Tenemos que administrar el puntero del token
+            ctx.consumirLexema();
+            ctx.setTokenActual(token);
+        } else {
+            // El lexema salio en null entonces tenemos administrar el error lexico
+            System.out.println("Error lexico, validar");
         }
 
         // Retrocede el puntero final por que el handler avanza una posicion extra
         // y causaba errores dado que si se encontraban lexemas validos juntos, estos se perdian
-        ctx.setPunteroFinal(ctx.getPunteroFinal() - 1);
-        // Si el token es delimitador, no se consume el lexema (ej. Caracter simple)
-        if (ctx.limitador()) {
-            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
-        } else {
-            // Tokens normales consumen lexema
-            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
-            ctx.consumirLexema();
-        }
+//        ctx.setPunteroFinal(ctx.getPunteroFinal() - 1);
+//        // Si el token es delimitador, no se consume el lexema (ej. Caracter simple)
+//        if (ctx.limitador()) {
+//            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
+//        } else {
+//            // Tokens normales consumen lexema
+//            ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
+//            ctx.consumirLexema();
+//        }
         return  ctx.getTokenActual();
+    }
+
+
+    public void all() {
+        while (!ctx.finArchivo()) {
+            Token token = null;
+            limpiador.aplicar(ctx);
+
+            for (TokenHandler handler : tokenHandlers) {
+                token = handler.extractLexeme(ctx);
+                if (token != null) break;
+            }
+
+            if (token != null) {
+                // Tenemos que administrar el puntero del token
+                ctx.consumirLexema();
+                ctx.setTokenActual(token);
+                ctx.agregarToken(token);
+                if (token.getTipo().equals(TiposTokens.IDENTIFICADOR)) {
+                    ctx.addSimbolos(token);
+                }
+            } else {
+                // El lexema salio en null entonces tenemos administrar el error lexico
+                System.out.println("Error lexico, validar");
+            }
+        }
+
+        //System.out.println(ctx.getTokens());
+  
+    }
+
+    public List<Token> obtenerSimbolos() {
+        return ctx.getSimbolos();
+    }
+
+    public Lista<Token> obtenerTokens() { return ctx.getTokens(); }
+
+    public List<NodoLineaToken> obtenerTokensLinea() { return ctx.getTokensLinea(); }
+
+    @Override
+    public String toString() {
+        return ctx.getTokensLinea().toString();
     }
 }

@@ -1,7 +1,10 @@
 package parser;
 
-import data_structures.Lista;
+import java.util.ArrayList;
+import java.util.List;
+
 import data_structures.Set;
+import lexer.constants.TablaCaracteresSimples;
 import parser.grammar.*;
 import parser.reader.GrammarReader;
 
@@ -59,22 +62,35 @@ public class GrammarParser {
      * el símbolo inicial.
      */
     public void ejecutar() {
-        Lista<String> gramatica = grammarReader.leerGramatica();
+        List<String> gramatica = grammarReader.leerGramatica();
 
-        for (int i = 0; i < gramatica.nodosExistentes(); i++) {
-            String linea = gramatica.obtener(i);
-            NoTerminal lhs = obtenerLHS(linea);
-            int inicioRHS = inicioProduccion(linea);
+        int contador = 1;
+        for (String s : gramatica) {
+            NoTerminal lhs = obtenerLHS(s);
+            grammar.agregarProduccion(new Production(lhs, new ArrayList<Symbol>(), contador++));
+
+        }
+        contador = 1;
+        for (String s : gramatica) {
+            NoTerminal lhs = obtenerLHS(s);
+            int inicioRHS = inicioProduccion(s);
 
             if (lhs != null && inicioRHS != -1) {
-                Lista<Symbol> rhs = obtenerRHS(linea, inicioRHS);
-                grammar.agregarProduccion(new Production(lhs, rhs, i+1));
-                for (Symbol s : rhs) {
-                    if (s instanceof Terminal && !grammar.terminalExiste((Terminal) s)) {
-                        grammar.agregarTerminal((Terminal) s);
+                List<Symbol> rhs = obtenerRHS(s, inicioRHS);
+
+                Production p = grammar.getProduccion(contador);
+
+                for (Symbol symbol : rhs) {
+                    p.getDerecha().add(symbol);
+                }
+
+                for (Symbol sym : rhs) {
+                    if (sym instanceof  Terminal && !grammar.terminalExiste((Terminal) sym)) {
+                        grammar.agregarTerminal((Terminal) sym);
                     }
                 }
             }
+            contador++;
         }
         definirPrincipal();
 
@@ -88,49 +104,68 @@ public class GrammarParser {
      * @param inicio índice donde inicia el RHS
      * @return lista de símbolos que conforman la producción
      */
-    private Lista<Symbol> obtenerRHS (String linea, int inicio) {
-        Lista<Symbol> rhs = new Lista<>();
+    private List<Symbol> obtenerRHS (String linea, int inicio) {
+        List<Symbol> rhs = new ArrayList<>();
 
         int fin = inicio;
 
         while (fin < linea.length()) {
 
             if (linea.charAt(fin) == ' ') {
-                fin ++;
+                fin++;
                 inicio = fin;
                 continue;
             }
 
+            if (isEpsilon(linea.charAt(fin))) {
+                rhs.add(new Epsilon());
+                fin++;
+                inicio = fin;
+                continue;
+            } else if (TablaCaracteresSimples.existe(String.valueOf(linea.charAt(fin)))) {
+                    char actual = linea.charAt(fin);
 
-            if (linea.charAt(fin) == '<') {
-                if (fin+1 < linea.length() && linea.charAt(fin + 1) != ' ' && linea.charAt(fin + 1) != '>') {
-                    inicio = fin;
-                    while (fin < linea.length() && linea.charAt(fin) != '>') {
-                        fin++;
+                    // Mira si existe un segundo carácter
+                    if (fin + 1 < linea.length()) {
+                        char siguiente = linea.charAt(fin + 1);
+                        String doble = "" + actual + siguiente;
+
+                        if (doble.equals("==") || doble.equals("<>")) {
+                            rhs.add(new Terminal(doble));
+                            fin += 2;
+                            inicio = fin;
+                            continue;
+                        }
                     }
-                    rhs.agregar(new NoTerminal(linea.substring(inicio, fin + 1)));
-                } else {
-                    rhs.agregar(new Terminal(linea.substring(inicio, fin + 1)));
-                }
-                fin++;
-                inicio = fin;
-            } else if (isEpsilon(linea.charAt(fin))) {
-                rhs.agregar(new Epsilon());
-                fin++;
-                inicio = fin;
-            } else if (isSimpleCharacter(linea.charAt(fin))) {
-                rhs.agregar(new Terminal(String.valueOf(linea.charAt(fin))));
-                fin++;
-                inicio = fin;
-            } else {
-                inicio = fin;
-                while (fin < linea.length() && linea.charAt(fin) != ' ' && !isSimpleCharacter(linea.charAt(fin))) {
+
+                    // Si no es doble, es simple: ')', ';', etc.
+                    rhs.add(new Terminal(String.valueOf(actual)));
                     fin++;
-                }
-                rhs.agregar(new Terminal(linea.substring(inicio, fin)));
-                inicio = fin;
+                    inicio = fin;
+                    continue;
             }
+
+            inicio = fin;
+            while (fin < linea.length() && linea.charAt(fin) != ' ' && !TablaCaracteresSimples.existe(String.valueOf(linea.charAt(fin)))) fin++;
+
+            String palabra = linea.substring(inicio, fin);
+            boolean encontrado = false;
+
+            for (NoTerminal nt : grammar.getNoTerminales()) {
+                if (nt.equals(palabra)) {
+                    rhs.add(new NoTerminal(palabra));
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                rhs.add(new Terminal(palabra));
+            }
+
+            inicio = fin;
         }
+
         return rhs;
     }
 
@@ -159,10 +194,10 @@ public class GrammarParser {
         Set<NoTerminal> lhs = new Set<>();
         Set<NoTerminal> rhs = new Set<>();
 
-        for (int i = 0; i < grammar.getProducciones().nodosExistentes(); i++) {
-            lhs.add(grammar.getProducciones().obtener(i).getIzquierda());
-            for (int j = 0; j < grammar.getProducciones().obtener(i).getDerecha().nodosExistentes(); j++) {
-                Symbol symbol = grammar.getProducciones().obtener(i).getDerecha().obtener(j);
+        for (int i = 0; i < grammar.getProducciones().size(); i++) {
+            lhs.add(grammar.getProducciones().get(i).getIzquierda());
+            for (int j = 0; j < grammar.getProducciones().get(i).getDerecha().size(); j++) {
+                Symbol symbol = grammar.getProducciones().get(i).getDerecha().get(j);
                 if (symbol instanceof NoTerminal) {
                     rhs.add((NoTerminal) symbol);
                 }
@@ -184,24 +219,30 @@ public class GrammarParser {
      * @param linea línea de la gramática
      * @return no terminal encontrado o null si no existe
      */
-    private NoTerminal obtenerLHS (String linea) {
+    private NoTerminal obtenerLHS(String linea) {
         int inicio = -1;
         int fin = -1;
-        // Los no terrminales se encuentran encerrados por <>
+
         for (int j = 0; j < linea.length(); j++) {
-            if (linea.charAt(j) == '<') inicio = j;
-            else if (linea.charAt(j) == '>') {
-                fin = j;
+            if (!Character.isWhitespace(linea.charAt(j))) {
+                inicio = j;
                 break;
             }
         }
 
-        if (inicio != -1 && fin != -1) {
-            NoTerminal noTerminal = new NoTerminal(linea.substring(inicio, fin + 1));
+        if (inicio != -1) {
+            fin = inicio;
+            while (fin < linea.length() && !Character.isWhitespace(linea.charAt(fin))) {
+                fin++;
+            }
+
+            NoTerminal noTerminal = new NoTerminal(linea.substring(inicio, fin));
             grammar.agregarNoTerminal(noTerminal);
             return noTerminal;
         }
+
         return null;
     }
+
 
 }

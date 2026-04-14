@@ -1,4 +1,10 @@
-Programa p Inicio
-Entero x;
-x = 5 + ;
-Fin
+Iniciar
+    Int a, b, c;
+    a = 0;
+    b = 0;
+    c = 0;
+    Leer a;
+    Leer b;
+    c = a * b - 3 * 2.5;
+    Mostrar c;
+Finalizar

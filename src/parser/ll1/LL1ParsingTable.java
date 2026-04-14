@@ -6,34 +6,10 @@ import data_structures.Map;
 import lexer.Token;
 import lexer.constants.TablaCaracteresSimples;
 import lexer.constants.TablaPalabrasReservadas;
+import lexer.constants.TiposTokens;
 import parser.grammar.*;
 
-/**
- * Representa la tabal de analisis sintactico LL(1)
- *
- * La tabla se construye a partir de:
- * - Las producciones de la gramatica
- * - los conjuntos FIRST y FOLLOW previamente calculados
- *
- * Cada celda M[A, a] contiene el identificador de la produccion
- * que debe aplicarse cuando:
- *  - A es el no terminal en el tope de la pila
- *  - a es el simbolo terminal de entrada actual
- *
- * Reglas de contruccion:
- * 1. Para cada produccion A -> a:
- *      - Para todo terminal t perteneciente First(a) \ {epsilon}:
- *          M[A, t] = produccion
- * 2. Si epsilon pertenece a First(a):
- *  - Para todo terminal t perteneciente a FOLLOW(A)
- *      M[A, t* = produccion
- *
- * Las posiciones sin produccion valida permanecen vacias (error sintactico)
- *
- * Precondiciones:
- *  - La gramatica debe de ser LL(1)
- *  - FIRST y FOLLOW deben de haber sido calculados previamente
- */
+
 public class LL1ParsingTable {
 
     private int[][] matriz; // Matriz LL(1) de producciones
@@ -43,6 +19,19 @@ public class LL1ParsingTable {
     private Map<Terminal, Integer> ubicacionesTerminales = new Map<>();
 
     private Grammar grammar; // gramatica asociada
+
+    private static final String[] ORDEN_NO_TERMINALES = {
+            "programa","lista_sent","sent_final","sentencia","lista_id",
+            "id_final","lista_expr","lista_exprfinal","expr_bool","expresion",
+            "expr_final","expr_arit","tipo","operador","operel","inicio"
+    };
+
+    private static final String[] ORDEN_TERMINALES = {
+            "Programa","id","Inicio","Fin",";","=","Leer","(",")","Escribir",
+            "Si","Entonces","Sino",",","literalentera","literalreal",
+            "Entero","Real","+","-","*",
+            ">","<","<>","=="
+    };
 
 
     private final int ID = 295;
@@ -54,62 +43,149 @@ public class LL1ParsingTable {
      */
     public LL1ParsingTable(Grammar grammar) {
         this.grammar = grammar;
-        crearTabla();
+
+
+        // codigo duro
+        for (int i = 0; i < ORDEN_TERMINALES.length; i++) {
+            ubicacionesTerminales.put(new Terminal(ORDEN_TERMINALES[i]), i);
+        }
+
+        for (int i = 0; i < ORDEN_NO_TERMINALES.length; i++) {
+            ubicacionesNoTerminales.put(new NoTerminal(ORDEN_NO_TERMINALES[i]), i);
+        }
+
+        this.matriz = new int[ORDEN_NO_TERMINALES.length][ORDEN_TERMINALES.length];
+
         llenarTabla();
+
     }
 
-    /**
-     * Inicializa la estructura de la tabla LL(1)
-     *
-     * - Asigna una fila a cada no terminal
-     * - Asigna una columna a cada terminal (excepto epsilon)
-     * - Crea la matriz de enteros para almacenar las producciones
-     */
-    private void crearTabla() {
-        int altura = grammar.getNoTerminales().nodosExistentes();
-        int anchura = grammar.getTerminales().nodosExistentes();
 
-        for (int i = 0; i < altura; i++) {
-            ubicacionesNoTerminales.put( grammar.getNoTerminales().obtener(i), i);
-        }
+//    /**
+//     * Para cada A -> a:
+//     *  - Se agrega entradas para FIRST(a)
+//     *  - sI first(A) contiene epsilon, se agregan entradas para FOLLOW(A)
+//     */
+//    private void llenarTabla() {
+//        Lista<Production> producciones = grammar.getProducciones();
+//
+//        for (Production p : producciones) {
+//            NoTerminal A = p.getIzquierda();
+//            Lista<Symbol> alpha = p.getDerecha();
+//
+//            Conjunto<Terminal> firstAlpha = new Conjunto<>();
+//
+//            for (Terminal t : firstAlpha) {
+//                if (!(t instanceof Epsilon)) {
+//                    agregarUbicacion(A, t, p.getId());
+//                }
+//            }
+//
+//            if (firstAlpha.contiene(Epsilon.getInstance())) {
+//                Conjunto<Terminal> followA = new Conjunto<>();
+//
+//                for (Terminal t : followA) {
+//                    agregarUbicacion(A, t, p.getId());
+//                }
+//            }
+//        }
+//    }
 
-        for (int i = 0; i < anchura; i++) {
-            if (grammar.getTerminales().obtener(i) instanceof Epsilon) continue;
-            ubicacionesTerminales.put(grammar.getTerminales().obtener(i), i);
-        }
 
-        this.matriz = new int[altura][anchura];
-    }
-
-    /**
-     * Para cada A -> a:
-     *  - Se agrega entradas para FIRST(a)
-     *  - sI first(A) contiene epsilon, se agregan entradas para FOLLOW(A)
-     */
     private void llenarTabla() {
-        Lista<Production> producciones = grammar.getProducciones();
 
-        for (Production p : producciones) {
-            NoTerminal A = p.getIzquierda();
-            Lista<Symbol> alpha = p.getDerecha();
+        // programa
+        agregarUbicacion("programa", "Programa", 1);
 
-            Conjunto<Terminal> firstAlpha = grammar.firstDeSecuencia(alpha);
+        // lista_sent
+        agregarUbicacion("lista_sent", "id", 2);
+        agregarUbicacion("lista_sent", "Leer", 2);
+        agregarUbicacion("lista_sent", "Escribir", 2);
+        agregarUbicacion("lista_sent", "Entero", 2);
+        agregarUbicacion("lista_sent", "Real", 2);
+        agregarUbicacion("lista_sent", "Si", 2);
 
-            for (Terminal t : firstAlpha) {
-                if (!(t instanceof Epsilon)) {
-                    agregarUbicacion(A, t, p.getId());
-                }
-            }
+        // sent_final
+        agregarUbicacion("sent_final", "id", 3);
+        agregarUbicacion("sent_final", "Fin", 4);
+        agregarUbicacion("sent_final", "Leer", 3);
+        agregarUbicacion("sent_final", "Escribir", 3);
+        agregarUbicacion("sent_final", "Entero", 3);
+        agregarUbicacion("sent_final", "Real", 3);
+        agregarUbicacion("sent_final", "Si", 3);
 
-            if (firstAlpha.contiene(Epsilon.getInstance())) {
-                Conjunto<Terminal> followA = grammar.getFollow().get(A);
+        // sentencia
+        agregarUbicacion("sentencia", "id", 6);
+        agregarUbicacion("sentencia", "Leer", 7);
+        agregarUbicacion("sentencia", "Escribir", 8);
+        agregarUbicacion("sentencia", "Entero", 5);
+        agregarUbicacion("sentencia", "Real", 5);
+        agregarUbicacion("sentencia", "Si", 9);
 
-                for (Terminal t : followA) {
-                    agregarUbicacion(A, t, p.getId());
-                }
-            }
-        }
+        // lista_id
+        agregarUbicacion("lista_id", "id", 10);
+
+        // id_final
+        agregarUbicacion("id_final", ",", 11);
+        agregarUbicacion("id_final", ";", 12);
+        agregarUbicacion("id_final", ")", 12);
+
+        // lista_expr
+        agregarUbicacion("lista_expr", "id", 13);
+        agregarUbicacion("lista_expr", "(", 13);
+        agregarUbicacion("lista_expr", "literalentera", 13);
+        agregarUbicacion("lista_expr", "literalreal", 13);
+
+        // lista_exprfinal - CORREGIDO
+        agregarUbicacion("lista_exprfinal", ",", 14);  // CAMBIO: era "=" ahora ","
+        agregarUbicacion("lista_exprfinal", ")", 15);
+
+        // expr_bool
+        agregarUbicacion("expr_bool", "id", 16);
+        agregarUbicacion("expr_bool", "literalentera", 16);
+        agregarUbicacion("expr_bool", "literalreal", 16);
+        agregarUbicacion("expr_bool", "(", 16);
+
+        // expresion
+        agregarUbicacion("expresion", "id", 17);
+        agregarUbicacion("expresion", "literalentera", 17);
+        agregarUbicacion("expresion", "literalreal", 17);
+        agregarUbicacion("expresion", "(", 17);
+
+        // expr_final - CORREGIDO
+        agregarUbicacion("expr_final", ";", 19);
+        agregarUbicacion("expr_final", ",", 19);
+        agregarUbicacion("expr_final", ")", 19); // AGREGADOmq
+        agregarUbicacion("expr_final", "+", 18);
+        agregarUbicacion("expr_final", "-", 18);
+        agregarUbicacion("expr_final", "*", 18);
+
+
+        // expr_arit
+        agregarUbicacion("expr_arit", "id", 21);
+        agregarUbicacion("expr_arit", "literalentera", 22);
+        agregarUbicacion("expr_arit", "literalreal", 23);
+        agregarUbicacion("expr_arit", "(", 20);
+
+        // tipo
+        agregarUbicacion("tipo", "Entero", 24);
+        agregarUbicacion("tipo", "Real", 25);
+
+        // operador
+        agregarUbicacion("operador", "+", 26);
+        agregarUbicacion("operador", "-", 27);
+        agregarUbicacion("operador", "*", 28);
+
+        // operel
+        agregarUbicacion("operel", ">", 29);
+        agregarUbicacion("operel", "<", 30);
+        agregarUbicacion("operel", "<>", 31);
+        agregarUbicacion("operel", "==", 32);
+
+        // inicio
+        agregarUbicacion("inicio", "Programa", 33);
     }
+
 
     /**
      * Asigna una produccion a una celda especifica de la tabla
@@ -118,11 +194,9 @@ public class LL1ParsingTable {
      * @param t terminal (columna)
      * @param valor identificador de la produccion
      */
-    private void agregarUbicacion(NoTerminal nt, Terminal t, int valor) {
-        int fila = ubicacionesNoTerminales.get(nt);
-        int columna = ubicacionesTerminales.get(t);
-
-
+    private void agregarUbicacion(String nt, String t, int valor) {
+        int fila = ubicacionesNoTerminales.get(new NoTerminal(nt));
+        int columna = ubicacionesTerminales.get(new Terminal(t));
 
         matriz[fila][columna] = valor;
     }
@@ -146,6 +220,11 @@ public class LL1ParsingTable {
                         || TablaCaracteresSimples.existe(t.getLexema())
             )
             terminal = new Terminal(t.getLexema());
+        else if (t.getTipo() == TiposTokens.NUMERO_NATURAL) {
+            terminal = new Terminal("literalentera");
+        } else if (t.getTipo() == TiposTokens.NUMERO_REAL) {
+            terminal = new Terminal("literalreal");
+        }
 
         int posicion;
         try {

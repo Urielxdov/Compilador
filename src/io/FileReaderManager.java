@@ -1,11 +1,10 @@
 package io;
 
-
-import data_structures.Lista;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FileReaderManager
@@ -26,15 +25,11 @@ import java.io.IOException;
  * unicamente lo carga en memoria
  */
 public class FileReaderManager {
-    /**
-     * Lector de archivos (no expone directamente)
-     */
-    private FileReader lector;
     /**Contenido del archivo leido, linea por linea*/
-    private Lista<String> programa;
+    private List<String> programa;
 
     public FileReaderManager(){
-        this.programa = new Lista<>();
+        this.programa = new ArrayList<>();
     }
 
     /**
@@ -44,11 +39,11 @@ public class FileReaderManager {
      * @param ruta ubicacion del archivo
      * @return lista de lineas leidas o null si ocurre un error
      */
-    public Lista<String> leerArchivo (RutaArchivos ruta) {
+    public List<String> leerArchivo (RutaArchivos ruta) {
         try (BufferedReader br = new BufferedReader(new FileReader(ruta.ruta))) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                programa.agregar(linea);
+                programa.add(linea);
             }
         } catch (IOException e) {
             System.out.println("Error al momento de leer el archivo");

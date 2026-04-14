@@ -13,8 +13,10 @@ public class Comparator {
         switch (value) {
             case "id":
                 return token.getTipo().equals(TiposTokens.IDENTIFICADOR);
-            case "intLiteral":
-                return token.getTipo().equals(TiposTokens.NUMERO_NATURAL) || token.getTipo().equals(TiposTokens.NUMERO_FLOTANTE);
+            case "literalentera":
+                return token.getTipo().equals(TiposTokens.NUMERO_NATURAL);
+            case "literalreal":
+                return token.getTipo().equals(TiposTokens.NUMERO_REAL);
             default:
                 return TablaPalabrasReservadas.existe(value) || TablaCaracteresSimples.existe(value);
         }

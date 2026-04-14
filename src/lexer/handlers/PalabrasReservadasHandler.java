@@ -1,31 +1,49 @@
 package lexer.handlers;
 
 import lexer.Context;
+import lexer.Token;
+import lexer.constants.TablaPalabrasReservadas;
+import lexer.constants.TiposTokens;
+
 
 /**
- * Nota de diseño:
- * El reconocimiento de plabras reservadas se realiza dentro de
- * {@link IdentificadoresHandler} como parte de las reglas del lenguaje,
- * donde las palabras reservadas se distinguen por iniciar con mayuscula
- *
- * Esta clase se dejo como placeholder para posible separacion
- * futura de responsabilidades
+ * Handler lexico encargado de reconocer palabras reservadas
+ * - Las palabras reservadas se definen en el Context
+ * - Este handler solo extrae lexemas que coincidan con palabras reservadas
  */
 public class PalabrasReservadasHandler implements TokenHandler {
+
     @Override
     public boolean accept(char c) {
-        return (c >= 97 && c <= 122) || (c >= 65 && c <= 90);
+        return Character.isLetter(c);
+    }
+    
+
+    private boolean accept(String cadena) {
+        return TablaPalabrasReservadas.existe(cadena);
     }
 
-    @Override
-    public boolean proccessChar(Context ctx) {
+    /**
+     * Extrae un lexema que corresponda a una palabra reservada
+     * Devuelve null si no se reconoce ninguna palabra reservada
+     */
+    public Token extractLexeme(Context ctx) {
         String linea = ctx.getLineaActual();
-        int pos = ctx.getPunteroFinal();
+        int inicio = ctx.getPunteroInicial();
+        int pos = inicio;
 
-        if (pos >= linea.length()) return false;
+        // Solo letras consecutivas
+        while (pos < linea.length() && accept(linea.charAt(pos))) pos++;
 
+        if (pos == inicio) return null; // No hay letras
 
+        String lexema = linea.substring(inicio, pos);
 
-        return false;
+        // Verifica si es palabra reservada
+        if (accept(lexema)) {
+            return new Token(TablaPalabrasReservadas.getValor(lexema), lexema, TiposTokens.PALABRA_RESERVADA);  
+        }
+
+        return null; // No es palabra reservada
     }
 }
