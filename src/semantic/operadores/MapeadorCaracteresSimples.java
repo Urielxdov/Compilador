@@ -14,6 +14,8 @@ public class MapeadorCaracteresSimples {
                 return "OPERADOR_RESTA";
             case "*":
                 return "OPERADOR_MULTIPLICACION";
+            case "/":
+                return "OPERADOR_DIVISION";
             case "=":
                 return "ASIGNACION";
             case ";":

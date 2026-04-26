@@ -28,6 +28,7 @@ public class TablaCaracteresSimples{
         CARACTERES_SIMPLES.put("+", (int) '+');
         CARACTERES_SIMPLES.put("-", (int) '-');
         CARACTERES_SIMPLES.put("*", (int) '*');
+        CARACTERES_SIMPLES.put("/", (int) '/');
         CARACTERES_SIMPLES.put("(", (int) '(');
         CARACTERES_SIMPLES.put(")", (int) ')');
         CARACTERES_SIMPLES.put(",", (int) ',');

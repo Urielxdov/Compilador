@@ -27,9 +27,7 @@ public class SymbolInputTable {
     /** Registra una nueva aparición del mismo lexema */
     public void registrarAparicion(int numeroLinea) {
         repeticiones++;
-        if (!lineas.contains(numeroLinea)) {
-            lineas.add(numeroLinea);
-        }
+        lineas.add(numeroLinea);
     }
 
     // Getters...

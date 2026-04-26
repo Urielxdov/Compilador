@@ -1,10 +1,9 @@
-Iniciar
-    Int a, b, c;
-    a = 0;
-    b = 0;
-    c = 0;
-    Leer a;
-    Leer b;
-    c = a * b - 3 * 2.5;
-    Mostrar c;
+Inicio Programa4
+ Int edad, anioNacimiento, peso;
+ Real estatura;
+ edad = 20;
+ anioNacimiento = 2006;
+ estatura = 1.75;
+ peso = estatura + edad;
+ Mostrar peso;
 Finalizar

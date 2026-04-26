@@ -5,10 +5,10 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 
 /**
- * Handler que reconoce números naturales
- * - Solo dígitos
- * - No puede empezar con '0' a menos que sea parte de un flotante
- * - No puede contener letras
+ * Handler que reconoce numeros naturales
+ * - Solo digitos
+ * - Permite 0 como literal valido
+ * - Rechaza enteros con ceros a la izquierda
  */
 public class NumeroNaturalesHandler implements TokenHandler {
     private final int ATRIBUTO = 297;
@@ -25,7 +25,7 @@ public class NumeroNaturalesHandler implements TokenHandler {
         int pos = inicio;
 
         if (pos >= linea.length() || !Character.isDigit(linea.charAt(pos))) {
-            return null; // No empieza con dígito
+            return null;
         }
 
         boolean empiezaCero = linea.charAt(pos) == '0';
@@ -35,19 +35,21 @@ public class NumeroNaturalesHandler implements TokenHandler {
             pos++;
         }
 
-        // Validaciones
-        if (empiezaCero && (pos >= linea.length() || linea.charAt(pos) != '.')) {
-            return null; // Número natural inválido que empieza con 0
+        if (empiezaCero && (pos - inicio) > 1) {
+            return null;
         }
 
         if (pos < linea.length()) {
             char next = linea.charAt(pos);
-            if (next == '.') return null;       // Flotante, lo maneja otro handler
-            if (Character.isLetter(next)) return null; // Letra después de número -> inválido
+            if (next == '.') {
+                return null;
+            }
+            if (Character.isLetter(next)) {
+                return null;
+            }
         }
 
         String lexema = linea.substring(inicio, pos);
-
         return new Token(ATRIBUTO, lexema, TiposTokens.NUMERO_NATURAL);
     }
 }

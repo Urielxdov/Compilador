@@ -19,7 +19,7 @@ public class CaracterSimpleHandler implements TokenHandler {
     @Override
     public boolean accept(char c) {
         return (c == 59) || (c == 61) || (c == 43) || (c == 45)
-                || (c == 42) || (c == 40) || (c == 41) || (c == 44)
+                || (c == 42) || (c == 47) || (c == 40) || (c == 41) || (c == 44)
                 || (c == 60) || (c == 62);
     }
 

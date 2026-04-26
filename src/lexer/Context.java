@@ -61,6 +61,7 @@ public class Context {
         this.caracteresSimples.add("+");
         this.caracteresSimples.add("-");
         this.caracteresSimples.add("*");
+        this.caracteresSimples.add("/");
         this.caracteresSimples.add("(");
         this.caracteresSimples.add(")");
         this.caracteresSimples.add(",");
@@ -204,7 +205,7 @@ public class Context {
 
 
     public void agregarToken(Token token) {
-        this.tokens.add(new NodoLineaToken(numeroLinea, token));
+        this.tokens.add(new NodoLineaToken(numeroLinea + 1, token));
     }
 
     public Lista<Token> getTokens() {

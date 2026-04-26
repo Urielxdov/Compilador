@@ -5,10 +5,10 @@ import lexer.Token;
 import lexer.constants.TiposTokens;
 
 /**
- * Handler que reconoce números flotantes
- * - Secuencias de dígitos con un solo punto decimal
- * - Rechaza números con más de un punto
- * - No acepta letras inmediatamente después del primer dígito
+ * Handler que reconoce numeros flotantes
+ * - Secuencias de digitos con un solo punto decimal
+ * - Rechaza numeros con mas de un punto
+ * - No acepta letras inmediatamente despues del primer digito
  */
 public class NumeroFloatHandler implements TokenHandler {
     private final int ATRIBUTO = 296;
@@ -25,24 +25,29 @@ public class NumeroFloatHandler implements TokenHandler {
         int pos = inicio;
 
         if (pos >= linea.length() || !Character.isDigit(linea.charAt(pos))) {
-            return null; // No empieza con dígito
+            return null;
         }
 
         int numeroPuntos = 0;
 
         while (pos < linea.length() && accept(linea.charAt(pos))) {
-            if (linea.charAt(pos) == '.') numeroPuntos++;
+            if (linea.charAt(pos) == '.') {
+                numeroPuntos++;
+            }
             pos++;
         }
 
-        // Validaciones
-        if (numeroPuntos > 1) return null;         // más de un punto
-        if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) return null; // dígito seguido de letra
+        if (numeroPuntos != 1) {
+            return null;
+        }
+        if (pos < linea.length() && Character.isLetter(linea.charAt(pos))) {
+            return null;
+        }
 
         String lexema = linea.substring(inicio, pos);
-
-        // No permitir números que terminan con punto
-        if (lexema.endsWith(".")) return null;
+        if (lexema.endsWith(".")) {
+            return null;
+        }
 
         return new Token(ATRIBUTO, lexema, TiposTokens.NUMERO_REAL);
     }

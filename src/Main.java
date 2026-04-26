@@ -1,9 +1,12 @@
 import java.util.List;
 
+import io.FileReaderManager;
+import io.RutaArchivos;
 import lexer.Lexer;
 import lexer.constants.TiposTokens;
-import lexer.table.SymbolTable;
 import lexer.tokens.NodoLineaToken;
+import semantic.SemanticAnalyzer;
+import semantic.SemanticReport;
 import semantic.operadores.MapeadorCaracteresSimples;
 
 public class Main {
@@ -33,6 +36,15 @@ public class Main {
         lex.all();
 
         List<NodoLineaToken> tokens = lex.obtenerTokensLinea();
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+        SemanticReport semanticReport = semanticAnalyzer.analyze(tokens);
+
+        System.out.println("ARCHIVO DE PRUEBA");
+        List<String> programa = new FileReaderManager().leerArchivo(RutaArchivos.PROGRAMA);
+        for (int i = 0; i < programa.size(); i++) {
+            System.out.printf("%-4d %s%n", i + 1, programa.get(i));
+        }
+        System.out.println();
 
         System.out.printf("%-10s %-10s %-25s%n", "NUMERO LINEA", "LEXEMA", "TIPO");
         System.out.println("----------------------------------------------------");
@@ -56,9 +68,10 @@ public class Main {
 
 
         }
-        System.out.println(lex.obtenerSimbolos());
-
-        SymbolTable tabla = SymbolTable.construir(lex.getCtx());
-        System.out.println(tabla);
+        System.out.println();
+        System.out.println("TABLA DE SIMBOLOS");
+        System.out.println(semanticReport.renderSymbolTable());
+        System.out.println("VERIFICACION DE TIPOS");
+        System.out.println(semanticReport.renderTypeVerification());
     }
 }
