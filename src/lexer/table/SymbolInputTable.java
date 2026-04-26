@@ -24,13 +24,31 @@ public class SymbolInputTable {
         this.valorInicial = token.getLexema();
     }
 
+    public void setValorInicial(String valorInicial) {
+        if (valorInicial == null || valorInicial.isEmpty()) {
+            return;
+        }
+        if (this.tipo == TiposTokens.IDENTIFICADOR && !esValorInicialNumerico()) {
+            this.valorInicial = valorInicial;
+        }
+    }
+
+    private boolean esValorInicialNumerico() {
+        try {
+            Double.parseDouble(this.valorInicial);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     /** Registra una nueva aparición del mismo lexema */
     public void registrarAparicion(int numeroLinea) {
         repeticiones++;
         lineas.add(numeroLinea);
     }
 
-    // Getters...
+
     public String getLexema()       { return lexema; }
     public TiposTokens getTipo()    { return tipo; }
     public int getIdToken()         { return idToken; }
