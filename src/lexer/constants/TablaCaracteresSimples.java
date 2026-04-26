@@ -1,5 +1,8 @@
 package lexer.constants;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import data_structures.Set;
 
 /**
@@ -16,21 +19,23 @@ import data_structures.Set;
  */
 public class TablaCaracteresSimples{
     /**Conjunto de simbolos simples reconocidos por el lenguaje*/
-    final static Set<Elemento> CARACTERES_SIMPLES = new Set<>();
+    //final static Set<Elemento> CARACTERES_SIMPLES = new Set<>();
+    final static Map<String, Integer> CARACTERES_SIMPLES = new HashMap<>();
 
     static {
-        CARACTERES_SIMPLES.add(new Elemento(";", ';'));
-        CARACTERES_SIMPLES.add(new Elemento("=", '='));
-        CARACTERES_SIMPLES.add(new Elemento("+", '+'));
-        CARACTERES_SIMPLES.add(new Elemento("-", '-'));
-        CARACTERES_SIMPLES.add(new Elemento("*", '*'));
-        CARACTERES_SIMPLES.add(new Elemento("(", '('));
-        CARACTERES_SIMPLES.add(new Elemento(")", ')'));
-        CARACTERES_SIMPLES.add(new Elemento(",", ','));
-        CARACTERES_SIMPLES.add(new Elemento("<", '<'));
-        CARACTERES_SIMPLES.add(new Elemento(">", '>'));
-        CARACTERES_SIMPLES.add(new Elemento("==", '='));
-        CARACTERES_SIMPLES.add(new Elemento("<>", '<'));
+        CARACTERES_SIMPLES.put(";", (int) ';');
+        CARACTERES_SIMPLES.put("=", (int) '=');
+        CARACTERES_SIMPLES.put("+", (int) '+');
+        CARACTERES_SIMPLES.put("-", (int) '-');
+        CARACTERES_SIMPLES.put("*", (int) '*');
+        CARACTERES_SIMPLES.put("/", (int) '/');
+        CARACTERES_SIMPLES.put("(", (int) '(');
+        CARACTERES_SIMPLES.put(")", (int) ')');
+        CARACTERES_SIMPLES.put(",", (int) ',');
+        CARACTERES_SIMPLES.put("<", (int) '<');
+        CARACTERES_SIMPLES.put(">", (int) '>');
+        CARACTERES_SIMPLES.put("==", (int) '=');
+        CARACTERES_SIMPLES.put("<>", (int) '<');
     }
     private TablaCaracteresSimples() {}
 
@@ -42,31 +47,7 @@ public class TablaCaracteresSimples{
      * @return true si el simbolo existe
      */
     public static boolean existe(String s) {
-        for (Elemento elemento : CARACTERES_SIMPLES)
-            if (elemento.clave.equals(s)) return true;
-        return false;
+        return CARACTERES_SIMPLES.containsKey(s);
     }
 
-    /**
-     * Representa un simbolo lexico simple
-     * Asocia la representacion textual con su valor interno
-     */
-    static class Elemento {
-        private String clave;
-        private int valor;
-
-        public Elemento (String clave, int valor) {
-            this.clave = clave;
-            this.valor = valor;
-        }
-
-        public String getClave() {
-            return clave;
-        }
-
-
-        public int getValor () {
-            return valor;
-        }
-    }
 }

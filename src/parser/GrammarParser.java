@@ -1,6 +1,8 @@
 package parser;
 
-import data_structures.Lista;
+import java.util.ArrayList;
+import java.util.List;
+
 import data_structures.Set;
 import lexer.constants.TablaCaracteresSimples;
 import parser.grammar.*;
@@ -60,12 +62,12 @@ public class GrammarParser {
      * el símbolo inicial.
      */
     public void ejecutar() {
-        Lista<String> gramatica = grammarReader.leerGramatica();
+        List<String> gramatica = grammarReader.leerGramatica();
 
         int contador = 1;
         for (String s : gramatica) {
             NoTerminal lhs = obtenerLHS(s);
-            grammar.agregarProduccion(new Production(lhs, new Lista<Symbol>(), contador++));
+            grammar.agregarProduccion(new Production(lhs, new ArrayList<Symbol>(), contador++));
 
         }
         contador = 1;
@@ -74,12 +76,12 @@ public class GrammarParser {
             int inicioRHS = inicioProduccion(s);
 
             if (lhs != null && inicioRHS != -1) {
-                Lista<Symbol> rhs = obtenerRHS(s, inicioRHS);
+                List<Symbol> rhs = obtenerRHS(s, inicioRHS);
 
                 Production p = grammar.getProduccion(contador);
 
                 for (Symbol symbol : rhs) {
-                    p.getDerecha().agregar(symbol);
+                    p.getDerecha().add(symbol);
                 }
 
                 for (Symbol sym : rhs) {
@@ -102,8 +104,8 @@ public class GrammarParser {
      * @param inicio índice donde inicia el RHS
      * @return lista de símbolos que conforman la producción
      */
-    private Lista<Symbol> obtenerRHS (String linea, int inicio) {
-        Lista<Symbol> rhs = new Lista<>();
+    private List<Symbol> obtenerRHS (String linea, int inicio) {
+        List<Symbol> rhs = new ArrayList<>();
 
         int fin = inicio;
 
@@ -116,7 +118,7 @@ public class GrammarParser {
             }
 
             if (isEpsilon(linea.charAt(fin))) {
-                rhs.agregar(new Epsilon());
+                rhs.add(new Epsilon());
                 fin++;
                 inicio = fin;
                 continue;
@@ -129,7 +131,7 @@ public class GrammarParser {
                         String doble = "" + actual + siguiente;
 
                         if (doble.equals("==") || doble.equals("<>")) {
-                            rhs.agregar(new Terminal(doble));
+                            rhs.add(new Terminal(doble));
                             fin += 2;
                             inicio = fin;
                             continue;
@@ -137,7 +139,7 @@ public class GrammarParser {
                     }
 
                     // Si no es doble, es simple: ')', ';', etc.
-                    rhs.agregar(new Terminal(String.valueOf(actual)));
+                    rhs.add(new Terminal(String.valueOf(actual)));
                     fin++;
                     inicio = fin;
                     continue;
@@ -151,14 +153,14 @@ public class GrammarParser {
 
             for (NoTerminal nt : grammar.getNoTerminales()) {
                 if (nt.equals(palabra)) {
-                    rhs.agregar(new NoTerminal(palabra));
+                    rhs.add(new NoTerminal(palabra));
                     encontrado = true;
                     break;
                 }
             }
 
             if (!encontrado) {
-                rhs.agregar(new Terminal(palabra));
+                rhs.add(new Terminal(palabra));
             }
 
             inicio = fin;
@@ -192,10 +194,10 @@ public class GrammarParser {
         Set<NoTerminal> lhs = new Set<>();
         Set<NoTerminal> rhs = new Set<>();
 
-        for (int i = 0; i < grammar.getProducciones().nodosExistentes(); i++) {
-            lhs.add(grammar.getProducciones().obtener(i).getIzquierda());
-            for (int j = 0; j < grammar.getProducciones().obtener(i).getDerecha().nodosExistentes(); j++) {
-                Symbol symbol = grammar.getProducciones().obtener(i).getDerecha().obtener(j);
+        for (int i = 0; i < grammar.getProducciones().size(); i++) {
+            lhs.add(grammar.getProducciones().get(i).getIzquierda());
+            for (int j = 0; j < grammar.getProducciones().get(i).getDerecha().size(); j++) {
+                Symbol symbol = grammar.getProducciones().get(i).getDerecha().get(j);
                 if (symbol instanceof NoTerminal) {
                     rhs.add((NoTerminal) symbol);
                 }

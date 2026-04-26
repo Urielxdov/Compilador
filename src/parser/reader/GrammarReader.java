@@ -1,6 +1,7 @@
 package parser.reader;
 
-import data_structures.Lista;
+import java.util.List;
+
 import io.FileReaderManager;
 import io.RutaArchivos;
 
@@ -22,8 +23,8 @@ public class GrammarReader {
      *
      * @return lista de cadenas que representan la gramatica
      */
-    public Lista<String> leerGramatica() {
-        Lista<String> gramatica = lector.leerArchivo(RutaArchivos.GRAMATICA);
+    public List<String> leerGramatica() {
+        List<String> gramatica = lector.leerArchivo(RutaArchivos.GRAMATICA);
         return gramatica;
     }
 }

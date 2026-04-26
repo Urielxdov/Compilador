@@ -1,10 +1,11 @@
 package parser.ll1;
 
-import data_structures.Pila;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import lexer.Lexer;
 import lexer.Token;
 import parser.grammar.*;
-import semantic.ast.ASTNode;
 
 /**
  * Implementacion de un LL(1)
@@ -32,8 +33,8 @@ import semantic.ast.ASTNode;
 public class LL1Parser {
     private Grammar grammar; // Gramatica LL(1)
     private LL1ParsingTable tabla; // Tabla de analisis predictivo LL(1)
-    private Pila<Symbol> pila; // Pila de simbolos del parser
-    private Pila<ASTNode> pilaAST;
+    private Deque<Symbol> pila; // Pila de simbolos del parser
+    //private Pila<ASTNode> pilaAST;
     private Lexer lexer; // Fuente de tokens
 
     /**
@@ -46,8 +47,8 @@ public class LL1Parser {
     public LL1Parser(Grammar grammar, LL1ParsingTable tabla, Lexer lexer) {
         this.grammar = grammar;
         this.tabla = tabla;
-        this.pila = new Pila<>();
-        this.pilaAST = new Pila<>();
+        this.pila = new ArrayDeque<>();
+        //this.pilaAST = new Pila<>();
         this.lexer = lexer;
     }
 
@@ -74,7 +75,7 @@ public class LL1Parser {
         Symbol x = pila.peek();
         Token a = lexer.next(); // inicializa pa
         int paso = 1;
-        while (!pila.esVacia()) {
+        while (!pila.isEmpty()) {
             System.out.println(String.valueOf(paso)+ ".- Token actual: " + a.getLexema() + "\nContenido de la pila:"+ pila.toString());
             if (x instanceof NoTerminal) {
                 int posicion = tabla.getNumeroProduccion((NoTerminal) x, a);
@@ -86,13 +87,13 @@ public class LL1Parser {
                     if (p == null) {
                         System.out.println("dime");
                     }
-                    for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
-                        pila.push(p.getDerecha().obtener(i));
+                    for (int i = p.getDerecha().size() - 1; i >= 0; i--) {
+                        pila.push(p.getDerecha().get(i));
                     }
                     x = pila.peek();
                 } else {
                     System.out.println("Se produjo un error sintacto, se esperaba un '" + x.getNombre() + "' y se obtuvo un '" + a.getLexema() + "'");
-                    return;
+                    break;
                 }
             } else {
                 if (Comparator.comapare(a, x)) {
@@ -114,10 +115,13 @@ public class LL1Parser {
                 }
                 else {
                     System.out.println("Error sintactico 2");
+                    break;
                 }
             }
             paso++;
         }
+        System.out.println("Vamos a imprir");
+        System.out.println(lexer.toString());
     }
 
 

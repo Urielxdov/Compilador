@@ -1,0 +1,12 @@
+Inicio Programa3
+ Int a, b, resultado;
+ Real base, altura, area;
+ a = 3; b = 7; resultado = a * b + 2;
+ base = 5.0;
+ altura = 4.0;
+ area = base * altura / 2.0;
+ Leer a;
+ Leer base;
+ Mostrar resultado;
+ Mostrar area;
+Finalizar

@@ -1,20 +1,21 @@
 package parser.grammar;
 
-import data_structures.Lista;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Grammar {
     // Gramatica completa
-    private Lista<Terminal> terminales;
-    private Lista<NoTerminal> noTerminales;
-    private Lista<Production> producciones;
+    private List<Terminal> terminales;
+    private List<NoTerminal> noTerminales;
+    private List<Production> producciones;
 
     private NoTerminal simboloInicial;
 
 
     public Grammar() {
-        terminales = new Lista<>();
-        noTerminales = new Lista<>();
-        producciones = new Lista<>();
+        terminales = new ArrayList<>();
+        noTerminales = new ArrayList<>();
+        producciones = new ArrayList<>();
 
     }
 
@@ -24,31 +25,31 @@ public class Grammar {
     }
 
     public void agregarNoTerminal(NoTerminal s) {
-        if (this.noTerminales.existe(s)) return;
-        this.noTerminales.agregar(s);
+        if (this.noTerminales.contains(s)) return;
+        this.noTerminales.add(s);
     }
 
 
     public void agregarProduccion(Production p) {
-        this.producciones.agregar(p);
+        this.producciones.add(p);
     }
 
-    public Lista<Terminal> getTerminales() {
+    public List<Terminal> getTerminales() {
         return terminales;
     }
 
 
     public boolean terminalExiste(Terminal t) {
-        return terminales.existe(t);
+        return terminales.contains(t);
     }
 
     public void agregarTerminal(Terminal t) {
         if (t == null) return;
         if (terminalExiste(t)) return;
-        terminales.agregar(t);
+        terminales.add(t);
     }
 
-    public Lista<Production> getProducciones() {
+    public List<Production> getProducciones() {
         return producciones;
     }
 
@@ -64,6 +65,6 @@ public class Grammar {
     }
 
 
-    public Lista<NoTerminal> getNoTerminales () { return noTerminales; }
+    public List<NoTerminal> getNoTerminales () { return noTerminales; }
 
 }

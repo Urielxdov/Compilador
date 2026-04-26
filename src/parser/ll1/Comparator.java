@@ -16,7 +16,7 @@ public class Comparator {
             case "literalentera":
                 return token.getTipo().equals(TiposTokens.NUMERO_NATURAL);
             case "literalreal":
-                return token.getTipo().equals(TiposTokens.NUMERO_FLOTANTE);
+                return token.getTipo().equals(TiposTokens.NUMERO_REAL);
             default:
                 return TablaPalabrasReservadas.existe(value) || TablaCaracteresSimples.existe(value);
         }
