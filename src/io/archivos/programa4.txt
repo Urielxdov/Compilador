@@ -1,0 +1,9 @@
+Inicio Programa4
+ Int edad, anioNacimiento, peso;
+ Real estatura;
+ edad = 20;
+ anioNacimiento = 2006;
+ estatura = 1.75;
+ peso = estatura + edad;
+ Mostrar peso;
+Finalizar

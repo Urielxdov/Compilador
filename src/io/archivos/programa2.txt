@@ -1,0 +1,11 @@
+Inicio Programa2
+ Int x, y, z;
+ Real promedio;
+ x = 10;
+ y = 5;
+ z = x + y + 2;
+ promedio = 4.5 + 1.5;
+ Leer x;
+ Mostrar z;
+ Mostrar promedio;
+Finalizar
