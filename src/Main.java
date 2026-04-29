@@ -1,85 +1,82 @@
+import codegen.GeneradorCodigo;
+import codegen.INotacion;
+import codegen.NotacionCuadruplo;
+import codegen.NotacionPostfija;
+import codegen.NotacionPrefija;
+import codegen.Cuadruplo;
+import lexer.Lexer;
+import lexer.Token;
+import parser.GrammarParser;
+import parser.grammar.Grammar;
+import parser.ll1.LL1Parser;
+import parser.ll1.LL1ParsingTable;
+import parser.reader.GrammarReader;
+import semantic.SemanticException;
+import semantic.SymbolTable;
+import semantic.ast.ASTBuilder;
+import semantic.ast.ASTNode;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import lexer.Lexer;
-import lexer.constants.TiposTokens;
-import lexer.tokens.NodoLineaToken;
 public class Main {
+    // Cambia para elegir notacion: CUADRUPLO | POSTFIJA | PREFIJA
+    private static final String NOTACION = "CUADRUPLO";
+
     public static void main(String[] args) {
-//         Grammar grammar = new Grammar();
-//         GrammarParser gp = new GrammarParser(grammar, new GrammarReader());
-//         gp.ejecutar();
-//         System.out.println("Simbolso terminales:\n " + grammar.getTerminales());
-//         System.out.println("Simbolos no terminales:\n" + grammar.getNoTerminales());
-//         System.out.println("Lados derechos:\n");
-//         for(Production p : grammar.getProducciones()) {
-//             System.out.println(p.getDerecha());
-//         }
-// //        System.out.println("Terminales");
-// //        System.out.println(grammar.getTerminales());
-// //        System.out.println("No terminales");
-// //        System.out.println(grammar.getNoTerminales());
-// //        System.out.println(grammar.getProducciones());
-// //        GrammarAnalysis ga = new GrammarAnalysis(grammar);
-// //        ga.calcularFirst();
-// //        ga.calcularFollow();
-//         LL1ParsingTable l = new LL1ParsingTable(grammar);
-//         System.out.println(l);
-//         LL1Parser lp = new LL1Parser(grammar, l, new Lexer());
-//         lp.execute();
+
+        // ── 1. ANALISIS LEXICO + SINTACTICO (LL1) ──────────────────────────
+        System.out.println("=== Analisis Sintactico LL(1) ===");
+        try {
+            Grammar grammar = new Grammar();
+            GrammarParser gp = new GrammarParser(grammar, new GrammarReader());
+            gp.ejecutar();
+
+            LL1ParsingTable tabla = new LL1ParsingTable(grammar);
+            LL1Parser lp = new LL1Parser(grammar, tabla, new Lexer());
+            lp.execute();
+        } catch (Exception e) {
+            System.out.println("[LL1] Error: " + e.getMessage());
+        }
+
+        // ── 2. LEXICO (segunda pasada para AST) ────────────────────────────
+        System.out.println("\n=== Construccion AST ===");
         Lexer lex = new Lexer();
         lex.all();
 
-        List<NodoLineaToken> tokens = lex.obtenerTokensLinea();
+        List<Token> tokenList = new ArrayList<>();
+        for (Token t : lex.obtenerTokens()) {
+            tokenList.add(t);
+        }
 
-        System.out.printf("%-10s %-10s %-25s%n", "NUMERO LINEA", "LEXEMA", "TIPO");
-        System.out.println("----------------------------------------------------");
+        // ── 3. ANALISIS SEMANTICO + AST ────────────────────────────────────
+        SymbolTable symbolTable = new SymbolTable();
+        ASTBuilder builder = new ASTBuilder(symbolTable);
+        ASTNode raiz;
 
-        for(NodoLineaToken token : tokens) {
+        try {
+            raiz = builder.construirAST(tokenList);
+        } catch (SemanticException e) {
+            System.out.println("[Semantico] " + e.getMessage());
+            return;
+        } catch (RuntimeException e) {
+            System.out.println("[Sintactico/AST] " + e.getMessage());
+            return;
+        }
 
-            String tipoFinal;
+        // ── 4. GENERACION DE CODIGO INTERMEDIO ─────────────────────────────
+        System.out.println("\n=== Codigo Intermedio [" + NOTACION + "] ===");
+        INotacion notacion = seleccionarNotacion(NOTACION);
+        GeneradorCodigo gen = new GeneradorCodigo(notacion);
+        List<Cuadruplo> codigo = gen.generar(raiz);
+        gen.imprimir(codigo);
+    }
 
-            if (token.getToken().getTipo() == TiposTokens.CARACTER_SIMPLE) {
-
-                switch (token.getToken().getLexema()) {
-
-                    case "+":
-                        tipoFinal = "OPERADOR_SUMA";
-                        break;
-
-                    case "-":
-                        tipoFinal = "OPERADOR_RESTA";
-                        break;
-
-                    case "*":
-                        tipoFinal = "OPERADOR_MULTIPLICACION";
-                        break;
-
-                    case "=":
-                        tipoFinal = "ASIGNACION";
-                        break;
-
-                    case ";":
-                    case ",":
-                    case "(":
-                    case ")":
-                        tipoFinal = "SIMBOLO_ESPECIAL";
-                        break;
-
-                    default:
-                        tipoFinal = "DESCONOCIDO";
-                }
-
-            } else {
-
-                tipoFinal = token.getToken().getTipo().toString();
-            }
-
-            System.out.printf(
-                    "%-10s %-10s %-25s%n",
-                    token.getLinea(),
-                    token.getToken().getLexema(),
-                    tipoFinal
-            );
+    private static INotacion seleccionarNotacion(String tipo) {
+        switch (tipo.toUpperCase()) {
+            case "POSTFIJA": return new NotacionPostfija();
+            case "PREFIJA":  return new NotacionPrefija();
+            default:         return new NotacionCuadruplo();
         }
     }
 }
