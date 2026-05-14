@@ -1,117 +1,72 @@
-import assembler.Assembler;
+import assembler.AssemblerDriver;
 import lexer.Lexer;
-import parser.grammar.Grammar;
 import parser.GrammarParser;
+import parser.grammar.Grammar;
 import parser.grammar.Production;
 import parser.ll1.LL1Parser;
 import parser.ll1.LL1ParsingTable;
 import parser.reader.GrammarReader;
+import semantic.SemanticAnalyzer;
+import semantic.SemanticResult;
+import semantic.ast.ASTBuilder;
+import io.RutaArchivos;
 
 public class Main {
+
     public static void main(String[] args) {
-        // --- Pipeline léxico/sintáctico existente ---
+        // Build grammar and LL1 table once (shared across all programs)
         Grammar grammar = new Grammar();
         GrammarParser gp = new GrammarParser(grammar, new GrammarReader());
         gp.ejecutar();
-        System.out.println("Simbolos terminales:\n " + grammar.getTerminales());
-        System.out.println("Simbolos no terminales:\n" + grammar.getNoTerminales());
-        System.out.println("Lados derechos:\n");
-        for (Production p : grammar.getProducciones()) {
-            System.out.println(p.getDerecha());
-        }
-        LL1ParsingTable l = new LL1ParsingTable(grammar);
-        System.out.println(l);
-        LL1Parser lp = new LL1Parser(grammar, l, new Lexer());
-        lp.execute();
+        LL1ParsingTable table = new LL1ParsingTable(grammar);
 
-        // --- Ensamblador ---
-        System.out.println("\n" + "=".repeat(60));
-        System.out.println("FASE DE ENSAMBLADO");
-        System.out.println("=".repeat(60) + "\n");
-        demoEnsamblador();
+        // Run all 10 programs through the gated pipeline
+        RutaArchivos[] programs = {
+            RutaArchivos.PROGRAMA1, RutaArchivos.PROGRAMA2, RutaArchivos.PROGRAMA3,
+            RutaArchivos.PROGRAMA4, RutaArchivos.PROGRAMA5, RutaArchivos.PROGRAMA6,
+            RutaArchivos.PROGRAMA7, RutaArchivos.PROGRAMA8, RutaArchivos.PROGRAMA9,
+            RutaArchivos.PROGRAMA10
+        };
+
+        for (RutaArchivos prog : programs) {
+            runPipeline(grammar, table, prog.ruta);
+        }
     }
 
-    /**
-     * Simula el ensamblado del programa de ejemplo:
-     *
-     *   Programa ejemplo
-     *   Inicio
-     *     Real multiple, cuenta;
-     *     Entero numero, res;
-     *     Leer(numero);
-     *     multiple = 56 + numero;
-     *     Si multiple > 10 Entonces
-     *       Escribir(numero);
-     *     Sino
-     *       Escribir(multiple);
-     *     res = numero + cuenta;
-     *     Escribir(res);
-     *   Fin
-     */
-    private static void demoEnsamblador() {
-        Assembler asm = new Assembler();
+    private static void runPipeline(Grammar grammar, LL1ParsingTable table, String path) {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("Procesando: " + path);
+        System.out.println("=".repeat(60));
 
-        // Inicio de estructura programa
-        asm.iniciarPrograma("ejemplo");
+        // Phase 1: Lexical + Syntactic + AST building
+        ASTBuilder astBuilder = new ASTBuilder();
+        Lexer lexer = new Lexer(path);
+        LL1Parser parser = new LL1Parser(grammar, table, lexer, astBuilder);
+        parser.execute();
 
-        // Declaración de variables: Real multiple, cuenta
-        asm.declararReal("multiple");
-        asm.declararReal("cuenta");
+        if (!astBuilder.isParseOk()) {
+            System.out.println("[ERROR SINTACTICO] Analisis detenido.");
+            return;
+        }
+        System.out.println("[OK] Analisis sintactico exitoso.");
 
-        // Declaración de variables: Entero numero, res
-        asm.declararEntero("numero");
-        asm.declararEntero("res");
+        // Phase 2: Semantic analysis
+        SemanticAnalyzer analyzer = new SemanticAnalyzer();
+        SemanticResult result = analyzer.analyze(astBuilder.getProgram());
 
-        // Leer(numero)
-        asm.leer("numero");
+        if (!result.isSuccess()) {
+            System.out.println("[ERROR SEMANTICO]");
+            for (String err : result.getErrors()) {
+                System.out.println("  " + err);
+            }
+            return;
+        }
+        System.out.println("[OK] Analisis semantico exitoso.");
 
-        // multiple = 56 + numero  →  MOV #56, LOAD numero, ADD, STORE multiple
-        asm.moverInmediato(56);
-        asm.cargar("numero");
-        asm.operacion("+");
-        asm.guardar("multiple");
-
-        // Si multiple > 10 Entonces ...
-        //   Genera: LOAD multiple, CMP #10 (literal), JGT <sino>
-        //   Aquí simplificado: comparamos multiple con numero como ejemplo de uso
-        int pcSaltoSi = asm.compararYSaltar("multiple", "numero", ">");
-
-        // Rama Entonces: Escribir(numero)
-        asm.escribir("numero");
-        int pcSaltoElse = asm.getPC();
-        // JMP para saltar la rama Sino (se parcha después)
-        // Emitimos un JMP placeholder
-        asm.getRegistros(); // accede registros (sin-op aquí, solo demo de acceso)
-
-        // Parcha el salto del Si para que apunte al inicio del Sino
-        asm.cerrarSalto(pcSaltoSi);
-
-        // Rama Sino: Escribir(multiple)
-        asm.escribir("multiple");
-
-        // Fin del Si
-
-        // res = numero + cuenta
-        asm.cargar("numero");
-        asm.cargar("cuenta");
-        asm.operacion("+");
-        asm.guardar("res");
-
-        // Escribir(res)
-        asm.escribir("res");
-
-        // Fin de programa
-        asm.terminarPrograma("ejemplo");
-
-        // Muestra resultados
-        asm.imprimirResumen();
-
-        // Demo de char y cadena
-        System.out.println("\n--- Demo tipos adicionales ---");
-        Assembler asm2 = new Assembler();
-        asm2.declararChar("letra");
-        asm2.declararCadena("mensaje", 20);
-        asm2.declararEntero("contador");
-        System.out.println(asm2.getTablaSimbolos());
+        // Phase 3: Code generation (only runs if both phases pass)
+        AssemblerDriver driver = new AssemblerDriver();
+        driver.generate(result.getProgram());
+        System.out.println("[OK] Codigo generado.");
+        driver.getAssembler().imprimirResumen();
     }
 }

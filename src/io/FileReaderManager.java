@@ -56,4 +56,17 @@ public class FileReaderManager {
         }
         return programa;
     }
+
+    public Lista<String> leerArchivo(String path) {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                programa.agregar(linea);
+            }
+        } catch (IOException e) {
+            System.out.println("Error al momento de leer el archivo: " + path);
+            return null;
+        }
+        return programa;
+    }
 }

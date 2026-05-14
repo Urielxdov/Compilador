@@ -41,6 +41,13 @@ public class Context {
         iniciarVariables();
     }
 
+    public Context(String path) {
+        iniciarVariables();
+        this.programa = new FileReaderManager().leerArchivo(path);
+        lineaActual = programa.obtener(0);
+        this.numeroLinea = 0;
+    }
+
     private void iniciarVariables () {
         this.tokens = new Lista<>();
         this.errores = new Lista<>();
