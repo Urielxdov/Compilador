@@ -16,6 +16,9 @@ public class ExprNode extends ASTNode {
     }
 
     public String getSingleIdentifier() {
+        if (!isSingleIdentifier()) {
+            throw new IllegalStateException("ExprNode is not a single identifier: " + tokens);
+        }
         return ((IdentifierToken) tokens.get(0)).getName();
     }
 

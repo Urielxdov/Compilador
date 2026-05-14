@@ -6,6 +6,8 @@ public class IfNode extends StatementNode {
     private final StatementNode elseBranch;
 
     public IfNode(BoolExprNode condition, StatementNode thenBranch, StatementNode elseBranch) {
+        if (condition == null || thenBranch == null || elseBranch == null)
+            throw new IllegalArgumentException("IfNode: condition, thenBranch, and elseBranch must not be null");
         this.condition = condition;
         this.thenBranch = thenBranch;
         this.elseBranch = elseBranch;
