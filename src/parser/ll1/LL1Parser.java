@@ -3,6 +3,7 @@ package parser.ll1;
 import data_structures.Pila;
 import lexer.Lexer;
 import lexer.Token;
+import parser.SemanticListener;
 import parser.grammar.*;
 import semantic.ast.ASTNode;
 
@@ -35,6 +36,7 @@ public class LL1Parser {
     private Pila<Symbol> pila; // Pila de simbolos del parser
     private Pila<ASTNode> pilaAST;
     private Lexer lexer; // Fuente de tokens
+    private SemanticListener semanticListener; // nullable
 
     /**
      * Construye un parser LL(1)
@@ -44,11 +46,24 @@ public class LL1Parser {
      * @param lexer analizador lexico que produce los tokens de entrada
      */
     public LL1Parser(Grammar grammar, LL1ParsingTable tabla, Lexer lexer) {
+        this(grammar, tabla, lexer, null);
+    }
+
+    /**
+     * Construye un parser LL(1) con un listener semantico opcional
+     *
+     * @param grammar gramatica previamente definida
+     * @param tabla tabla de analisis LL(1) generada a partir de la gramatica
+     * @param lexer analizador lexico que produce los tokens de entrada
+     * @param listener listener semantico que recibe eventos del parser (puede ser null)
+     */
+    public LL1Parser(Grammar grammar, LL1ParsingTable tabla, Lexer lexer, SemanticListener listener) {
         this.grammar = grammar;
         this.tabla = tabla;
         this.pila = new Pila<>();
         this.pilaAST = new Pila<>();
         this.lexer = lexer;
+        this.semanticListener = listener;
     }
 
 
@@ -81,6 +96,7 @@ public class LL1Parser {
 
                 if (posicion != 0) {
                     Production p = grammar.getProduccion(posicion);
+                    if (semanticListener != null) semanticListener.onProductionApplied(p, a);
                     pila.pop();
                     System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
                     if (p == null) {
@@ -92,11 +108,13 @@ public class LL1Parser {
                     x = pila.peek();
                 } else {
                     System.out.println("Se produjo un error sintacto, se esperaba un '" + x.getNombre() + "' y se obtuvo un '" + a.getLexema() + "'");
+                    if (semanticListener != null) semanticListener.onParseComplete(false);
                     return;
                 }
             } else {
                 if (Comparator.comapare(a, x)) {
                     Symbol t = pila.pop();
+                    if (semanticListener != null) semanticListener.onTerminalMatched(a);
                     // Aqui debemos implementar un FActory para la creacion del nodo
                     // se compara lo que se espera para el sintactico, con lo que hay en el programa
                     // esto lo logramos mediante token que posee un atributo TipoToken
@@ -118,6 +136,7 @@ public class LL1Parser {
             }
             paso++;
         }
+        if (semanticListener != null) semanticListener.onParseComplete(true);
     }
 
 
