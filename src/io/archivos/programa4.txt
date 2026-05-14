@@ -1,0 +1,8 @@
+Programa resta
+Inicio
+Entero a, b, diferencia;
+a = 10;
+b = 3;
+diferencia = a - b;
+Si diferencia > b Entonces Escribir(diferencia); Sino Escribir(b);
+Fin

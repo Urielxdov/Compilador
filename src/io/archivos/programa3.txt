@@ -1,0 +1,7 @@
+Programa comparador
+Inicio
+Entero a, b;
+Leer(a);
+Leer(b);
+Si a > b Entonces Escribir(a); Sino Escribir(b);
+Fin

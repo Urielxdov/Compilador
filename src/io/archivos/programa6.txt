@@ -1,0 +1,8 @@
+Programa mixto
+Inicio
+Entero num;
+Real total;
+num = 5;
+total = num;
+Escribir(total);
+Fin

@@ -1,0 +1,9 @@
+Programa complejo
+Inicio
+Entero a, b, c, resultado;
+a = 2;
+b = 3;
+c = 4;
+resultado = a + b * c;
+Escribir(resultado);
+Fin

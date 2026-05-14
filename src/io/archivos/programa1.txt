@@ -1,0 +1,7 @@
+Programa sumador
+Inicio
+Entero a, b, suma;
+Leer(a, b);
+suma = a + b;
+Escribir(suma);
+Fin
