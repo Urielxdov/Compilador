@@ -96,14 +96,15 @@ public class LL1Parser {
 
                 if (posicion != 0) {
                     Production p = grammar.getProduccion(posicion);
-                    if (semanticListener != null) semanticListener.onProductionApplied(p, a);
                     pila.pop();
-                    System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
                     if (p == null) {
                         System.out.println("dime");
-                    }
-                    for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
-                        pila.push(p.getDerecha().obtener(i));
+                    } else {
+                        System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
+                        if (semanticListener != null) semanticListener.onProductionApplied(p, a);
+                        for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
+                            pila.push(p.getDerecha().obtener(i));
+                        }
                     }
                     x = pila.peek();
                 } else {
