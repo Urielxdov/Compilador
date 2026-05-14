@@ -37,6 +37,7 @@ public class ASTBuilder implements SemanticListener {
 
     // ---- Write context ----
     private final List<ExprNode> writeExprs = new ArrayList<>();
+    private int writeParenDepth = 0; // tracks nested ( ) inside Escribir arguments
 
     // ---- Expression context (shared across assign/write/bool) ----
     private ExprNode currentExpr = new ExprNode();
@@ -55,6 +56,9 @@ public class ASTBuilder implements SemanticListener {
     // ---- Statement delivery ----
     private void deliverStatement(StatementNode stmt) {
         if (state == State.IF_THEN) {
+            // Grammar guarantees exactly one then-branch statement
+            if (ifStack.peek().thenBranch != null)
+                throw new IllegalStateException("ASTBuilder: thenBranch already set — parser delivered two then-branch statements");
             ifStack.peek().thenBranch = stmt;
         } else if (state == State.IF_ELSE) {
             IfFrame frame = ifStack.pop();
@@ -84,7 +88,7 @@ public class ASTBuilder implements SemanticListener {
             case 5  -> { pushState(State.DECLARING); declType = null; declIds.clear(); }
             case 6  -> { pushState(State.ASSIGNING); assignGotTarget = false; assignTarget = null; currentExpr = new ExprNode(); }
             case 7  -> { pushState(State.READING); readVars.clear(); }
-            case 8  -> { pushState(State.WRITING); writeExprs.clear(); currentExpr = new ExprNode(); }
+            case 8  -> { pushState(State.WRITING); writeExprs.clear(); currentExpr = new ExprNode(); writeParenDepth = 0; }
             case 9  -> {
                 pushState(State.IF_COND);
                 ifStack.push(new IfFrame());
@@ -140,18 +144,26 @@ public class ASTBuilder implements SemanticListener {
                 }
             }
             case WRITING -> {
-                if (isExprToken(token)) {
+                if (lex.equals("(")) {
+                    writeParenDepth++;
                     currentExpr.addToken(tokenToOperationToken(token));
+                } else if (lex.equals(")")) {
+                    if (writeParenDepth > 0) {
+                        writeParenDepth--;
+                        currentExpr.addToken(tokenToOperationToken(token));
+                    } else {
+                        // closing ) of Escribir(...) — flush current expression
+                        if (!currentExpr.getTokens().isEmpty()) writeExprs.add(currentExpr);
+                    }
                 } else if (lex.equals(",")) {
                     writeExprs.add(currentExpr);
                     currentExpr = new ExprNode();
-                } else if (lex.equals(")")) {
-                    if (!currentExpr.getTokens().isEmpty()) writeExprs.add(currentExpr);
                 } else if (lex.equals(";")) {
                     WriteNode node = new WriteNode(new ArrayList<>(writeExprs));
-                    writeExprs.clear();
                     popState();
                     deliverStatement(node);
+                } else if (isExprToken(token)) {
+                    currentExpr.addToken(tokenToOperationToken(token));
                 }
             }
             case IF_COND -> {
@@ -162,6 +174,8 @@ public class ASTBuilder implements SemanticListener {
                 } else if (isExprToken(token)) {
                     currentExpr.addToken(tokenToOperationToken(token));
                 } else if (lex.equals("Entonces")) {
+                    if (boolLeft == null || boolOperator == null)
+                        throw new IllegalStateException("ASTBuilder: bool expression incomplete before Entonces");
                     ExprNode right = currentExpr;
                     ifStack.peek().condition = new BoolExprNode(boolLeft, boolOperator, right);
                     popState();
@@ -194,8 +208,7 @@ public class ASTBuilder implements SemanticListener {
         if (tipo == TiposTokens.IDENTIFICADOR) return true;
         if (tipo == TiposTokens.NUMERO_NATURAL) return true;
         if (tipo == TiposTokens.NUMERO_FLOTANTE) return true;
-        return lex.equals("+") || lex.equals("-") || lex.equals("*")
-            || lex.equals("(") || lex.equals(")");
+        return lex.equals("+") || lex.equals("-") || lex.equals("*") || lex.equals("(");
     }
 
     private boolean isRelOp(String lex) {
