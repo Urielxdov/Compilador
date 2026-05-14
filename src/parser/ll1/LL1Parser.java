@@ -131,7 +131,9 @@ public class LL1Parser {
                     x = pila.peek();
                 }
                 else {
-                    System.out.println("Error sintactico 2");
+                    System.out.println("Error sintactico 2: se esperaba '" + x.getNombre() + "' y se obtuvo '" + a.getLexema() + "'");
+                    if (semanticListener != null) semanticListener.onParseComplete(false);
+                    return;
                 }
             }
             paso++;
