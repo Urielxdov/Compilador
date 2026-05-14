@@ -64,6 +64,16 @@ public class Lexer {
         tokenHandlers.agregar(new IdentificadoresHandler());
         tokenHandlers.agregar(new CaracterSimpleHandler());
     }
+
+    public Lexer(String path) {
+        ctx = new Context(path);
+        limpiador = new EliminarVacios();
+        tokenHandlers = new Lista<>();
+        tokenHandlers.agregar(new NumeroNaturalesHandler());
+        tokenHandlers.agregar(new NumeroFloatHandler());
+        tokenHandlers.agregar(new IdentificadoresHandler());
+        tokenHandlers.agregar(new CaracterSimpleHandler());
+    }
 //    public Token getNextToken() {
 //        while (!ctx.finArchivo()) {
 //            limpiador.aplicar(ctx);

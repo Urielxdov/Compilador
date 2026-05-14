@@ -1,0 +1,8 @@
+Programa multiescribir
+Inicio
+Entero a, b, c;
+a = 1;
+b = 2;
+c = a + b;
+Escribir(a, b, c);
+Fin

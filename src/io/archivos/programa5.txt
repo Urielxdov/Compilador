@@ -1,0 +1,8 @@
+Programa reales
+Inicio
+Real x, y, resultado;
+Leer(x);
+Leer(y);
+resultado = x + y;
+Escribir(resultado);
+Fin

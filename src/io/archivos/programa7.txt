@@ -1,0 +1,7 @@
+Programa cuadrado
+Inicio
+Entero n, cuad;
+n = 4;
+cuad = n * n;
+Escribir(cuad);
+Fin

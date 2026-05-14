@@ -1,4 +1,4 @@
 package semantic.ast;
 
-public class StatementNode {
+public abstract class StatementNode extends ASTNode {
 }

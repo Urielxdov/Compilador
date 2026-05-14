@@ -1,0 +1,7 @@
+Programa igualdad
+Inicio
+Entero x, y;
+x = 5;
+y = 5;
+Si x == y Entonces Escribir(x); Sino Escribir(y);
+Fin
