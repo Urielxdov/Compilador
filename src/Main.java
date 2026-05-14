@@ -2,7 +2,6 @@ import assembler.AssemblerDriver;
 import lexer.Lexer;
 import parser.GrammarParser;
 import parser.grammar.Grammar;
-import parser.grammar.Production;
 import parser.ll1.LL1Parser;
 import parser.ll1.LL1ParsingTable;
 import parser.reader.GrammarReader;
