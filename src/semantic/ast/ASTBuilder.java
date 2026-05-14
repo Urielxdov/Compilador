@@ -111,8 +111,9 @@ public class ASTBuilder implements SemanticListener {
                 if (token.getTipo() == TiposTokens.IDENTIFICADOR) {
                     declIds.add(lex);
                 } else if (lex.equals(";")) {
-                    deliverStatement(new DeclarationNode(declType, new ArrayList<>(declIds)));
+                    DeclarationNode node = new DeclarationNode(declType, new ArrayList<>(declIds));
                     popState();
+                    deliverStatement(node);
                 }
             }
             case ASSIGNING -> {
@@ -124,16 +125,18 @@ public class ASTBuilder implements SemanticListener {
                 } else if (isExprToken(token)) {
                     currentExpr.addToken(tokenToOperationToken(token));
                 } else if (lex.equals(";")) {
-                    deliverStatement(new AssignmentNode(assignTarget, currentExpr));
+                    AssignmentNode node = new AssignmentNode(assignTarget, currentExpr);
                     popState();
+                    deliverStatement(node);
                 }
             }
             case READING -> {
                 if (token.getTipo() == TiposTokens.IDENTIFICADOR) {
                     readVars.add(lex);
                 } else if (lex.equals(";")) {
-                    deliverStatement(new ReadNode(new ArrayList<>(readVars)));
+                    ReadNode node = new ReadNode(new ArrayList<>(readVars));
                     popState();
+                    deliverStatement(node);
                 }
             }
             case WRITING -> {
@@ -145,9 +148,10 @@ public class ASTBuilder implements SemanticListener {
                 } else if (lex.equals(")")) {
                     if (!currentExpr.getTokens().isEmpty()) writeExprs.add(currentExpr);
                 } else if (lex.equals(";")) {
-                    deliverStatement(new WriteNode(new ArrayList<>(writeExprs)));
+                    WriteNode node = new WriteNode(new ArrayList<>(writeExprs));
                     writeExprs.clear();
                     popState();
+                    deliverStatement(node);
                 }
             }
             case IF_COND -> {
