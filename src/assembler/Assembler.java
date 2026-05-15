@@ -169,6 +169,16 @@ public class Assembler {
         return pcSalto;
     }
 
+    /**
+     * Emite un JMP con destino temporal para parchearlo posteriormente.
+     * @return PC del salto en el generador absoluto
+     */
+    public int saltoIncondicional() {
+        int pcSalto = generadorAbsoluto.getPC();
+        generadorAbsoluto.emitirJmp(0);
+        return pcSalto;
+    }
+
     /** Parcha el destino de un salto emitido en pcSalto con la dirección actual del PC */
     public void cerrarSalto(int pcSalto) {
         generadorAbsoluto.parchear(pcSalto, generadorAbsoluto.getPC());

@@ -21,10 +21,10 @@ public class Main {
 
         // Run all 10 programs through the gated pipeline
         RutaArchivos[] programs = {
-            RutaArchivos.PROGRAMA1, RutaArchivos.PROGRAMA2, RutaArchivos.PROGRAMA3,
-            RutaArchivos.PROGRAMA4, RutaArchivos.PROGRAMA5, RutaArchivos.PROGRAMA6,
-            RutaArchivos.PROGRAMA7, RutaArchivos.PROGRAMA8, RutaArchivos.PROGRAMA9,
-            RutaArchivos.PROGRAMA10
+            RutaArchivos.PROGRAMA1, RutaArchivos.PROGRAMA2, RutaArchivos.PROGRAMA3
+//            RutaArchivos.PROGRAMA4, RutaArchivos.PROGRAMA5, RutaArchivos.PROGRAMA6,
+//            RutaArchivos.PROGRAMA7, RutaArchivos.PROGRAMA8, RutaArchivos.PROGRAMA9,
+//            RutaArchivos.PROGRAMA10
         };
 
         for (RutaArchivos prog : programs) {
