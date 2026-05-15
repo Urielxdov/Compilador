@@ -28,7 +28,7 @@ public class PostfixConverter {
 
         for (OperationToken token : tokens) {
 
-            if (token.isNumber()) {
+            if (token.isNumber() || token.isIdentifier()) {
                 output.add(token);
             }
 
