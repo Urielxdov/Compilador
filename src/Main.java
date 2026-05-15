@@ -3,6 +3,7 @@ import intermediate.IntermediateCode;
 import intermediate.IntermediateCodeGenerator;
 import intermediate.PostfixPrinter;
 import optimizer.LocalOptimizer;
+import optimizer.GlobalOptimizer;
 import lexer.Lexer;
 import parser.GrammarParser;
 import parser.grammar.Grammar;
@@ -41,7 +42,7 @@ public class Main {
         System.out.println("Procesando: " + path);
         System.out.println("=".repeat(60));
 
-        // Phase 1: Lexical + Syntactic + AST building
+        // Phase 1: Lexical + Syntactic + AST
         ASTBuilder astBuilder = new ASTBuilder();
         Lexer lexer = new Lexer(path);
         LL1Parser parser = new LL1Parser(grammar, table, lexer, astBuilder);
@@ -59,14 +60,12 @@ public class Main {
 
         if (!result.isSuccess()) {
             System.out.println("[ERROR SEMANTICO]");
-            for (String err : result.getErrors()) {
-                System.out.println("  " + err);
-            }
+            for (String err : result.getErrors()) System.out.println("  " + err);
             return;
         }
         System.out.println("[OK] Analisis semantico exitoso.");
 
-        // Phase 3: Intermediate Code
+        // Phase 3: Intermediate code
         IntermediateCodeGenerator icg = new IntermediateCodeGenerator();
         IntermediateCode ic = icg.generate(result.getProgram());
         System.out.println("\n=== CODIGO INTERMEDIO (CRUDO) ===");
@@ -75,10 +74,14 @@ public class Main {
         // Phase 4: Postfix (RPN) representation
         new PostfixPrinter().print(result.getProgram());
 
-        // Phase 5: Local optimizations
+        // Phase 5: Local optimizations (4 passes)
         IntermediateCode icLocal = new LocalOptimizer().optimize(ic);
 
-        // Phase 6: Code generation (only runs if both phases pass)
+        // Phase 6: Global optimization
+        IntermediateCode icGlobal = new GlobalOptimizer().optimize(icLocal, path);
+        System.out.println("\n[OK] Optimizaciones completadas.");
+
+        // Phase 7: Code generation (uses original AST — AssemblerDriver unchanged)
         AssemblerDriver driver = new AssemblerDriver();
         driver.generate(result.getProgram());
         System.out.println("[OK] Codigo generado.");
