@@ -42,6 +42,9 @@ public class PostfixPrinter {
                 + " Entonces " + stmtToRPN(ifNode.getThenBranch())
                 + " Sino "     + stmtToRPN(ifNode.getElseBranch())
                 + " FinSi";
+        } else {
+            throw new IllegalArgumentException("PostfixPrinter: tipo de sentencia no soportado: "
+                + stmt.getClass().getSimpleName());
         }
         return "";
     }

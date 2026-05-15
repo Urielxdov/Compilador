@@ -39,6 +39,9 @@ public class IntermediateCodeGenerator {
             }
         } else if (stmt instanceof IfNode ifNode) {
             processIf(ifNode);
+        } else {
+            throw new IllegalArgumentException("ICG: tipo de sentencia no soportado: "
+                + stmt.getClass().getSimpleName());
         }
     }
 

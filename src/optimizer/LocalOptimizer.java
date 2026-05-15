@@ -12,9 +12,9 @@ public class LocalOptimizer {
         List<Triplet> current = new ArrayList<>(ic.getTriplets());
 
         current = runPass("Pase 1 - Subexpresiones Redundantes", current, this::pase1Redundantes);
-        current = runPass("Pase 2 - Codigo Muerto",              current, this::pase2CodigoMuerto);
-        current = runPass("Pase 3 - Reutilizacion CSE",          current, this::pase3CSE);
-        current = runPass("Pase 4 - Reducciones Algebraicas",    current, this::pase4Algebraicas);
+        current = runPass("Pase 2 - Reutilizacion CSE",          current, this::pase3CSE);
+        current = runPass("Pase 3 - Reducciones Algebraicas",    current, this::pase4Algebraicas);
+        current = runPass("Pase 4 - Codigo Muerto",              current, this::pase2CodigoMuerto);
 
         return new IntermediateCode(current);
     }

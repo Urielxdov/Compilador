@@ -15,6 +15,6 @@ public class BasicBlock {
 
     public String        getLabel()      { return label; }
     public List<Triplet> getTriplets()   { return triplets; }
-    public List<String>  getSuccessors() { return successors; }
+    public List<String>  getSuccessors() { return Collections.unmodifiableList(successors); }
     public void addSuccessor(String s)   { if (!successors.contains(s)) successors.add(s); }
 }
