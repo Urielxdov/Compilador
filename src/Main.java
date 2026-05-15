@@ -1,6 +1,7 @@
 import assembler.AssemblerDriver;
 import intermediate.IntermediateCode;
 import intermediate.IntermediateCodeGenerator;
+import intermediate.PostfixPrinter;
 import lexer.Lexer;
 import parser.GrammarParser;
 import parser.grammar.Grammar;
@@ -70,7 +71,10 @@ public class Main {
         System.out.println("\n=== CODIGO INTERMEDIO (CRUDO) ===");
         ic.imprimir();
 
-        // Phase 4: Code generation (only runs if both phases pass)
+        // Phase 4: Postfix (RPN) representation
+        new PostfixPrinter().print(result.getProgram());
+
+        // Phase 5: Code generation (only runs if both phases pass)
         AssemblerDriver driver = new AssemblerDriver();
         driver.generate(result.getProgram());
         System.out.println("[OK] Codigo generado.");
