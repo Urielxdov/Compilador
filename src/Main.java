@@ -2,6 +2,7 @@ import assembler.AssemblerDriver;
 import intermediate.IntermediateCode;
 import intermediate.IntermediateCodeGenerator;
 import intermediate.PostfixPrinter;
+import optimizer.LocalOptimizer;
 import lexer.Lexer;
 import parser.GrammarParser;
 import parser.grammar.Grammar;
@@ -74,7 +75,10 @@ public class Main {
         // Phase 4: Postfix (RPN) representation
         new PostfixPrinter().print(result.getProgram());
 
-        // Phase 5: Code generation (only runs if both phases pass)
+        // Phase 5: Local optimizations
+        IntermediateCode icLocal = new LocalOptimizer().optimize(ic);
+
+        // Phase 6: Code generation (only runs if both phases pass)
         AssemblerDriver driver = new AssemblerDriver();
         driver.generate(result.getProgram());
         System.out.println("[OK] Codigo generado.");
