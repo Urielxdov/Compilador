@@ -9,12 +9,24 @@ import java.util.stream.Collectors;
 public class LocalOptimizer {
 
     public IntermediateCode optimize(IntermediateCode ic) {
+        Objects.requireNonNull(ic, "IntermediateCode no puede ser null");
         List<Triplet> current = new ArrayList<>(ic.getTriplets());
+        if (current.isEmpty()) return ic;
 
-        current = runPass("Pase 1 - Subexpresiones Redundantes", current, this::pase1Redundantes);
-        current = runPass("Pase 2 - Reutilizacion CSE",          current, this::pase3CSE);
-        current = runPass("Pase 3 - Reducciones Algebraicas",    current, this::pase4Algebraicas);
-        current = runPass("Pase 4 - Codigo Muerto",              current, this::pase2CodigoMuerto);
+        int maxIterations = 3;
+        for (int iteration = 0; iteration < maxIterations; iteration++) {
+            int beforeSize = current.size();
+
+            current = runPass("Pase 1 - Subexpresiones Redundantes", current, this::pase1Redundantes);
+            current = runPass("Pase 2 - Reutilizacion CSE",          current, this::pase2CSE);
+            current = runPass("Pase 3 - Reducciones Algebraicas",    current, this::pase3Algebraicas);
+            current = runPass("Pase 4 - Codigo Muerto",              current, this::pase4CodigoMuerto);
+
+            if (current.size() == beforeSize) {
+                System.out.println("[LOCAL] Punto fijo alcanzado en iteracion " + (iteration + 1));
+                break;
+            }
+        }
 
         return new IntermediateCode(current);
     }
@@ -42,7 +54,7 @@ public class LocalOptimizer {
         for (int i = 0; i + 1 < in.size(); i++) {
             Triplet t1 = in.get(i);
             Triplet t2 = in.get(i + 1);
-            if (!isMovToTemp(t1) || !isBinaryOpOnTemp(t2, t1.getOp1())) continue;
+            if (!TripletPatterns.isMovToTemp(t1) || !TripletPatterns.isBinaryOpOnTemp(t2, t1.getOp1())) continue;
 
             String key = t1.getOp2() + " " + t2.getInstruccion() + " " + t2.getOp2();
             String temp = t1.getOp1();
@@ -60,16 +72,16 @@ public class LocalOptimizer {
     }
 
     // -----------------------------------------------------------------------
-    // Pase 2: Remove (mov Ti X, op Ti Y) pairs where Ti is never used after.
+    // Pase 4: Remove (mov Ti X, op Ti Y) pairs where Ti is never used after.
     //   "Used" means Ti appears in op2, or as op1 of Mostrar.
     // -----------------------------------------------------------------------
-    private List<Triplet> pase2CodigoMuerto(List<Triplet> in) {
+    private List<Triplet> pase4CodigoMuerto(List<Triplet> in) {
         Set<Integer> toRemove = new HashSet<>();
 
         for (int i = 0; i + 1 < in.size(); i++) {
             Triplet t1 = in.get(i);
             Triplet t2 = in.get(i + 1);
-            if (!isMovToTemp(t1) || !isBinaryOpOnTemp(t2, t1.getOp1())) continue;
+            if (!TripletPatterns.isMovToTemp(t1) || !TripletPatterns.isBinaryOpOnTemp(t2, t1.getOp1())) continue;
 
             String temp = t1.getOp1();
             boolean usedAfter = false;
@@ -90,7 +102,7 @@ public class LocalOptimizer {
     }
 
     // -----------------------------------------------------------------------
-    // Pase 3: CSE — if Ti's ops-chain is a suffix of Tj's ops-chain (commutative ops only),
+    // Pase 2: CSE — if Ti's ops-chain is a suffix of Tj's ops-chain (commutative ops only),
     //   AND the op just before the suffix in Tj uses Ti's base as op2,
     //   replace the feeder op + suffix ops with a single: opsI[0].op Tj Ti.
     //
@@ -101,7 +113,7 @@ public class LocalOptimizer {
     //   Replace: remove "+ t2 X" and "+ t2 10", add "+ t2 t1"
     //   Result: mov t2 Y, + t2 t1
     // -----------------------------------------------------------------------
-    private List<Triplet> pase3CSE(List<Triplet> in) {
+    private List<Triplet> pase2CSE(List<Triplet> in) {
         // Build per-temp: movIndex, base value, ops chain (indices + content)
         Map<String, String>        tempBase    = new LinkedHashMap<>();
         Map<String, List<Integer>> tempOpIdxs  = new LinkedHashMap<>();
@@ -109,12 +121,12 @@ public class LocalOptimizer {
 
         for (int i = 0; i < in.size(); i++) {
             Triplet t = in.get(i);
-            if (isMovToTemp(t)) {
+            if (TripletPatterns.isMovToTemp(t)) {
                 String ti = t.getOp1();
                 tempBase.put(ti, t.getOp2());
                 tempOpIdxs.put(ti, new ArrayList<>());
                 tempOps.put(ti, new ArrayList<>());
-            } else if (isTemp(t.getOp1()) && tempOps.containsKey(t.getOp1())) {
+            } else if (TripletPatterns.isTemp(t.getOp1()) && tempOps.containsKey(t.getOp1())) {
                 String ti = t.getOp1();
                 tempOpIdxs.get(ti).add(i);
                 tempOps.get(ti).add(new String[]{t.getInstruccion(), t.getOp2()});
@@ -127,7 +139,7 @@ public class LocalOptimizer {
         outer:
         for (String ti : tempOps.keySet()) {
             List<String[]> opsI = tempOps.get(ti);
-            if (opsI.isEmpty() || !isCommutativeChain(opsI)) continue;
+            if (opsI.isEmpty() || !TripletPatterns.isCommutativeChain(opsI)) continue;
             String baseI = tempBase.get(ti);
 
             for (String tj : tempOps.keySet()) {
@@ -164,14 +176,10 @@ public class LocalOptimizer {
         return filterOut(result, toRemove);
     }
 
-    private boolean isCommutativeChain(List<String[]> ops) {
-        return ops.stream().allMatch(o -> "+".equals(o[0]) || "*".equals(o[0]));
-    }
-
     // -----------------------------------------------------------------------
-    // Pase 4: Remove or simplify identity operations.
+    // Pase 3: Remove or simplify identity operations.
     // -----------------------------------------------------------------------
-    private List<Triplet> pase4Algebraicas(List<Triplet> in) {
+    private List<Triplet> pase3Algebraicas(List<Triplet> in) {
         List<Triplet> result = new ArrayList<>();
         for (Triplet t : in) {
             String op  = t.getInstruccion();
@@ -190,12 +198,6 @@ public class LocalOptimizer {
     // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------
-    private boolean isTemp(String s)        { return s != null && s.matches("t\\d+"); }
-    private boolean isMovToTemp(Triplet t)  { return "mov".equals(t.getInstruccion()) && isTemp(t.getOp1()); }
-    private boolean isBinaryOpOnTemp(Triplet t, String temp) {
-        return temp.equals(t.getOp1()) && t.getOp2() != null && !"mov".equals(t.getInstruccion());
-    }
-
     private List<Triplet> filterOut(List<Triplet> list, Set<Integer> indices) {
         List<Triplet> out = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) if (!indices.contains(i)) out.add(list.get(i));
