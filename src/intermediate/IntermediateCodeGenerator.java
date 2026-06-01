@@ -9,6 +9,7 @@ public class IntermediateCodeGenerator {
     private final List<Triplet> triplets = new ArrayList<>();
     private int tempCount = 0;
     private int labelCount = 0;
+    private int currentSrcLine = 0;
 
     public IntermediateCode generate(ProgramNode program) {
         for (StatementNode stmt : program.getStatements())
@@ -17,6 +18,7 @@ public class IntermediateCodeGenerator {
     }
 
     private void processStatement(StatementNode stmt) {
+        currentSrcLine = stmt.getLineNumber();
         if (stmt instanceof DeclarationNode decl) {
             String tipo = decl.getType() == DataType.ENTERO ? "Int" : "Real";
             for (String id : decl.getIds()) emit(tipo, id);
@@ -87,6 +89,7 @@ public class IntermediateCodeGenerator {
      *   LABEL  labelEnd
      */
     private void processIf(IfNode ifNode) {
+        int ifLine = currentSrcLine; // already set by processStatement before calling processIf
         BoolExprNode cond = ifNode.getCondition();
         String leftVar  = evalExpr(cond.getLeft());
         String rightVar = evalExpr(cond.getRight());
@@ -97,15 +100,19 @@ public class IntermediateCodeGenerator {
         emit("JMP_F", condStr, labelElse);
 
         processStatement(ifNode.getThenBranch());
-        emit("JMP", labelEnd);
 
+        currentSrcLine = ifLine;
+        emit("JMP", labelEnd);
         emit("LABEL", labelElse);
+
         processStatement(ifNode.getElseBranch());
+
+        currentSrcLine = ifLine;
         emit("LABEL", labelEnd);
     }
 
-    private void emit(String i, String o1, String o2) { triplets.add(new Triplet(i, o1, o2)); }
-    private void emit(String i, String o1)            { triplets.add(new Triplet(i, o1, null)); }
+    private void emit(String i, String o1, String o2) { triplets.add(new Triplet(i, o1, o2, currentSrcLine)); }
+    private void emit(String i, String o1)            { triplets.add(new Triplet(i, o1, null, currentSrcLine)); }
     private String newTemp()  { return "t" + (tempCount++); }
     private String newLabel() { return "L" + (labelCount++); }
 }

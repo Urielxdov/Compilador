@@ -74,12 +74,18 @@ public class Main {
         // Phase 4: Postfix (RPN) representation
         new PostfixPrinter().print(result.getProgram());
 
-        // Phase 5: Local optimizations (4 passes)
-        IntermediateCode icLocal = new LocalOptimizer().optimize(ic);
+        // Phase 5: Local optimizations (in-place, 4 passes)
+        new LocalOptimizer().optimize(ic);
 
-        // Phase 6: Global optimization
-        IntermediateCode icGlobal = new GlobalOptimizer().optimize(icLocal, path);
+        // Phase 6: Global optimization (in-place, same instance)
+        new GlobalOptimizer().optimize(ic, path);
         System.out.println("\n[OK] Optimizaciones completadas.");
+
+        // REQ-02: validate jump targets are intact after optimization
+        ic.validateJumps();
+
+        // REQ-03: show optimized triplets alongside original source
+        ic.imprimirConFuente(path);
 
         // Phase 7: Code generation (uses original AST — AssemblerDriver unchanged)
         AssemblerDriver driver = new AssemblerDriver();

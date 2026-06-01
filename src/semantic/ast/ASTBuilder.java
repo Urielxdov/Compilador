@@ -46,10 +46,14 @@ public class ASTBuilder implements SemanticListener {
     private ExprNode boolLeft;
     private String boolOperator;
 
+    // ---- Statement line tracking (REQ-03) ----
+    private int currentStmtLine = 0;
+
     // ---- If context stack (supports nested ifs) ----
     private static class IfFrame {
         BoolExprNode condition;
         StatementNode thenBranch;
+        int lineNumber;
     }
     private final Deque<IfFrame> ifStack = new ArrayDeque<>();
 
@@ -63,6 +67,7 @@ public class ASTBuilder implements SemanticListener {
         } else if (state == State.IF_ELSE) {
             IfFrame frame = ifStack.pop();
             IfNode ifNode = new IfNode(frame.condition, frame.thenBranch, stmt);
+            ifNode.setLineNumber(frame.lineNumber);
             popState(); // pop IF_ELSE -> back to parent context
             deliverStatement(ifNode);
         } else {
@@ -85,13 +90,15 @@ public class ASTBuilder implements SemanticListener {
     public void onProductionApplied(Production p, Token lookahead) {
         switch (p.getId()) {
             case 1  -> state = State.READING_PROG_NAME;
-            case 5  -> { pushState(State.DECLARING); declType = null; declIds.clear(); }
-            case 6  -> { pushState(State.ASSIGNING); assignGotTarget = false; assignTarget = null; currentExpr = new ExprNode(); }
-            case 7  -> { pushState(State.READING); readVars.clear(); }
-            case 8  -> { pushState(State.WRITING); writeExprs.clear(); currentExpr = new ExprNode(); writeParenDepth = 0; }
+            case 5  -> { pushState(State.DECLARING); declType = null; declIds.clear(); currentStmtLine = lookahead.getLineNumber(); }
+            case 6  -> { pushState(State.ASSIGNING); assignGotTarget = false; assignTarget = null; currentExpr = new ExprNode(); currentStmtLine = lookahead.getLineNumber(); }
+            case 7  -> { pushState(State.READING); readVars.clear(); currentStmtLine = lookahead.getLineNumber(); }
+            case 8  -> { pushState(State.WRITING); writeExprs.clear(); currentExpr = new ExprNode(); writeParenDepth = 0; currentStmtLine = lookahead.getLineNumber(); }
             case 9  -> {
                 pushState(State.IF_COND);
-                ifStack.push(new IfFrame());
+                IfFrame frame = new IfFrame();
+                frame.lineNumber = lookahead.getLineNumber();
+                ifStack.push(frame);
                 boolLeft = null; boolOperator = null;
                 currentExpr = new ExprNode();
             }
@@ -116,6 +123,7 @@ public class ASTBuilder implements SemanticListener {
                     declIds.add(lex);
                 } else if (lex.equals(";")) {
                     DeclarationNode node = new DeclarationNode(declType, new ArrayList<>(declIds));
+                    node.setLineNumber(currentStmtLine);
                     popState();
                     deliverStatement(node);
                 }
@@ -130,6 +138,7 @@ public class ASTBuilder implements SemanticListener {
                     currentExpr.addToken(tokenToOperationToken(token));
                 } else if (lex.equals(";")) {
                     AssignmentNode node = new AssignmentNode(assignTarget, currentExpr);
+                    node.setLineNumber(currentStmtLine);
                     popState();
                     deliverStatement(node);
                 }
@@ -139,6 +148,7 @@ public class ASTBuilder implements SemanticListener {
                     readVars.add(lex);
                 } else if (lex.equals(";")) {
                     ReadNode node = new ReadNode(new ArrayList<>(readVars));
+                    node.setLineNumber(currentStmtLine);
                     popState();
                     deliverStatement(node);
                 }
@@ -160,6 +170,7 @@ public class ASTBuilder implements SemanticListener {
                     currentExpr = new ExprNode();
                 } else if (lex.equals(";")) {
                     WriteNode node = new WriteNode(new ArrayList<>(writeExprs));
+                    node.setLineNumber(currentStmtLine);
                     popState();
                     deliverStatement(node);
                 } else if (isExprToken(token)) {

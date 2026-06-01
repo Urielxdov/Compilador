@@ -127,8 +127,13 @@ public class Lexer {
             ctx.setPunteroFinal(ctx.getPunteroFinal() + 1);
             ctx.consumirLexema();
         }
-        return  ctx.getTokenActual();
+        Token token = ctx.getTokenActual();
+        // REQ-03: stamp 1-based source line number derived from the lexer context
+        token.setLineNumber(ctx.getNumeroLinea() + 1);
+        return token;
     }
+
+    public int getNumeroLinea() { return ctx.getNumeroLinea() + 1; }
 
     public Lista<Token> obtenerSimbolos() {
         return ctx.getSimbolos();

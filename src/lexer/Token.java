@@ -12,6 +12,8 @@ public class Token {
     private String lexema;
     // Categoria del analizador lexico
     private TiposTokens tipo;
+    // Numero de linea fuente (1-based), establecido por el Lexer tras reconocer el token
+    private int lineNumber;
 
     public Token(int atributo, String lexema, TiposTokens tipo) {
         this.atributo = atributo;
@@ -30,6 +32,9 @@ public class Token {
     public TiposTokens getTipo () {
         return tipo;
     }
+
+    public int getLineNumber() { return lineNumber; }
+    public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
 
     @Override
     public String toString() {

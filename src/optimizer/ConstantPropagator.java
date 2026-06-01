@@ -25,7 +25,7 @@ public class ConstantPropagator {
 
             } else if ("mov".equals(instr) && t.getOp2() != null
                        && constants.containsKey(t.getOp2())) {
-                result.set(i, new Triplet("mov", t.getOp1(), constants.get(t.getOp2())));
+                result.set(i, new Triplet("mov", t.getOp1(), constants.get(t.getOp2()), t.getSourceLineNumber()));
 
             } else if ("=".equals(instr)) {
                 constants.remove(t.getOp1());

@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 public class LocalOptimizer {
 
-    public IntermediateCode optimize(IntermediateCode ic) {
+    public void optimize(IntermediateCode ic) {
         Objects.requireNonNull(ic, "IntermediateCode no puede ser null");
         List<Triplet> current = new ArrayList<>(ic.getTriplets());
-        if (current.isEmpty()) return ic;
+        if (current.isEmpty()) return;
 
         int maxIterations = 3;
         for (int iteration = 0; iteration < maxIterations; iteration++) {
@@ -28,7 +28,7 @@ public class LocalOptimizer {
             }
         }
 
-        return new IntermediateCode(current);
+        ic.replaceTriplets(current);
     }
 
     private List<Triplet> runPass(String nombre, List<Triplet> antes,
@@ -168,7 +168,7 @@ public class LocalOptimizer {
                     toRemove.add(idxJ.get(k));
                 }
                 int lastIdx = idxJ.get(opsJ.size() - 1);
-                result.set(lastIdx, new Triplet(opsI.get(0)[0], tj, ti));
+                result.set(lastIdx, new Triplet(opsI.get(0)[0], tj, ti, in.get(lastIdx).getSourceLineNumber()));
                 break outer;
             }
         }
@@ -187,7 +187,7 @@ public class LocalOptimizer {
             if (("+".equals(op) || "-".equals(op)) && "0".equals(op2)) continue; // X +/- 0 -> remove
             if (("*".equals(op) || "/".equals(op)) && "1".equals(op2)) continue; // X */÷ 1 -> remove
             if ("*".equals(op) && "0".equals(op2)) {                              // X * 0 -> mov Ti 0
-                result.add(new Triplet("mov", t.getOp1(), "0"));
+                result.add(new Triplet("mov", t.getOp1(), "0", t.getSourceLineNumber()));
                 continue;
             }
             result.add(t);
@@ -209,7 +209,8 @@ public class LocalOptimizer {
         return list.stream()
             .map(t -> new Triplet(t.getInstruccion(),
                                   map.getOrDefault(t.getOp1(), t.getOp1()),
-                                  t.getOp2() != null ? map.getOrDefault(t.getOp2(), t.getOp2()) : null))
+                                  t.getOp2() != null ? map.getOrDefault(t.getOp2(), t.getOp2()) : null,
+                                  t.getSourceLineNumber()))
             .collect(Collectors.toList());
     }
 }

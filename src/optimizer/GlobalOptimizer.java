@@ -17,7 +17,7 @@ public class GlobalOptimizer {
         this.propagator   = new ConstantPropagator();
     }
 
-    public IntermediateCode optimize(IntermediateCode ic, String sourcePath) {
+    public void optimize(IntermediateCode ic, String sourcePath) {
         Objects.requireNonNull(ic, "IntermediateCode no puede ser null");
         Objects.requireNonNull(sourcePath, "sourcePath no puede ser null");
 
@@ -27,6 +27,6 @@ public class GlobalOptimizer {
         flowAnalyzer.buildBlocks(ic.getTriplets());
         List<Triplet> optimized = propagator.propagate(ic.getTriplets());
 
-        return new IntermediateCode(optimized);
+        ic.replaceTriplets(optimized);
     }
 }
