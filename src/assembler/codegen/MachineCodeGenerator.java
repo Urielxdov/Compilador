@@ -72,6 +72,14 @@ public class MachineCodeGenerator {
         emitir(new Instruction(Opcode.JNE, Instruction.MODO_DIRECTO, destino));
     }
 
+    public void emitirJle(int destino) {
+        emitir(new Instruction(Opcode.JLE, Instruction.MODO_DIRECTO, destino));
+    }
+
+    public void emitirJge(int destino) {
+        emitir(new Instruction(Opcode.JGE, Instruction.MODO_DIRECTO, destino));
+    }
+
     public void emitirRead(String nombreVar) {
         SymbolRecord r = tablaSimbolos.obtener(nombreVar);
         emitir(new Instruction(Opcode.READ, Instruction.MODO_DIRECTO, r.getDireccion()));

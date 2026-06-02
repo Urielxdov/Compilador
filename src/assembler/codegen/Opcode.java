@@ -17,8 +17,10 @@ public enum Opcode {
     JNE  (0x0D),  // salta si ZF=0         (distinto)
     READ (0x0E),  // Leer
     WRITE(0x0F),  // Escribir
-    CALL (0x10),  // llama subrutina
-    RET  (0x11),  // retorna de subrutina
+    JLE  (0x10),  // salta si ZF=1 o SF=1 (menor o igual)
+    JGE  (0x11),  // salta si ZF=1 o SF=0 (mayor o igual)
+    CALL (0x12),  // llama subrutina
+    RET  (0x13),  // retorna de subrutina
     HALT (0xFF);  // fin de programa
 
     private final int codigo;

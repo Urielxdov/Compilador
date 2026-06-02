@@ -1,4 +1,4 @@
-import assembler.AssemblerDriver;
+import assembler.TripletAssemblerDriver;
 import intermediate.IntermediateCode;
 import intermediate.IntermediateCodeGenerator;
 import intermediate.PostfixPrinter;
@@ -14,9 +14,9 @@ import semantic.SemanticAnalyzer;
 import semantic.SemanticResult;
 import semantic.ast.ASTBuilder;
 import io.RutaArchivos;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.IOException;
 
 public class Main {
 
@@ -100,10 +100,19 @@ public class Main {
         // REQ-03: show optimized triplets alongside original source
         ic.imprimirConFuente(path);
 
-        // Phase 7: Code generation (uses original AST — AssemblerDriver unchanged)
-        //AssemblerDriver driver = new AssemblerDriver();
-        //driver.generate(result.getProgram());
-        //System.out.println("[OK] Codigo generado.");
-        //driver.getAssembler().imprimirResumen();
+        // Phase 7: Code generation from optimized intermediate code
+        String progName = path.substring(path.lastIndexOf('/') + 1).replace(".txt", "");
+        TripletAssemblerDriver driver = new TripletAssemblerDriver(progName);
+        driver.generate(ic);
+        System.out.println("[OK] Codigo maquina generado.");
+        driver.getAssembler().imprimirResumen();
+
+        String asmPath = path.replace(".txt", ".asm");
+        try {
+            driver.escribirArchivo(asmPath);
+            System.out.println("[OK] Ensamblador escrito en: " + asmPath);
+        } catch (IOException e) {
+            System.err.println("[ERROR] No se pudo escribir .asm: " + e.getMessage());
+        }
     }
 }
