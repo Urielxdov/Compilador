@@ -155,20 +155,29 @@ public class ASTBuilder implements SemanticListener {
             }
             case WRITING -> {
                 if (lex.equals("(")) {
-                    writeParenDepth++;
-                    currentExpr.addToken(tokenToOperationToken(token));
-                } else if (lex.equals(")")) {
                     if (writeParenDepth > 0) {
-                        writeParenDepth--;
+                        currentExpr.addToken(tokenToOperationToken(token));
+                    }
+                    writeParenDepth++;
+                } else if (lex.equals(")")) {
+                    writeParenDepth--;
+                    if (writeParenDepth > 0) {
                         currentExpr.addToken(tokenToOperationToken(token));
                     } else {
-                        // closing ) of Escribir(...) — flush current expression
-                        if (!currentExpr.getTokens().isEmpty()) writeExprs.add(currentExpr);
+                        if (!currentExpr.getTokens().isEmpty()) {
+                            writeExprs.add(currentExpr);
+                            currentExpr = new ExprNode();
+                        }
                     }
                 } else if (lex.equals(",")) {
-                    writeExprs.add(currentExpr);
+                    if (!currentExpr.getTokens().isEmpty()) {
+                        writeExprs.add(currentExpr);
+                    }
                     currentExpr = new ExprNode();
                 } else if (lex.equals(";")) {
+                    if (!currentExpr.getTokens().isEmpty() && writeExprs.isEmpty()) {
+                        writeExprs.add(currentExpr);
+                    }
                     WriteNode node = new WriteNode(new ArrayList<>(writeExprs));
                     node.setLineNumber(currentStmtLine);
                     popState();

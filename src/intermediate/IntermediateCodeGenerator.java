@@ -12,13 +12,17 @@ public class IntermediateCodeGenerator {
     private int currentSrcLine = 0;
 
     public IntermediateCode generate(ProgramNode program) {
-        for (StatementNode stmt : program.getStatements())
+        for (StatementNode stmt : program.getStatements()) {
             processStatement(stmt);
+        }
         return new IntermediateCode(triplets);
     }
 
     private void processStatement(StatementNode stmt) {
+        if (stmt == null) return;
+
         currentSrcLine = stmt.getLineNumber();
+
         if (stmt instanceof DeclarationNode decl) {
             String tipo = decl.getType() == DataType.ENTERO ? "Int" : "Real";
             for (String id : decl.getIds()) emit(tipo, id);
@@ -31,28 +35,30 @@ public class IntermediateCodeGenerator {
             for (String var : read.getVars()) emit("Leer", var);
 
         } else if (stmt instanceof WriteNode write) {
-            for (ExprNode expr : write.getExpressions()) {
-                if (expr.isSingleIdentifier()) {
-                    emit("Mostrar", expr.getSingleIdentifier());
-                } else {
-                    String result = evalExpr(expr);
-                    emit("Mostrar", result);
+            if (write.getExpressions() != null) {
+                for (ExprNode expr : write.getExpressions()) {
+                    if (expr.isSingleIdentifier()) {
+                        emit("Mostrar", expr.getSingleIdentifier());
+                    } else {
+                        String result = evalExpr(expr);
+                        emit("Mostrar", result);
+                    }
                 }
             }
         } else if (stmt instanceof IfNode ifNode) {
             processIf(ifNode);
         } else {
             throw new IllegalArgumentException("ICG: tipo de sentencia no soportado: "
-                + stmt.getClass().getSimpleName());
+                    + stmt.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Converts ExprNode to postfix, then processes via operand stack to emit triplets.
-     * Single-token expressions return the value directly without emitting any triplets.
-     */
     private String evalExpr(ExprNode expr) {
+        if (expr == null) return "";
+
         List<OperationToken> tokens = expr.getTokens();
+        if (tokens == null || tokens.isEmpty()) return "";
+
         if (tokens.size() == 1) {
             OperationToken tok = tokens.get(0);
             if (tok instanceof IdentifierToken id) return id.getName();
@@ -76,43 +82,49 @@ public class IntermediateCodeGenerator {
                 stack.push(temp);
             }
         }
-        return stack.pop();
+        return stack.isEmpty() ? "" : stack.pop();
     }
 
-    /**
-     * JMP_F pattern:
-     *   JMP_F  "left op right"  labelElse  <- jump to else when condition is FALSE
-     *   <then-branch>
-     *   JMP    labelEnd
-     *   LABEL  labelElse
-     *   <else-branch>
-     *   LABEL  labelEnd
-     */
     private void processIf(IfNode ifNode) {
-        int ifLine = currentSrcLine; // already set by processStatement before calling processIf
+        int ifLine = currentSrcLine;
         BoolExprNode cond = ifNode.getCondition();
+        if (cond == null) return;
+
         String leftVar  = evalExpr(cond.getLeft());
         String rightVar = evalExpr(cond.getRight());
         String labelElse = newLabel();
         String labelEnd  = newLabel();
 
+        // 1. Condición de salto
         String condStr = leftVar + " " + cond.getOperator() + " " + rightVar;
         emit("JMP_F", condStr, labelElse);
 
+        // 2. Ejecutar cuerpo del THEN directamente
         processStatement(ifNode.getThenBranch());
 
+        // 3. Salto para brincarse el SINO
         currentSrcLine = ifLine;
         emit("JMP", labelEnd);
+
+        // 4. Destino del primer salto si la condición fue falsa
         emit("LABEL", labelElse);
 
+        // 5. Ejecutar cuerpo del ELSE directamente
         processStatement(ifNode.getElseBranch());
 
+        // 6. Destino final
         currentSrcLine = ifLine;
         emit("LABEL", labelEnd);
     }
 
-    private void emit(String i, String o1, String o2) { triplets.add(new Triplet(i, o1, o2, currentSrcLine)); }
-    private void emit(String i, String o1)            { triplets.add(new Triplet(i, o1, null, currentSrcLine)); }
+    private void emit(String i, String o1, String o2) {
+        triplets.add(new Triplet(i, o1, o2, currentSrcLine));
+    }
+
+    private void emit(String i, String o1) {
+        triplets.add(new Triplet(i, o1, null, currentSrcLine));
+    }
+
     private String newTemp()  { return "t" + (tempCount++); }
     private String newLabel() { return "L" + (labelCount++); }
 }

@@ -30,9 +30,9 @@ public class IntermediateCode {
      */
     public boolean validateJumps() {
         Set<String> defined = triplets.stream()
-            .filter(t -> "LABEL".equals(t.getInstruccion()))
-            .map(Triplet::getOp1)
-            .collect(Collectors.toSet());
+                .filter(t -> "LABEL".equals(t.getInstruccion()))
+                .map(Triplet::getOp1)
+                .collect(Collectors.toSet());
 
         boolean ok = true;
         for (Triplet t : triplets) {
@@ -55,8 +55,8 @@ public class IntermediateCode {
     }
 
     /**
-     * REQ-03: print source file with each line's optimized triplets shown directly below it.
-     * Grouping uses sourceLineNumber (semantic), not array position (positional).
+     * REQ-03: print source file with each line's optimized triplets shown aligned.
+     * Muestra OBLIGATORIAMENTE todas las líneas del archivo fuente (con o sin tercetos).
      */
     public void imprimirConFuente(String sourcePath) {
         List<String> sourceLines = new ArrayList<>();
@@ -64,24 +64,47 @@ public class IntermediateCode {
             sourceLines = Files.readAllLines(Path.of(sourcePath));
         } catch (Exception e) {
             System.out.println("  (no se pudo leer fuente: " + e.getMessage() + ")");
+            return;
         }
 
-        // Build sourceLineNumber -> list of formatted triplet strings
-        Map<Integer, List<String>> byLine = new LinkedHashMap<>();
-        for (int i = 0; i < triplets.size(); i++) {
-            Triplet t = triplets.get(i);
-            byLine.computeIfAbsent(t.getSourceLineNumber(), k -> new ArrayList<>())
-                  .add(String.format("    -> (%d) %s", i, t));
-        }
+        System.out.println("\n========================================================================================================");
+        System.out.println("===                        TERCETOS OPTIMIZADOS | CODIGO FUENTE COMPLETO                        ===");
+        System.out.println("========================================================================================================");
+        System.out.printf("%-7s %-50s %s%n", "LÍNEA", "CÓDIGO FUENTE ORIGINAL", "TERCETOS ASOCIADOS");
+        System.out.println("-".repeat(104));
 
-        System.out.println("\n=== TERCETOS OPTIMIZADOS | CODIGO FUENTE ORIGINAL ===");
-        System.out.println("-".repeat(60));
         for (int i = 0; i < sourceLines.size(); i++) {
             int lineNo = i + 1;
-            System.out.printf("(%d) %s%n", lineNo, sourceLines.get(i));
-            if (byLine.containsKey(lineNo)) {
-                byLine.get(lineNo).forEach(System.out::println);
+            String sourceCode = sourceLines.get(i).trim();
+            boolean firstTriplet = true;
+
+            // Buscamos todos los tercetos que pertenezcan a la línea actual
+            for (int j = 0; j < triplets.size(); j++) {
+                Triplet t = triplets.get(j);
+
+                if (t.getSourceLineNumber() == lineNo) {
+                    // Formateamos el terceto de manera explícita mostrando su índice y sus operadores completos
+                    String tripletStr = String.format("(%d) Inst: %-8s | Op1: %-10s | Op2: %-10s",
+                            j,
+                            t.getInstruccion(),
+                            t.getOp1() != null ? t.getOp1() : "null",
+                            t.getOp2() != null ? t.getOp2() : "null");
+
+                    if (firstTriplet) {
+                        System.out.printf("%-7d %-50s -> %s%n", lineNo, sourceCode, tripletStr);
+                        firstTriplet = false;
+                    } else {
+                        // Si la línea generó múltiples tercetos, se alinean abajo limpiamente
+                        System.out.printf("%-7s %-50s -> %s%n", "", "", tripletStr);
+                    }
+                }
+            }
+
+            // Si la línea del código fuente no generó tercetos (como Inicio, Fin, comentarios), se imprime limpia
+            if (firstTriplet) {
+                System.out.printf("%-7d %-50s |%n", lineNo, sourceCode);
             }
         }
+        System.out.println("-".repeat(104));
     }
 }

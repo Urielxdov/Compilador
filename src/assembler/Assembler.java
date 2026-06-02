@@ -218,6 +218,7 @@ public class Assembler {
     public AssemblerSymbolTable getTablaSimbolos() { return tablaSimbolos; }
     public MemoryMatrix       getMemoria()         { return memoria; }
     public StructureTable     getTablaEstructuras(){ return tablaEstructuras; }
+    public MachineCodeGenerator getMachineCodeGenerator() { return generadorAbsoluto; }
     public int                getPC()              { return generadorAbsoluto.getPC(); }
 
     public void imprimirResumen() {

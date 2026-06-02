@@ -90,7 +90,7 @@ public class LL1Parser {
         Token a = lexer.next(); // inicializa pa
         int paso = 1;
         while (!pila.esVacia()) {
-            System.out.println(String.valueOf(paso)+ ".- Token actual: " + a.getLexema() + "\nContenido de la pila:"+ pila.toString());
+            //System.out.println(String.valueOf(paso)+ ".- Token actual: " + a.getLexema() + "\nContenido de la pila:"+ pila.toString());
             if (x instanceof NoTerminal) {
                 int posicion = tabla.getNumeroProduccion((NoTerminal) x, a);
 
@@ -98,9 +98,9 @@ public class LL1Parser {
                     Production p = grammar.getProduccion(posicion);
                     pila.pop();
                     if (p == null) {
-                        System.out.println("dime");
+                        //System.out.println("dime");
                     } else {
-                        System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
+                        //System.out.println("Produccion a utilizar: " + p.toString() + " en paso " + String.valueOf(paso));
                         if (semanticListener != null) semanticListener.onProductionApplied(p, a);
                         for (int i = p.getDerecha().nodosExistentes() - 1; i >= 0; i--) {
                             pila.push(p.getDerecha().obtener(i));
@@ -121,9 +121,9 @@ public class LL1Parser {
                     // esto lo logramos mediante token que posee un atributo TipoToken
                     try {
                         x = pila.peek();
-                        System.out.println("Simbolos en paso '" + String.valueOf(paso) + "':\n" + lexer.obtenerSimbolos());
+                        //System.out.println("Simbolos en paso '" + String.valueOf(paso) + "':\n" + lexer.obtenerSimbolos());
                     } catch (Exception e) {
-                        System.out.println("aca");
+                        //System.out.println("aca se quemaaa");
                         System.out.println(t);
                     }
                     a = lexer.next();

@@ -14,6 +14,9 @@ import semantic.SemanticAnalyzer;
 import semantic.SemanticResult;
 import semantic.ast.ASTBuilder;
 import io.RutaArchivos;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 public class Main {
 
@@ -26,7 +29,9 @@ public class Main {
 
         // Run all 10 programs through the gated pipeline
         RutaArchivos[] programs = {
-            RutaArchivos.PROGRAMA1, RutaArchivos.PROGRAMA2, RutaArchivos.PROGRAMA3
+            //RutaArchivos.PROGRAMA1,
+                //RutaArchivos.PROGRAMA2,
+                RutaArchivos.PROGRAMA3
 //            RutaArchivos.PROGRAMA4, RutaArchivos.PROGRAMA5, RutaArchivos.PROGRAMA6,
 //            RutaArchivos.PROGRAMA7, RutaArchivos.PROGRAMA8, RutaArchivos.PROGRAMA9,
 //            RutaArchivos.PROGRAMA10
@@ -40,6 +45,14 @@ public class Main {
     private static void runPipeline(Grammar grammar, LL1ParsingTable table, String path) {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("Procesando: " + path);
+        
+        // Imprimir contenido del archivo
+        try {
+            Files.lines(Paths.get(path)).forEach(System.out::println);
+        } catch (IOException e) {
+            System.err.println("Error leyendo el archivo: " + e.getMessage());
+        }
+        
         System.out.println("=".repeat(60));
 
         // Phase 1: Lexical + Syntactic + AST
@@ -88,9 +101,9 @@ public class Main {
         ic.imprimirConFuente(path);
 
         // Phase 7: Code generation (uses original AST — AssemblerDriver unchanged)
-        AssemblerDriver driver = new AssemblerDriver();
-        driver.generate(result.getProgram());
-        System.out.println("[OK] Codigo generado.");
-        driver.getAssembler().imprimirResumen();
+        //AssemblerDriver driver = new AssemblerDriver();
+        //driver.generate(result.getProgram());
+        //System.out.println("[OK] Codigo generado.");
+        //driver.getAssembler().imprimirResumen();
     }
 }
