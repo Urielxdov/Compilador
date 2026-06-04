@@ -16,6 +16,7 @@ import semantic.ast.ASTBuilder;
 import io.RutaArchivos;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Main {
@@ -101,10 +102,13 @@ public class Main {
         ic.imprimirConFuente(path);
 
         // Phase 7: Code generation from optimized intermediate code
-        String progName = path.substring(path.lastIndexOf('/') + 1).replace(".txt", "");
+        String fileName = Path.of(path).getFileName().toString();
+        String progName = fileName.endsWith(".txt")
+                ? fileName.substring(0, fileName.length() - 4)
+                : fileName;
         TripletAssemblerDriver driver = new TripletAssemblerDriver(progName);
         driver.generate(ic);
-        System.out.println("[OK] Codigo maquina generado.");
+        System.out.println("[OK] Ensamblador NASM x86-64 generado.");
         driver.getAssembler().imprimirResumen();
 
         String asmPath = path.replace(".txt", ".asm");
